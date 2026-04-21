@@ -176,7 +176,7 @@ export default function Home() {
                 Resalta sobre la superficie mediante un tono de contenedor secundario.
               </CardContent>
               <CardFooter>
-                <Button variant="ghost" size="sm">Action</Button>
+                <Button size="sm">Action</Button>
               </CardFooter>
             </Card>
 
@@ -189,7 +189,7 @@ export default function Home() {
                 La variante más equilibrada para la mayoría de los bloques de contenido.
               </CardContent>
               <CardFooter>
-                <Button variant="ghost" size="sm">Action</Button>
+                <Button variant="secondary" size="sm">Action</Button>
               </CardFooter>
             </Card>
 

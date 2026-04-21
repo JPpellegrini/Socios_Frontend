@@ -12,47 +12,32 @@ function Input({
   const generatedId = React.useId();
   const inputId = id || generatedId;
   
-  const inputElement = (
-    <input
-      id={inputId}
-      type={type}
-      data-slot="input"
-      placeholder=" " 
-      className={cn(
-        "peer block w-full min-w-0 appearance-none bg-transparent px-4 pb-2 pt-6 text-base text-foreground transition-all outline-none disabled:pointer-events-none disabled:opacity-50",
-        className
-      )}
-      {...props}
-    />
-  );
-
-  if (!label) {
-    return (
-      <div className="relative h-14 w-full rounded-xl border border-input bg-surface-variant/10 transition-all focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10">
-        <input
-          id={inputId}
-          type={type}
-          data-slot="input"
-          className={cn(
-            "h-full w-full min-w-0 bg-transparent px-4 text-base transition-all outline-none disabled:pointer-events-none disabled:opacity-50",
-            className
-          )}
-          {...props}
-        />
-      </div>
-    );
-  }
-
   return (
-    <div className="group relative h-14 w-full rounded-xl border border-input bg-surface-variant/10 transition-all focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 dark:bg-input/30">
-      {inputElement}
-      <label
-        htmlFor={inputId}
-        className="pointer-events-none absolute left-4 top-4 z-10 origin-[0] -translate-y-3 scale-75 transform text-sm font-medium text-muted-foreground transition-all duration-200 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-3 peer-focus:scale-75 peer-focus:text-primary"
-      >
-        {label}
-      </label>
-      <div className="absolute bottom-0 left-0 h-0.5 w-full scale-x-0 bg-primary transition-transform duration-300 group-focus-within:scale-x-100" />
+    <div className={cn(
+      "group relative h-14 w-full rounded-xl bg-surface-variant/40 transition-all dark:bg-input/60",
+      className
+    )}>
+      <input
+        id={inputId}
+        type={type}
+        data-slot="input"
+        placeholder={props.placeholder || (label ? " " : undefined)} 
+        className={cn(
+          "peer block h-full w-full appearance-none bg-transparent px-4 text-base text-foreground transition-all outline-none disabled:pointer-events-none disabled:opacity-50",
+          "placeholder:text-muted-foreground",
+          label && "placeholder:opacity-0 focus:placeholder:opacity-100",
+          label ? "pb-2 pt-6" : "py-2"
+        )}
+        {...props}
+      />
+      {label && (
+        <label
+          htmlFor={inputId}
+          className="pointer-events-none absolute left-4 top-4 z-10 origin-[0] -translate-y-3 scale-75 transform text-sm font-medium text-muted-foreground transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-3 peer-focus:scale-75 peer-focus:text-primary peer-disabled:opacity-50"
+        >
+          {label}
+        </label>
+      )}
     </div>
   );
 }

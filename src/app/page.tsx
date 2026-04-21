@@ -18,7 +18,7 @@ function ShowcaseSection({ title, description, children }: {
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">{title}</h2>
         <p className="text-base text-muted-foreground leading-relaxed max-w-2xl">{description}</p>
       </div>
-      <div className="rounded-[2rem] bg-surface-variant/5 p-4 sm:p-8 overflow-hidden">
+      <div className="rounded-[2rem] bg-secondary-container/10 p-4 sm:p-8 overflow-hidden shadow-inner ring-1 ring-inset ring-foreground/5">
         {children}
       </div>
     </section>
@@ -74,7 +74,7 @@ export default function Home() {
             <Input label="Nombre de Usuario" defaultValue="pablo_dev" />
             <Input label="Correo electrónico" type="email" placeholder="ejemplo@correo.com" />
             <Input label="Contraseña" type="password" />
-            <Input label="Campo sin etiqueta (Fallback)" placeholder="Sin label prop" />
+            <Input placeholder="Campo sin etiqueta prop (estándar)" />
           </div>
         </ShowcaseSection>
 

@@ -113,29 +113,29 @@ export default function Home() {
         {/* CARDS SECTION */}
         <ShowcaseSection 
           title="Contenedores y Tarjetas" 
-          description="Uso de elevación y variantes de superficie para agrupar contenido con un radio de 28px."
+          description="Uso de contrastes sólidos y radios de 28px para agrupar contenido. Ahora con respuesta táctil de contracción."
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             <Card variant="elevated">
               <CardHeader>
-                <CardTitle>Elevada</CardTitle>
-                <CardDescription>Sombra M3 Nivel 1</CardDescription>
+                <CardTitle>Tonal (Container)</CardTitle>
+                <CardDescription>Énfasis Medio</CardDescription>
               </CardHeader>
               <CardContent className="text-sm opacity-80">
-                Ideal para destacar contenido interactivo del fondo.
+                Usa el color de contenedor secundario para resaltar secciones interactivas.
               </CardContent>
               <CardFooter>
-                <Button variant="ghost" size="sm">Ver más</Button>
+                <Button variant="ghost" size="sm">Interactuar</Button>
               </CardFooter>
             </Card>
 
             <Card variant="filled">
               <CardHeader>
-                <CardTitle>Rellena</CardTitle>
+                <CardTitle>Superficie</CardTitle>
                 <CardDescription>Surface Variant</CardDescription>
               </CardHeader>
               <CardContent className="text-sm opacity-80">
-                Ofrece un contraste sutil sin necesidad de sombras pesadas.
+                Un bloque sólido y equilibrado para la mayoría de los casos de uso.
               </CardContent>
               <CardFooter>
                 <Button variant="secondary" size="sm">Acción</Button>
@@ -144,15 +144,42 @@ export default function Home() {
 
             <Card variant="outlined">
               <CardHeader>
-                <CardTitle>Delineada</CardTitle>
-                <CardDescription>Outline 1px</CardDescription>
+                <CardTitle>Bajo Énfasis</CardTitle>
+                <CardDescription>Delineado Sólido</CardDescription>
               </CardHeader>
               <CardContent className="text-sm opacity-80">
-                Excelente para agrupar información de bajo énfasis primario.
+                Utiliza una opacidad mínima para una agrupación discreta.
               </CardContent>
               <CardFooter>
                 <Button variant="outline" size="sm">Configurar</Button>
               </CardFooter>
+            </Card>
+
+            {/* CARD CON IMAGEN (Simulada) */}
+            <Card className="p-0 overflow-hidden">
+              <div className="h-40 bg-primary/20 flex items-center justify-center text-primary/40 italic font-serif text-2xl">
+                Media Content
+              </div>
+              <CardHeader className="p-6">
+                <CardTitle>Tarjeta con Media</CardTitle>
+                <CardDescription>Layout vertical</CardDescription>
+              </CardHeader>
+              <CardContent className="px-6 pb-6 text-sm opacity-80">
+                Soporte para contenido visual con radios adaptados en las esquinas superiores.
+              </CardContent>
+            </Card>
+
+            {/* CARD HORIZONTAL */}
+            <Card className="col-span-1 md:col-span-2 flex-row items-center p-0 overflow-hidden min-h-[160px]">
+              <div className="w-1/3 h-full bg-secondary-container/50 flex items-center justify-center text-secondary-container text-xs font-bold uppercase tracking-widest vertical-text py-4">
+                Horizontal
+              </div>
+              <div className="flex-1 p-6 space-y-2">
+                <CardTitle>Diseño Horizontal</CardTitle>
+                <CardDescription>Variante Flexible</CardDescription>
+                <p className="text-sm opacity-80">Ideal para listas de elementos o secciones de dashboard.</p>
+                <Button variant="link" size="sm" className="px-0 h-auto font-bold">Ver Detalles</Button>
+              </div>
             </Card>
           </div>
         </ShowcaseSection>

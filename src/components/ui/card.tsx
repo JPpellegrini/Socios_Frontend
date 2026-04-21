@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 function Card({
   className,
   size = "default",
-  variant = "elevated",
+  variant = "filled",
   ...props
 }: React.ComponentProps<"div"> & { 
   size?: "default" | "sm",
@@ -17,11 +17,11 @@ function Card({
       data-size={size}
       data-variant={variant}
       className={cn(
-        "group/card flex flex-col gap-6 overflow-hidden rounded-[var(--radius)] text-sm transition-all",
-        variant === "elevated" && "bg-card text-card-foreground shadow-m3-1 hover:shadow-m3-2",
-        variant === "filled" && "bg-surface-variant text-on-surface-variant",
-        variant === "outlined" && "bg-background text-foreground border border-outline",
-        "has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-4 data-[size=sm]:p-4 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-[var(--radius)] *:[img:last-child]:rounded-b-[var(--radius)]",
+        "group/card flex flex-col gap-6 overflow-hidden rounded-[calc(var(--radius)*1.75)] text-sm transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] active:scale-[0.98] cursor-pointer",
+        variant === "elevated" && "bg-secondary-container/30 text-on-secondary-container",
+        variant === "filled" && "bg-surface-variant/30 text-on-surface-variant",
+        variant === "outlined" && "bg-surface-variant/10 text-foreground",
+        "has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-4 data-[size=sm]:p-4 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-[calc(var(--radius)*1.75)] *:[img:last-child]:rounded-b-[calc(var(--radius)*1.75)]",
         size === "default" && "p-6",
         className
       )}
@@ -35,7 +35,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-header"
       className={cn(
-        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-[var(--radius)] px-0 group-data-[size=sm]/card:px-0 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:pb-4 group-data-[size=sm]/card:[.border-b]:pb-3",
+        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-[calc(var(--radius)*1.75)] px-0 group-data-[size=sm]/card:px-0 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:pb-4 group-data-[size=sm]/card:[.border-b]:pb-3",
         className
       )}
       {...props}
@@ -94,7 +94,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-footer"
       className={cn(
-        "flex items-center rounded-b-[var(--radius)] border-t bg-muted/50 p-6 -mx-6 -mb-0 group-data-[size=sm]/card:p-4 group-data-[size=sm]/card:-mx-4",
+        "flex items-center justify-end p-6 pt-0 group-data-[size=sm]/card:p-4 group-data-[size=sm]/card:pt-0",
         className
       )}
       {...props}

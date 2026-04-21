@@ -1,4 +1,4 @@
-import { Bell, Search, Settings } from "lucide-react";
+import { Bell, Search, Settings, Home as HomeIcon, Heart, User, Plus, Pencil, Trash, Check, X, Info, AlertTriangle, Menu, ChevronRight, Share2, Mail, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -272,6 +272,42 @@ export default function Home() {
                 <Chip variant="suggestion">Suggestion</Chip>
               </div>
             </div>
+          </div>
+        </ShowcaseSection>
+
+        {/* ICONOGRAPHY SECTION */}
+        <ShowcaseSection 
+          title="Iconography" 
+          description="Iconos de sistema para navegación, acciones y estados, optimizados para legibilidad y peso visual."
+        >
+          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-6 sm:gap-8">
+            {[
+              { Icon: HomeIcon, label: "Home" },
+              { Icon: Search, label: "Search" },
+              { Icon: Settings, label: "Settings" },
+              { Icon: Bell, label: "Notifications" },
+              { Icon: Heart, label: "Favorite" },
+              { Icon: User, label: "Account" },
+              { Icon: Plus, label: "Add" },
+              { Icon: Pencil, label: "Edit" },
+              { Icon: Trash, label: "Delete" },
+              { Icon: Check, label: "Done" },
+              { Icon: X, label: "Close" },
+              { Icon: Info, label: "Info" },
+              { Icon: AlertTriangle, label: "Warning" },
+              { Icon: Menu, label: "Menu" },
+              { Icon: ChevronRight, label: "Navigation" },
+              { Icon: Share2, label: "Share" },
+              { Icon: Mail, label: "Email" },
+              { Icon: MessageSquare, label: "Chat" },
+            ].map(({ Icon, label }, i) => (
+              <div key={i} className="flex flex-col items-center gap-3 group cursor-pointer transition-transform active:scale-90">
+                <div className="size-12 rounded-xl bg-surface-variant/10 flex items-center justify-center transition-colors group-hover:bg-primary/10">
+                  <Icon className="size-6 text-on-surface-variant group-hover:text-primary transition-colors" />
+                </div>
+                <span className="text-[0.6rem] font-medium text-muted-foreground group-hover:text-foreground text-center line-clamp-1">{label}</span>
+              </div>
+            ))}
           </div>
         </ShowcaseSection>
       </main>

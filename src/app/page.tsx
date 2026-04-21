@@ -1,96 +1,172 @@
+import { Bell, Search, Settings } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
-import { ArrowRight, Bell, Heart, Mail, Search, Share2, Settings } from "lucide-react";
+/**
+ * ShowcaseSection: Un componente auxiliar para mantener la consistencia
+ * en los títulos y descripción de cada sección del catálogo.
+ */
+function ShowcaseSection({ title, description, children }: { 
+  title: string; 
+  description: string; 
+  children: React.ReactNode 
+}) {
+  return (
+    <section className="space-y-6 sm:space-y-8">
+      <div className="space-y-1.5 px-1">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">{title}</h2>
+        <p className="text-base text-muted-foreground leading-relaxed max-w-2xl">{description}</p>
+      </div>
+      <div className="rounded-[2rem] bg-surface-variant/5 p-4 sm:p-8 overflow-hidden">
+        {children}
+      </div>
+    </section>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground transition-colors duration-300">
-      <header className="sticky top-0 z-50 flex h-16 items-center justify-between px-6 bg-background/80 backdrop-blur-md border-b border-outline-variant">
-        <div className="flex items-center gap-4">
-          <div className="p-2 rounded-full hover:bg-surface-variant transition-colors cursor-pointer">
+    <div className="flex min-h-screen flex-col bg-background text-foreground selection:bg-primary/10">
+      {/* --- HEADER --- */}
+      <header className="sticky top-0 z-50 flex h-16 items-center justify-between px-4 sm:px-8 bg-background/80 backdrop-blur-xl border-b border-outline-variant">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon-sm" className="hover:bg-surface-variant transition-colors">
             <Search className="w-5 h-5 text-on-surface-variant" />
-          </div>
-          <h1 className="text-xl font-medium tracking-tight">Material 3 Showcase</h1>
+          </Button>
+          <h1 className="text-base sm:text-lg font-semibold tracking-tight text-foreground/90">
+            Material 3 Design System
+          </h1>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-full hover:bg-surface-variant transition-colors cursor-pointer relative">
+
+        <div className="flex items-center gap-2 sm:gap-4">
+          <Button variant="ghost" size="icon-sm" className="relative hover:bg-surface-variant">
             <Bell className="w-5 h-5 text-on-surface-variant" />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-destructive rounded-full" />
-          </div>
-          <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold shadow-m3-1">
+            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-destructive rounded-full border-2 border-background" />
+          </Button>
+          <div className="h-9 w-9 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold shadow-sm ring-2 ring-primary/20 ring-offset-2 ring-offset-background cursor-pointer hover:scale-105 transition-all">
             P
           </div>
         </div>
       </header>
 
-      <main className="flex-1 max-w-5xl mx-auto w-full p-8 space-y-12">
-        {/* Hero Section */}
-        <section className="bg-primary-container text-on-primary-container p-10 rounded-[2rem] shadow-m3-2 flex flex-col items-start gap-6">
-          <h2 className="text-4xl font-bold leading-tight">Welcome to Material 3</h2>
-          <p className="text-lg max-w-2xl opacity-90">
-            This project has been updated with the Material 3 design system. 
-            Enjoy beautiful OKLCH colors, adaptive radii, and elevation-based shadows.
+      {/* --- MAIN CONTENT --- */}
+      <main className="flex-1 max-w-5xl mx-auto w-full p-4 sm:p-12 space-y-12 sm:space-y-24">
+        
+        {/* HERO INTRO */}
+        <section className="py-8 space-y-4 px-1">
+          <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-primary">Baseline</h3>
+          <h2 className="text-4xl sm:text-6xl font-black tracking-tighter leading-[1.1]">
+            Visual Excellence <br />
+            <span className="text-primary/60 italic font-serif">by design.</span>
+          </h2>
+          <p className="text-lg sm:text-xl text-muted-foreground max-w-xl">
+            Un showcase de componentes encapsulados que siguen las directrices de Material You para una experiencia moderna.
           </p>
-          <button className="flex items-center gap-2 px-6 h-12 bg-primary text-primary-foreground rounded-full font-medium hover:shadow-m3-3 transition-all active:scale-95">
-            Get Started <ArrowRight className="w-4 h-4" />
-          </button>
         </section>
 
-        {/* Buttons Section */}
-        <section className="space-y-6">
-          <h3 className="text-2xl font-semibold">Adaptive Components</h3>
-          <div className="flex flex-wrap gap-4">
-            {/* FAB Example */}
-            <button className="bg-secondary-container text-on-secondary-container p-4 rounded-2xl shadow-m3-3 hover:shadow-m3-4 transition-all">
-              <Settings className="w-6 h-6" />
-            </button>
-            
-            {/* Outline Button */}
-            <button className="px-6 h-10 border border-outline text-primary rounded-full font-medium hover:bg-primary/5 transition-colors">
-              Outlined
-            </button>
-
-            {/* Tonal Button */}
-            <button className="px-6 h-10 bg-secondary-container text-on-secondary-container rounded-full font-medium hover:shadow-m3-1 hover:brightness-105 transition-all">
-              Filled Tonal
-            </button>
-
-            {/* Ghost / Text Button */}
-            <button className="px-6 h-10 text-primary rounded-full font-medium hover:bg-primary/5 transition-colors flex items-center gap-2">
-              <Share2 className="w-4 h-4" /> Share
-            </button>
+        {/* INPUTS SECTION */}
+        <ShowcaseSection 
+          title="Campos de Texto" 
+          description="Material 3 Filled fields con soporte nativo de etiquetas flotantes y estados interactivos."
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 max-w-4xl">
+            <Input label="Nombre de Usuario" defaultValue="pablo_dev" />
+            <Input label="Correo electrónico" type="email" placeholder="ejemplo@correo.com" />
+            <Input label="Contraseña" type="password" />
+            <Input label="Campo sin etiqueta (Fallback)" placeholder="Sin label prop" />
           </div>
-        </section>
+        </ShowcaseSection>
 
-        {/* Cards Section */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-surface-variant text-on-surface-variant p-6 rounded-[1.75rem] space-y-4 border border-outline-variant">
-            <div className="flex items-center justify-between">
-              <Mail className="w-6 h-6" />
-              <div className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-xs font-bold uppercase tracking-wider">
-                New
+        {/* BUTTONS SECTION */}
+        <ShowcaseSection 
+          title="Acciones y Botones" 
+          description="Desde botones de alto énfasis hasta opciones discretas. Formato cápsula por defecto."
+        >
+          <div className="space-y-12">
+            {/* VARIANTES */}
+            <div className="space-y-4">
+              <p className="text-xs font-bold uppercase tracking-widest text-primary/70">Variantes de Énfasis</p>
+              <div className="flex flex-wrap gap-4 items-center">
+                <Button>Filled (Primary)</Button>
+                <Button variant="secondary">Filled Tonal</Button>
+                <Button variant="outline">Outlined</Button>
+                <Button variant="ghost">Text / Ghost</Button>
+                <Button variant="destructive">Destructive</Button>
               </div>
             </div>
-            <h4 className="text-xl font-bold">Filled Card</h4>
-            <p className="opacity-80">
-              Surface variants offer a subtle contrast for content organization without overwhelming the UI.
-            </p>
-          </div>
 
-          <div className="bg-card text-card-foreground p-6 rounded-[1.75rem] space-y-4 shadow-m3-2 border border-transparent">
-            <div className="flex items-center justify-between">
-              <Heart className="w-6 h-6 text-destructive" />
-              <p className="text-sm opacity-60">Elevated</p>
+            {/* TAMAÑOS */}
+            <div className="space-y-4">
+              <p className="text-xs font-bold uppercase tracking-widest text-primary/70">Escala de Tamaños</p>
+              <div className="flex flex-wrap gap-6 items-end">
+                <Button size="xs">XS</Button>
+                <Button size="sm">Small</Button>
+                <Button size="default">Default (M3)</Button>
+                <Button size="lg">Large</Button>
+                <Button size="xl">Extra Large (Hero)</Button>
+              </div>
             </div>
-            <h4 className="text-xl font-bold">Elevated Card</h4>
-            <p className="opacity-80">
-              Uses depth and shadows to create focal points for important user information or actions.
-            </p>
           </div>
-        </section>
+        </ShowcaseSection>
+
+        {/* CARDS SECTION */}
+        <ShowcaseSection 
+          title="Contenedores y Tarjetas" 
+          description="Uso de elevación y variantes de superficie para agrupar contenido con un radio de 28px."
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            <Card variant="elevated">
+              <CardHeader>
+                <CardTitle>Elevada</CardTitle>
+                <CardDescription>Sombra M3 Nivel 1</CardDescription>
+              </CardHeader>
+              <CardContent className="text-sm opacity-80">
+                Ideal para destacar contenido interactivo del fondo.
+              </CardContent>
+              <CardFooter>
+                <Button variant="ghost" size="sm">Ver más</Button>
+              </CardFooter>
+            </Card>
+
+            <Card variant="filled">
+              <CardHeader>
+                <CardTitle>Rellena</CardTitle>
+                <CardDescription>Surface Variant</CardDescription>
+              </CardHeader>
+              <CardContent className="text-sm opacity-80">
+                Ofrece un contraste sutil sin necesidad de sombras pesadas.
+              </CardContent>
+              <CardFooter>
+                <Button variant="secondary" size="sm">Acción</Button>
+              </CardFooter>
+            </Card>
+
+            <Card variant="outlined">
+              <CardHeader>
+                <CardTitle>Delineada</CardTitle>
+                <CardDescription>Outline 1px</CardDescription>
+              </CardHeader>
+              <CardContent className="text-sm opacity-80">
+                Excelente para agrupar información de bajo énfasis primario.
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" size="sm">Configurar</Button>
+              </CardFooter>
+            </Card>
+          </div>
+        </ShowcaseSection>
       </main>
 
-      <footer className="p-8 text-center border-t border-outline-variant text-muted-foreground text-sm">
-        Built with Next.js, Tailwind v4 and Material 3 Principles.
+      {/* --- FOOTER --- */}
+      <footer className="p-12 text-center border-t border-outline-variant bg-surface-variant/5">
+        <div className="flex justify-center gap-6 mb-4">
+          <Button variant="ghost" size="icon-sm" className="rounded-full"><Settings className="w-5 h-5 text-muted-foreground" /></Button>
+        </div>
+        <p className="text-muted-foreground text-sm font-medium">
+          SocioFrontend &copy; 2026 <br />
+          <span className="text-xs opacity-50 font-normal">Next.js + Tailwind v4 + Material Design 3</span>
+        </p>
       </footer>
     </div>
   );

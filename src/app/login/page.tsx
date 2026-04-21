@@ -13,8 +13,8 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4 text-foreground">
       <Card variant="elevated" className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-xl font-semibold">Centro de Jubilados</CardTitle>
-          <CardDescription className="text-sm">
+          <CardTitle className="text-2xl font-semibold">Centro de Jubilados</CardTitle>
+          <CardDescription>
             Identifícate para continuar al panel.
           </CardDescription>
         </CardHeader>
@@ -55,4 +55,4 @@ export default function LoginPage() {
       </Card>
     </div>
   );
-}
+}

@@ -2,6 +2,7 @@ import { Bell, Search, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Chip } from "@/components/ui/chip";
 
 /**
  * ShowcaseSection: Un componente auxiliar para mantener la consistencia
@@ -55,56 +56,106 @@ export default function Home() {
         
         {/* HERO INTRO */}
         <section className="py-8 space-y-4 px-1">
-          <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-primary">Baseline</h3>
+          <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-primary">Material Design 3</h3>
           <h2 className="text-4xl sm:text-6xl font-black tracking-tighter leading-[1.1]">
-            Visual Excellence <br />
-            <span className="text-primary/60 italic font-serif">by design.</span>
+            Standardized <br />
+            <span className="text-primary/60 italic font-serif">Component Catalog.</span>
           </h2>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-xl">
-            Un showcase de componentes encapsulados que siguen las directrices de Material You para una experiencia moderna.
+            Un catálogo vivo de componentes y estilos tipográficos siguiendo las directrices oficiales de M3.
           </p>
         </section>
 
+        {/* TYPOGRAPHY SECTION */}
+        <ShowcaseSection 
+          title="Typography Scale" 
+          description="La escala tipográfica de M3 optimiza la legibilidad y jerarquía a través de 5 estilos clave."
+        >
+          <div className="space-y-8 overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-outline-variant text-[0.7rem] uppercase tracking-widest text-muted-foreground">
+                  <th className="pb-4 font-bold">Style</th>
+                  <th className="pb-4 font-bold">Large (Default)</th>
+                  <th className="pb-4 font-bold">Medium</th>
+                  <th className="pb-4 font-bold">Small</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-outline-variant/30">
+                <tr>
+                  <td className="py-6 align-top font-mono text-[0.7rem] text-primary/70">Display</td>
+                  <td className="py-6 text-5xl font-normal tracking-tight">Display L</td>
+                  <td className="py-6 text-4xl font-normal">Display M</td>
+                  <td className="py-6 text-3xl font-normal">Display S</td>
+                </tr>
+                <tr>
+                  <td className="py-6 align-top font-mono text-[0.7rem] text-primary/70">Headline</td>
+                  <td className="py-6 text-2xl font-normal leading-tight">Headline L</td>
+                  <td className="py-6 text-xl font-normal">Headline M</td>
+                  <td className="py-6 text-lg font-normal">Headline S</td>
+                </tr>
+                <tr>
+                  <td className="py-6 align-top font-mono text-[0.7rem] text-primary/70">Title</td>
+                  <td className="py-6 text-base font-semibold">Title L</td>
+                  <td className="py-6 text-sm font-semibold tracking-wide">Title M</td>
+                  <td className="py-6 text-xs font-semibold tracking-wider">Title S</td>
+                </tr>
+                <tr>
+                  <td className="py-6 align-top font-mono text-[0.7rem] text-primary/70">Body</td>
+                  <td className="py-6 text-base font-normal">Body L</td>
+                  <td className="py-6 text-sm font-normal">Body M</td>
+                  <td className="py-6 text-xs font-normal">Body S</td>
+                </tr>
+                <tr>
+                  <td className="py-6 align-top font-mono text-[0.7rem] text-primary/70">Label</td>
+                  <td className="py-6 text-sm font-bold tracking-wide">Label L</td>
+                  <td className="py-6 text-xs font-bold tracking-wider">Label M</td>
+                  <td className="py-6 text-[0.6rem] font-bold tracking-[0.08em] uppercase">Label S</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </ShowcaseSection>
+
         {/* INPUTS SECTION */}
         <ShowcaseSection 
-          title="Campos de Texto" 
-          description="Material 3 Filled fields con soporte nativo de etiquetas flotantes y estados interactivos."
+          title="Text Fields" 
+          description="Entradas de datos con soporte para etiquetas flotantes y validaciones visuales."
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 max-w-4xl">
-            <Input label="Nombre de Usuario" defaultValue="pablo_dev" />
-            <Input label="Correo electrónico" type="email" placeholder="ejemplo@correo.com" />
-            <Input label="Contraseña" type="password" />
-            <Input placeholder="Campo sin etiqueta prop (estándar)" />
+            <div className="space-y-2">
+              <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Filled Text Field</p>
+              <Input label="Nombre de Usuario" defaultValue="pablo_dev" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Email Variant</p>
+              <Input label="Correo electrónico" type="email" placeholder="ejemplo@correo.com" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Password Variant</p>
+              <Input label="Contraseña" type="password" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Standard Text Field (Fallback)</p>
+              <Input placeholder="Campo sin etiqueta prop" />
+            </div>
           </div>
         </ShowcaseSection>
 
         {/* BUTTONS SECTION */}
         <ShowcaseSection 
-          title="Acciones y Botones" 
-          description="Desde botones de alto énfasis hasta opciones discretas. Formato cápsula por defecto."
+          title="Buttons" 
+          description="Acciones con distintos niveles de énfasis. Formato cápsula por defecto con respuesta de contracción."
         >
-          <div className="space-y-12">
-            {/* VARIANTES */}
+          <div className="space-y-8">
             <div className="space-y-4">
-              <p className="text-xs font-bold uppercase tracking-widest text-primary/70">Variantes de Énfasis</p>
+              <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Emphasis Types</p>
               <div className="flex flex-wrap gap-4 items-center">
-                <Button>Filled (Primary)</Button>
-                <Button variant="secondary">Filled Tonal</Button>
-                <Button variant="outline">Outlined</Button>
-                <Button variant="ghost">Text / Ghost</Button>
-                <Button variant="destructive">Destructive</Button>
-              </div>
-            </div>
-
-            {/* TAMAÑOS */}
-            <div className="space-y-4">
-              <p className="text-xs font-bold uppercase tracking-widest text-primary/70">Escala de Tamaños</p>
-              <div className="flex flex-wrap gap-6 items-end">
-                <Button size="xs">XS</Button>
-                <Button size="sm">Small</Button>
-                <Button size="default">Default (M3)</Button>
-                <Button size="lg">Large</Button>
-                <Button size="xl">Extra Large (Hero)</Button>
+                <Button>Filled Button</Button>
+                <Button variant="secondary">Tonal Button</Button>
+                <Button variant="outline">Outlined Button</Button>
+                <Button variant="ghost">Text Button</Button>
+                <Button variant="destructive">Tonal Error Button</Button>
               </div>
             </div>
           </div>
@@ -112,46 +163,46 @@ export default function Home() {
 
         {/* CARDS SECTION */}
         <ShowcaseSection 
-          title="Contenedores y Tarjetas" 
-          description="Uso de contrastes sólidos y radios de 28px para agrupar contenido. Ahora con respuesta táctil de contracción."
+          title="Cards" 
+          description="Contenedores sólidos para agrupar información con radios XL y respuesta táctil."
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             <Card variant="elevated">
               <CardHeader>
-                <CardTitle>Tonal (Container)</CardTitle>
-                <CardDescription>Énfasis Medio</CardDescription>
+                <CardTitle>Elevated Card</CardTitle>
+                <CardDescription>Máximo Énfasis Sólido</CardDescription>
               </CardHeader>
               <CardContent className="text-sm opacity-80">
-                Usa el color de contenedor secundario para resaltar secciones interactivas.
+                Resalta sobre la superficie mediante un tono de contenedor secundario.
               </CardContent>
               <CardFooter>
-                <Button variant="ghost" size="sm">Interactuar</Button>
+                <Button variant="ghost" size="sm">Action</Button>
               </CardFooter>
             </Card>
 
             <Card variant="filled">
               <CardHeader>
-                <CardTitle>Superficie</CardTitle>
-                <CardDescription>Surface Variant</CardDescription>
+                <CardTitle>Filled Card</CardTitle>
+                <CardDescription>M3 Surface standard</CardDescription>
               </CardHeader>
               <CardContent className="text-sm opacity-80">
-                Un bloque sólido y equilibrado para la mayoría de los casos de uso.
+                La variante más equilibrada para la mayoría de los bloques de contenido.
               </CardContent>
               <CardFooter>
-                <Button variant="secondary" size="sm">Acción</Button>
+                <Button variant="ghost" size="sm">Action</Button>
               </CardFooter>
             </Card>
 
             <Card variant="outlined">
               <CardHeader>
-                <CardTitle>Bajo Énfasis</CardTitle>
-                <CardDescription>Delineado Sólido</CardDescription>
+                <CardTitle>Outlined Card</CardTitle>
+                <CardDescription>Bajo Énfasis Sólido</CardDescription>
               </CardHeader>
               <CardContent className="text-sm opacity-80">
-                Utiliza una opacidad mínima para una agrupación discreta.
+                Ideal para agrupar información secundaria de forma discreta.
               </CardContent>
               <CardFooter>
-                <Button variant="outline" size="sm">Configurar</Button>
+                <Button variant="ghost" size="sm">Action</Button>
               </CardFooter>
             </Card>
 
@@ -181,6 +232,46 @@ export default function Home() {
                 <Button variant="link" size="sm" className="px-0 h-auto font-bold">Ver Detalles</Button>
               </div>
             </Card>
+          </div>
+        </ShowcaseSection>
+
+        {/* ACTIONS AND SELECTION */}
+        <ShowcaseSection 
+          title="Actions and Selection" 
+          description="Elementos interactivos para tareas rápidas, filtrado y estados de selección."
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            {/* FABs */}
+            <div className="space-y-6">
+              <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Floating Action Button (FAB)</p>
+              <div className="flex items-end gap-6">
+                {/* Large FAB */}
+                <div className="flex flex-col items-center gap-3">
+                  <Button className="size-24 rounded-3xl shadow-m3-2 hover:shadow-m3-3 active:scale-95 flex items-center justify-center">
+                    <Search className="size-8" />
+                  </Button>
+                  <span className="text-[0.65rem] font-medium text-muted-foreground">Large FAB</span>
+                </div>
+                {/* Standard FAB */}
+                <div className="flex flex-col items-center gap-3">
+                  <Button className="size-14 rounded-2xl shadow-m3-1 hover:shadow-m3-2 active:scale-90 flex items-center justify-center">
+                    <Bell className="size-6" />
+                  </Button>
+                  <span className="text-[0.65rem] font-medium text-muted-foreground">Standard</span>
+                </div>
+              </div>
+            </div>
+
+            {/* CHIPS */}
+            <div className="space-y-6">
+              <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Chips</p>
+              <div className="flex flex-wrap gap-3">
+                <Chip variant="assist">Assist Chip</Chip>
+                <Chip variant="filter" selected>Filter Chip</Chip>
+                <Chip variant="input">Input Chip</Chip>
+                <Chip variant="suggestion">Suggestion</Chip>
+              </div>
+            </div>
           </div>
         </ShowcaseSection>
       </main>

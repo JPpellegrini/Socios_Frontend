@@ -30,8 +30,8 @@ export async function loginAction(prevState: LoginState, formData: FormData): Pr
       maxAge: 60 * 60 * 24 * 7,
     });
 
-  } catch (error: any) {
-    return { error: error.message || "Credenciales inválidas" };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : "Credenciales inválidas" };
   }
 
   redirect("/dashboard");

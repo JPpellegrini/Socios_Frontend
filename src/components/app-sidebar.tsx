@@ -9,7 +9,13 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
-const items = [
+
+type NavItem = {
+  title: string
+  url: string
+}
+
+const navItems: NavItem[] = [
   { title: "Usuarios", url: "/dashboard/usuarios" },
   { title: "Empleados", url: "/dashboard/empleados" },
   { title: "Socios", url: "/dashboard/socios" },
@@ -26,7 +32,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>Centro de Jubilados</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {navItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <Link href={item.url}>{item.title}</Link>

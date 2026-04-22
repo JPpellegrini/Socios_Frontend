@@ -1,17 +1,20 @@
+"use client";
+
 import { Bell, Search, Settings, Home as HomeIcon, Heart, User, Plus, Pencil, Trash, Check, X, Info, AlertTriangle, Menu, ChevronRight, Share2, Mail, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardMedia, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Chip } from "@/components/ui/chip";
+import { Fab } from "@/components/ui/fab";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-/**
- * ShowcaseSection: Un componente auxiliar para mantener la consistencia
- * en los títulos y descripción de cada sección del catálogo.
- */
-function ShowcaseSection({ title, description, children }: { 
-  title: string; 
-  description: string; 
-  children: React.ReactNode 
+function ShowcaseSection({ title, description, children }: {
+  title: string;
+  description: string;
+  children: React.ReactNode;
 }) {
   return (
     <section className="space-y-6 sm:space-y-8">
@@ -19,7 +22,7 @@ function ShowcaseSection({ title, description, children }: {
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">{title}</h2>
         <p className="text-base text-muted-foreground leading-relaxed max-w-2xl">{description}</p>
       </div>
-      <div className="rounded-[2rem] bg-secondary-container/10 p-4 sm:p-8 overflow-hidden shadow-inner ring-1 ring-inset ring-foreground/5">
+      <div className="rounded-[2rem] bg-surface-container-low [--background:var(--surface-container-low)] p-4 sm:p-8 overflow-hidden border border-outline/10">
         {children}
       </div>
     </section>
@@ -28,300 +31,410 @@ function ShowcaseSection({ title, description, children }: {
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground selection:bg-primary/10">
-      {/* --- HEADER --- */}
-      <header className="sticky top-0 z-50 flex h-16 items-center justify-between px-4 sm:px-8 bg-background/80 backdrop-blur-xl border-b border-outline-variant">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon-sm" className="hover:bg-surface-variant transition-colors">
-            <Search className="w-5 h-5 text-on-surface-variant" />
-          </Button>
-          <h1 className="text-base sm:text-lg font-semibold tracking-tight text-foreground/90">
-            Material 3 Design System
-          </h1>
-        </div>
+    <TooltipProvider>
+      <div className="flex min-h-screen flex-col bg-background text-foreground selection:bg-primary/10">
 
-        <div className="flex items-center gap-2 sm:gap-4">
-          <Button variant="ghost" size="icon-sm" className="relative hover:bg-surface-variant">
-            <Bell className="w-5 h-5 text-on-surface-variant" />
-            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-destructive rounded-full border-2 border-background" />
-          </Button>
-          <div className="h-9 w-9 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold shadow-sm ring-2 ring-primary/20 ring-offset-2 ring-offset-background cursor-pointer hover:scale-105 transition-all">
-            P
+        <header className="sticky top-0 z-50 flex h-16 items-center justify-between px-4 sm:px-8 bg-background/80 backdrop-blur-xl border-b border-outline-variant">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon-sm">
+              <Search className="w-5 h-5" />
+            </Button>
+            <h1 className="text-base sm:text-lg font-semibold tracking-tight text-foreground/90">
+              Sistema de Diseño Material 3
+            </h1>
           </div>
-        </div>
-      </header>
 
-      {/* --- MAIN CONTENT --- */}
-      <main className="flex-1 max-w-5xl mx-auto w-full p-4 sm:p-12 space-y-12 sm:space-y-24">
-        
-        {/* HERO INTRO */}
-        <section className="py-8 space-y-4 px-1">
-          <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-primary">Material Design 3</h3>
-          <h2 className="text-4xl sm:text-6xl font-black tracking-tighter leading-[1.1]">
-            Standardized <br />
-            <span className="text-primary/60 italic font-serif">Component Catalog.</span>
-          </h2>
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-xl">
-            Un catálogo vivo de componentes y estilos tipográficos siguiendo las directrices oficiales de M3.
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Button variant="ghost" size="icon-sm">
+              <Bell className="w-5 h-5" />
+            </Button>
+            <div className="h-9 w-9 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold cursor-pointer">
+              P
+            </div>
+          </div>
+        </header>
+
+        <main className="flex-1 max-w-5xl mx-auto w-full p-4 sm:p-12 space-y-12 sm:space-y-24">
+
+          <section className="py-8 space-y-4 px-1">
+            <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-primary">Material Design 3</h3>
+            <h2 className="text-4xl sm:text-6xl font-black tracking-tighter leading-[1.1]">
+              Catálogo de <br />
+              <span className="text-primary/60 italic font-serif">Componentes Estandarizado.</span>
+            </h2>
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-xl">
+              Un escaparte vivo de componentes y estilos tipográficos siguiendo las directrices oficiales de Material 3, adaptado para una experiencia premium.
+            </p>
+          </section>
+
+          <ShowcaseSection
+            title="Escala Tipográfica"
+            description="La escala de M3 optimiza la legibilidad y jerarquía a través de 5 estilos clave: Display, Headline, Title, Body y Label."
+          >
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-outline-variant text-[0.7rem] uppercase tracking-widest text-muted-foreground">
+                    <th className="pb-4 font-bold">Estilo</th>
+                    <th className="pb-4 font-bold">Grande (Default)</th>
+                    <th className="pb-4 font-bold">Medio</th>
+                    <th className="pb-4 font-bold">Pequeño</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-outline-variant/30">
+                  <tr>
+                    <td className="py-6 align-top font-mono text-[0.7rem] text-primary/70">Display</td>
+                    <td className="py-6 text-5xl font-normal tracking-tight">Display L</td>
+                    <td className="py-6 text-4xl font-normal">Display M</td>
+                    <td className="py-6 text-3xl font-normal">Display S</td>
+                  </tr>
+                  <tr>
+                    <td className="py-6 align-top font-mono text-[0.7rem] text-primary/70">Headline</td>
+                    <td className="py-6 text-2xl font-normal leading-tight">Headline L</td>
+                    <td className="py-6 text-xl font-normal">Headline M</td>
+                    <td className="py-6 text-lg font-normal">Headline S</td>
+                  </tr>
+                  <tr>
+                    <td className="py-6 align-top font-mono text-[0.7rem] text-primary/70">Title</td>
+                    <td className="py-6 text-base font-semibold">Title L</td>
+                    <td className="py-6 text-sm font-semibold tracking-wide">Title M</td>
+                    <td className="py-6 text-xs font-semibold tracking-wider">Title S</td>
+                  </tr>
+                  <tr>
+                    <td className="py-6 align-top font-mono text-[0.7rem] text-primary/70">Body</td>
+                    <td className="py-6 text-base font-normal">Body L</td>
+                    <td className="py-6 text-sm font-normal">Body M</td>
+                    <td className="py-6 text-xs font-normal">Body S</td>
+                  </tr>
+                  <tr>
+                    <td className="py-6 align-top font-mono text-[0.7rem] text-primary/70">Label</td>
+                    <td className="py-6 text-sm font-bold tracking-wide">Label L</td>
+                    <td className="py-6 text-xs font-bold tracking-wider">Label M</td>
+                    <td className="py-6 text-[0.6rem] font-bold tracking-[0.08em] uppercase">Label S</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ShowcaseSection>
+
+          <ShowcaseSection
+            title="Botones"
+            description="Acciones con distintos niveles de énfasis. Formato de cápsula total con respuesta táctil refinada."
+          >
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Tipos de Énfasis</p>
+                <div className="flex flex-wrap gap-4 items-center">
+                  <Button variant="elevated">Elevado</Button>
+                  <Button>Primario (Filled)</Button>
+                  <Button variant="secondary">Tonal</Button>
+                  <Button variant="outline">Delineado</Button>
+                  <Button variant="ghost">Texto</Button>
+                  <Button variant="destructive">Destructivo</Button>
+                  <Button variant="link">Enlace</Button>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Tamaños</p>
+                <div className="flex flex-wrap gap-4 items-center">
+                  <Button size="xl">Extra Grande</Button>
+                  <Button size="lg">Grande</Button>
+                  <Button size="default">Default</Button>
+                  <Button size="sm">Pequeño</Button>
+                  <Button size="xs">Extra Pequeño</Button>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Íconos</p>
+                <div className="flex flex-wrap gap-4 items-center">
+                  <Button size="icon"><Plus /></Button>
+                  <Button size="icon-sm" variant="outline"><Search /></Button>
+                  <Button size="icon-lg" variant="secondary"><Bell /></Button>
+                </div>
+              </div>
+            </div>
+          </ShowcaseSection>
+
+          <ShowcaseSection
+            title="Campos de Texto"
+            description="Entradas de datos con soporte para etiquetas flotantes y variantes oficiales: Filled y Outlined."
+          >
+            <div className="space-y-12">
+              <div className="space-y-4">
+                <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Variante Filled (Predeterminada)</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
+                  <Input label="Nombre de Usuario" defaultValue="pablo_dev" variant="filled" />
+                  <Input label="Correo Electrónico" type="email" placeholder="ejemplo@correo.com" variant="filled" />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Variante Outlined</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
+                  <Input label="Contraseña" type="password" variant="outlined" />
+                  <Input placeholder="Campo sin etiqueta" variant="outlined" />
+                </div>
+              </div>
+            </div>
+          </ShowcaseSection>
+
+          <ShowcaseSection
+            title="Label"
+            description="Etiquetas semánticas para formularios, asociadas a controles mediante htmlFor."
+          >
+            <div className="flex flex-wrap gap-6 items-center">
+              <Label htmlFor="demo-input-1">Etiqueta de formulario</Label>
+              <Label htmlFor="demo-input-2" className="text-primary">Etiqueta primaria</Label>
+              <Label htmlFor="demo-input-3" className="opacity-50 cursor-not-allowed">Etiqueta deshabilitada</Label>
+            </div>
+          </ShowcaseSection>
+
+          <ShowcaseSection
+            title="Tarjetas"
+            description="Contenedores sólidos para agrupar información con radios XL y elevación tonal sin sombras."
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              <Card variant="elevated">
+                <CardHeader>
+                  <CardTitle>Tarjeta Elevada</CardTitle>
+                  <CardDescription>Máximo Énfasis Tonal</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  Se distingue del fondo mediante un tono de contenedor secundario suave.
+                </CardContent>
+                <CardFooter>
+                  <Button size="sm">Acción</Button>
+                </CardFooter>
+              </Card>
+
+              <Card variant="filled">
+                <CardHeader>
+                  <CardTitle>Tarjeta Rellena</CardTitle>
+                  <CardDescription>Estándar de Superficie M3</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  La variante más equilibrada para la mayoría de los bloques de contenido.
+                </CardContent>
+                <CardFooter>
+                  <Button variant="secondary" size="sm">Acción</Button>
+                </CardFooter>
+              </Card>
+
+              <Card variant="outlined">
+                <CardHeader>
+                  <CardTitle>Tarjeta Delineada</CardTitle>
+                  <CardDescription>Bajo Énfasis Tonal</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  Ideal para agrupar información secundaria de forma discreta y limpia.
+                </CardContent>
+                <CardFooter>
+                  <Button variant="ghost" size="sm">Acción</Button>
+                </CardFooter>
+              </Card>
+
+              <Card variant="filled">
+                <CardMedia className="flex items-center justify-center">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary-container" />
+                  <Heart className="relative size-8 text-primary/60" />
+                </CardMedia>
+                <CardHeader>
+                  <CardTitle>Contenido Visual</CardTitle>
+                  <CardDescription>Diseño Vertical</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  Soporte para contenido visual con radios adaptados automáticamente.
+                </CardContent>
+              </Card>
+
+              <Card variant="outlined" orientation="horizontal" className="col-span-1 md:col-span-2">
+                <CardMedia className="flex items-center justify-center">
+                  <div className="absolute inset-0 bg-gradient-to-b from-secondary-container/60 to-primary/20" />
+                  <Share2 className="relative size-6 text-primary/70" />
+                </CardMedia>
+                <CardContent className="flex flex-col justify-center gap-1">
+                  <CardTitle>Diseño Horizontal</CardTitle>
+                  <CardDescription>Variante Flexible</CardDescription>
+                  <p className="text-sm text-on-surface-variant/70 mt-1">Ideal para listas de elementos o secciones de tablero de control.</p>
+                  <Button variant="link" size="sm" className="self-start -ml-2 mt-1">Ver Detalles</Button>
+                </CardContent>
+              </Card>
+            </div>
+          </ShowcaseSection>
+
+          <ShowcaseSection
+            title="Botones de Acción Flotante (FAB)"
+            description="Acción principal de la pantalla. Disponible en cuatro tamaños y variantes de color."
+          >
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Tamaños</p>
+                <div className="flex flex-wrap items-end gap-6">
+                  <div className="flex flex-col items-center gap-3">
+                    <Fab size="large" icon={<Search />} />
+                    <span className="text-[0.65rem] font-medium text-muted-foreground">Grande</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-3">
+                    <Fab icon={<Bell />} />
+                    <span className="text-[0.65rem] font-medium text-muted-foreground">Estándar</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-3">
+                    <Fab size="small" icon={<Plus />} />
+                    <span className="text-[0.65rem] font-medium text-muted-foreground">Pequeño</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-3">
+                    <Fab size="extended" label="Redactar" icon={<Pencil />} />
+                    <span className="text-[0.65rem] font-medium text-muted-foreground">Extendido</span>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Variantes de Color</p>
+                <div className="flex flex-wrap items-center gap-6">
+                  <Fab variant="primary" icon={<Plus />} />
+                  <Fab variant="secondary" icon={<Plus />} />
+                  <Fab variant="tertiary" icon={<Plus />} />
+                  <Fab variant="surface" icon={<Plus />} />
+                </div>
+              </div>
+            </div>
+          </ShowcaseSection>
+
+          <ShowcaseSection
+            title="Chips"
+            description="Elementos compactos para filtrado, selección de entradas y acciones contextuales."
+          >
+            <div className="flex flex-wrap gap-3">
+              <Chip variant="assist" icon={<Settings />}>Assist</Chip>
+              <Chip variant="filter" selected>Filter</Chip>
+              <Chip variant="input" onRemove={() => {}}>Input</Chip>
+              <Chip variant="suggestion">Suggestion</Chip>
+            </div>
+          </ShowcaseSection>
+
+          <ShowcaseSection
+            title="Separador"
+            description="Divisor visual para separar secciones de contenido, horizontal o vertical."
+          >
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Horizontal</p>
+                <Separator />
+              </div>
+              <div className="space-y-4">
+                <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Vertical</p>
+                <div className="flex items-center gap-4 h-8">
+                  <span className="text-sm text-muted-foreground">Izquierda</span>
+                  <Separator orientation="vertical" />
+                  <span className="text-sm text-muted-foreground">Derecha</span>
+                </div>
+              </div>
+            </div>
+          </ShowcaseSection>
+
+          <ShowcaseSection
+            title="Skeleton"
+            description="Marcador de posición animado para estados de carga, evitando saltos de diseño."
+          >
+            <div className="space-y-6 max-w-sm">
+              <div className="flex items-center gap-4">
+                <Skeleton className="size-12 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              </div>
+              <Skeleton className="h-32 w-full rounded-xl" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-5/6" />
+                <Skeleton className="h-4 w-4/6" />
+              </div>
+            </div>
+          </ShowcaseSection>
+
+          <ShowcaseSection
+            title="Tooltip"
+            description="Información contextual emergente al pasar el cursor sobre un elemento interactivo."
+          >
+            <div className="flex flex-wrap gap-6 items-center">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline">Información</Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Tooltip de información básica</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Info />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Tooltip lateral derecho</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Settings />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>Ajustes del sistema</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          </ShowcaseSection>
+
+          <ShowcaseSection
+            title="Iconografía"
+            description="Iconos de sistema optimizados para legibilidad y consistencia visual."
+          >
+            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-6 sm:gap-8">
+              {[
+                { Icon: HomeIcon, label: "Inicio" },
+                { Icon: Search, label: "Buscar" },
+                { Icon: Settings, label: "Ajustes" },
+                { Icon: Bell, label: "Notificaciones" },
+                { Icon: Heart, label: "Favoritos" },
+                { Icon: User, label: "Cuenta" },
+                { Icon: Plus, label: "Añadir" },
+                { Icon: Pencil, label: "Editar" },
+                { Icon: Trash, label: "Eliminar" },
+                { Icon: Check, label: "Hecho" },
+                { Icon: X, label: "Cerrar" },
+                { Icon: Info, label: "Info" },
+                { Icon: AlertTriangle, label: "Alerta" },
+                { Icon: Menu, label: "Menú" },
+                { Icon: ChevronRight, label: "Siguiente" },
+                { Icon: Share2, label: "Compartir" },
+                { Icon: Mail, label: "Correo" },
+                { Icon: MessageSquare, label: "Chat" },
+              ].map(({ Icon, label }) => (
+                <div key={label} className="flex flex-col items-center gap-3 group cursor-pointer transition-transform active:scale-90">
+                  <div className="size-12 rounded-2xl bg-surface-container-highest flex items-center justify-center transition-colors group-hover:bg-primary/10">
+                    <Icon className="size-6 text-on-surface-variant group-hover:text-primary transition-colors" />
+                  </div>
+                  <span className="text-[0.6rem] font-medium text-muted-foreground group-hover:text-foreground text-center line-clamp-1">{label}</span>
+                </div>
+              ))}
+            </div>
+          </ShowcaseSection>
+
+        </main>
+
+        <footer className="p-12 text-center border-t border-outline-variant bg-surface-container-lowest">
+          <p className="text-muted-foreground text-sm font-medium">
+            SocioFrontend &copy; 2026 <br />
+            <span className="text-xs opacity-50 font-normal">Next.js + Tailwind v4 + Material Design 3</span>
           </p>
-        </section>
+        </footer>
 
-        {/* TYPOGRAPHY SECTION */}
-        <ShowcaseSection 
-          title="Typography Scale" 
-          description="La escala tipográfica de M3 optimiza la legibilidad y jerarquía a través de 5 estilos clave."
-        >
-          <div className="space-y-8 overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-outline-variant text-[0.7rem] uppercase tracking-widest text-muted-foreground">
-                  <th className="pb-4 font-bold">Style</th>
-                  <th className="pb-4 font-bold">Large (Default)</th>
-                  <th className="pb-4 font-bold">Medium</th>
-                  <th className="pb-4 font-bold">Small</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-outline-variant/30">
-                <tr>
-                  <td className="py-6 align-top font-mono text-[0.7rem] text-primary/70">Display</td>
-                  <td className="py-6 text-5xl font-normal tracking-tight">Display L</td>
-                  <td className="py-6 text-4xl font-normal">Display M</td>
-                  <td className="py-6 text-3xl font-normal">Display S</td>
-                </tr>
-                <tr>
-                  <td className="py-6 align-top font-mono text-[0.7rem] text-primary/70">Headline</td>
-                  <td className="py-6 text-2xl font-normal leading-tight">Headline L</td>
-                  <td className="py-6 text-xl font-normal">Headline M</td>
-                  <td className="py-6 text-lg font-normal">Headline S</td>
-                </tr>
-                <tr>
-                  <td className="py-6 align-top font-mono text-[0.7rem] text-primary/70">Title</td>
-                  <td className="py-6 text-base font-semibold">Title L</td>
-                  <td className="py-6 text-sm font-semibold tracking-wide">Title M</td>
-                  <td className="py-6 text-xs font-semibold tracking-wider">Title S</td>
-                </tr>
-                <tr>
-                  <td className="py-6 align-top font-mono text-[0.7rem] text-primary/70">Body</td>
-                  <td className="py-6 text-base font-normal">Body L</td>
-                  <td className="py-6 text-sm font-normal">Body M</td>
-                  <td className="py-6 text-xs font-normal">Body S</td>
-                </tr>
-                <tr>
-                  <td className="py-6 align-top font-mono text-[0.7rem] text-primary/70">Label</td>
-                  <td className="py-6 text-sm font-bold tracking-wide">Label L</td>
-                  <td className="py-6 text-xs font-bold tracking-wider">Label M</td>
-                  <td className="py-6 text-[0.6rem] font-bold tracking-[0.08em] uppercase">Label S</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </ShowcaseSection>
-
-        {/* INPUTS SECTION */}
-        <ShowcaseSection 
-          title="Text Fields" 
-          description="Entradas de datos con soporte para etiquetas flotantes y validaciones visuales."
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 max-w-4xl">
-            <div className="space-y-2">
-              <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Filled Text Field</p>
-              <Input label="Nombre de Usuario" defaultValue="pablo_dev" />
-            </div>
-            <div className="space-y-2">
-              <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Email Variant</p>
-              <Input label="Correo electrónico" type="email" placeholder="ejemplo@correo.com" />
-            </div>
-            <div className="space-y-2">
-              <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Password Variant</p>
-              <Input label="Contraseña" type="password" />
-            </div>
-            <div className="space-y-2">
-              <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Standard Text Field (Fallback)</p>
-              <Input placeholder="Campo sin etiqueta prop" />
-            </div>
-          </div>
-        </ShowcaseSection>
-
-        {/* BUTTONS SECTION */}
-        <ShowcaseSection 
-          title="Buttons" 
-          description="Acciones con distintos niveles de énfasis. Formato cápsula por defecto con respuesta de contracción."
-        >
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Emphasis Types</p>
-              <div className="flex flex-wrap gap-4 items-center">
-                <Button>Filled Button</Button>
-                <Button variant="secondary">Tonal Button</Button>
-                <Button variant="outline">Outlined Button</Button>
-                <Button variant="ghost">Text Button</Button>
-                <Button variant="destructive">Tonal Error Button</Button>
-              </div>
-            </div>
-          </div>
-        </ShowcaseSection>
-
-        {/* CARDS SECTION */}
-        <ShowcaseSection 
-          title="Cards" 
-          description="Contenedores sólidos para agrupar información con radios XL y respuesta táctil."
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            <Card variant="elevated">
-              <CardHeader>
-                <CardTitle>Elevated Card</CardTitle>
-                <CardDescription>Máximo Énfasis Sólido</CardDescription>
-              </CardHeader>
-              <CardContent className="text-sm opacity-80">
-                Resalta sobre la superficie mediante un tono de contenedor secundario.
-              </CardContent>
-              <CardFooter>
-                <Button size="sm">Action</Button>
-              </CardFooter>
-            </Card>
-
-            <Card variant="filled">
-              <CardHeader>
-                <CardTitle>Filled Card</CardTitle>
-                <CardDescription>M3 Surface standard</CardDescription>
-              </CardHeader>
-              <CardContent className="text-sm opacity-80">
-                La variante más equilibrada para la mayoría de los bloques de contenido.
-              </CardContent>
-              <CardFooter>
-                <Button variant="secondary" size="sm">Action</Button>
-              </CardFooter>
-            </Card>
-
-            <Card variant="outlined">
-              <CardHeader>
-                <CardTitle>Outlined Card</CardTitle>
-                <CardDescription>Bajo Énfasis Sólido</CardDescription>
-              </CardHeader>
-              <CardContent className="text-sm opacity-80">
-                Ideal para agrupar información secundaria de forma discreta.
-              </CardContent>
-              <CardFooter>
-                <Button variant="ghost" size="sm">Action</Button>
-              </CardFooter>
-            </Card>
-
-            {/* CARD CON IMAGEN (Simulada) */}
-            <Card className="p-0 overflow-hidden">
-              <div className="h-40 bg-primary/20 flex items-center justify-center text-primary/40 italic font-serif text-2xl">
-                Media Content
-              </div>
-              <CardHeader className="p-6">
-                <CardTitle>Tarjeta con Media</CardTitle>
-                <CardDescription>Layout vertical</CardDescription>
-              </CardHeader>
-              <CardContent className="px-6 pb-6 text-sm opacity-80">
-                Soporte para contenido visual con radios adaptados en las esquinas superiores.
-              </CardContent>
-            </Card>
-
-            {/* CARD HORIZONTAL */}
-            <Card className="col-span-1 md:col-span-2 flex-row items-center p-0 overflow-hidden min-h-[160px]">
-              <div className="w-1/3 h-full bg-secondary-container/50 flex items-center justify-center text-secondary-container text-xs font-bold uppercase tracking-widest vertical-text py-4">
-                Horizontal
-              </div>
-              <div className="flex-1 p-6 space-y-2">
-                <CardTitle>Diseño Horizontal</CardTitle>
-                <CardDescription>Variante Flexible</CardDescription>
-                <p className="text-sm opacity-80">Ideal para listas de elementos o secciones de dashboard.</p>
-                <Button variant="link" size="sm" className="px-0 h-auto font-bold">Ver Detalles</Button>
-              </div>
-            </Card>
-          </div>
-        </ShowcaseSection>
-
-        {/* ACTIONS AND SELECTION */}
-        <ShowcaseSection 
-          title="Actions and Selection" 
-          description="Elementos interactivos para tareas rápidas, filtrado y estados de selección."
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {/* FABs */}
-            <div className="space-y-6">
-              <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Floating Action Button (FAB)</p>
-              <div className="flex items-end gap-6">
-                {/* Large FAB */}
-                <div className="flex flex-col items-center gap-3">
-                  <Button className="size-24 rounded-3xl shadow-m3-2 hover:shadow-m3-3 active:scale-95 flex items-center justify-center">
-                    <Search className="size-8" />
-                  </Button>
-                  <span className="text-[0.65rem] font-medium text-muted-foreground">Large FAB</span>
-                </div>
-                {/* Standard FAB */}
-                <div className="flex flex-col items-center gap-3">
-                  <Button className="size-14 rounded-2xl shadow-m3-1 hover:shadow-m3-2 active:scale-90 flex items-center justify-center">
-                    <Bell className="size-6" />
-                  </Button>
-                  <span className="text-[0.65rem] font-medium text-muted-foreground">Standard</span>
-                </div>
-              </div>
-            </div>
-
-            {/* CHIPS */}
-            <div className="space-y-6">
-              <p className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/60 px-1">Chips</p>
-              <div className="flex flex-wrap gap-3">
-                <Chip variant="assist">Assist Chip</Chip>
-                <Chip variant="filter" selected>Filter Chip</Chip>
-                <Chip variant="input">Input Chip</Chip>
-                <Chip variant="suggestion">Suggestion</Chip>
-              </div>
-            </div>
-          </div>
-        </ShowcaseSection>
-
-        {/* ICONOGRAPHY SECTION */}
-        <ShowcaseSection 
-          title="Iconography" 
-          description="Iconos de sistema para navegación, acciones y estados, optimizados para legibilidad y peso visual."
-        >
-          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-6 sm:gap-8">
-            {[
-              { Icon: HomeIcon, label: "Home" },
-              { Icon: Search, label: "Search" },
-              { Icon: Settings, label: "Settings" },
-              { Icon: Bell, label: "Notifications" },
-              { Icon: Heart, label: "Favorite" },
-              { Icon: User, label: "Account" },
-              { Icon: Plus, label: "Add" },
-              { Icon: Pencil, label: "Edit" },
-              { Icon: Trash, label: "Delete" },
-              { Icon: Check, label: "Done" },
-              { Icon: X, label: "Close" },
-              { Icon: Info, label: "Info" },
-              { Icon: AlertTriangle, label: "Warning" },
-              { Icon: Menu, label: "Menu" },
-              { Icon: ChevronRight, label: "Navigation" },
-              { Icon: Share2, label: "Share" },
-              { Icon: Mail, label: "Email" },
-              { Icon: MessageSquare, label: "Chat" },
-            ].map(({ Icon, label }, i) => (
-              <div key={i} className="flex flex-col items-center gap-3 group cursor-pointer transition-transform active:scale-90">
-                <div className="size-12 rounded-xl bg-surface-variant/10 flex items-center justify-center transition-colors group-hover:bg-primary/10">
-                  <Icon className="size-6 text-on-surface-variant group-hover:text-primary transition-colors" />
-                </div>
-                <span className="text-[0.6rem] font-medium text-muted-foreground group-hover:text-foreground text-center line-clamp-1">{label}</span>
-              </div>
-            ))}
-          </div>
-        </ShowcaseSection>
-      </main>
-
-      {/* --- FOOTER --- */}
-      <footer className="p-12 text-center border-t border-outline-variant bg-surface-variant/5">
-        <div className="flex justify-center gap-6 mb-4">
-          <Button variant="ghost" size="icon-sm" className="rounded-full"><Settings className="w-5 h-5 text-muted-foreground" /></Button>
-        </div>
-        <p className="text-muted-foreground text-sm font-medium">
-          SocioFrontend &copy; 2026 <br />
-          <span className="text-xs opacity-50 font-normal">Next.js + Tailwind v4 + Material Design 3</span>
-        </p>
-      </footer>
-    </div>
+      </div>
+    </TooltipProvider>
   );
 }

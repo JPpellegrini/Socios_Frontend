@@ -12,30 +12,24 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4 text-foreground">
       <Card variant="elevated" className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-semibold">Centro de Jubilados</CardTitle>
-          <CardDescription>
+        <CardHeader className="text-center pb-8">
+          <CardTitle className="text-2xl font-bold tracking-tight">Centro de Jubilados</CardTitle>
+          <CardDescription className="text-base">
             Identifícate para continuar al panel.
           </CardDescription>
         </CardHeader>
-        
-        <form action={formAction} className="flex flex-col gap-8">
+
+        <form action={formAction} className="flex flex-col gap-6">
           <CardContent className="flex flex-col gap-4">
-            {state?.error && (
-              <div className="rounded-xl border border-destructive/20 bg-destructive/10 p-4 text-sm font-medium text-destructive animate-in fade-in slide-in-from-top-1">
-                {state.error}
-              </div>
-            )}
-            
             <Input
               label="Usuario"
               id="username"
-              name="username" 
+              name="username"
               type="text"
               required
               disabled={pending}
+              error={!!state?.error}
             />
-            
             <Input
               label="Contraseña"
               id="password"
@@ -43,10 +37,12 @@ export default function LoginPage() {
               type="password"
               required
               disabled={pending}
+              error={!!state?.error}
+              errorText={state?.error}
             />
           </CardContent>
 
-          <CardFooter className="px-0">
+          <CardFooter>
             <Button type="submit" className="w-full" disabled={pending}>
               {pending ? "Ingresando..." : "Ingresar"}
             </Button>

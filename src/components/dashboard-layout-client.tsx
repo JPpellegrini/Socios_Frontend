@@ -81,7 +81,6 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
 
   return (
     <div className="flex h-screen w-full bg-background text-foreground font-sans overflow-hidden select-none">
-      {/* Sidebar Principal */}
       <aside
         className={`${
           isSidebarOpen ? "w-72" : "w-20"
@@ -186,7 +185,6 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
         </nav>
       </aside>
 
-      {/* Main Content Area */}
       <main className="flex-1 flex flex-col overflow-hidden relative">
         <header className="h-16 bg-surface-container-lowest border-b border-outline-variant flex items-center justify-between px-8 flex-shrink-0 z-10">
           <div>
@@ -247,7 +245,6 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
           </div>
         </header>
 
-        {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-6 bg-background">{children}</div>
       </main>
 

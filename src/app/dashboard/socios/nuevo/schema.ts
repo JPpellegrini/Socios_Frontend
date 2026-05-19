@@ -3,7 +3,8 @@ import { z } from "zod";
 export const socioSchema = z.object({
   nombre: z.string().min(2, "El nombre debe tener al menos 2 letras"),
   apellido: z.string().min(2, "El apellido debe tener al menos 2 letras"),
-  dni: z.string().regex(/^\d+$/, "El DNI solo puede contener números").min(7, "DNI inválido"),
+  tipoDocumento: z.enum(["DNI", "CUIT"]),
+  nroDocumento: z.string().regex(/^\d+$/, "El documento solo puede contener números").min(7, "El documento debe tener al menos 7 dígitos"),
   fechaNacimiento: z.string().min(1, "La fecha de nacimiento es obligatoria"),
   ciudad: z.string().min(1, "La ciudad es obligatoria"),
   calle: z.string().min(1, "La calle es obligatoria"),

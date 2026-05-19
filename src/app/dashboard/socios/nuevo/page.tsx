@@ -195,7 +195,7 @@ export default function NuevoSocioPage() {
               onValueChange={(val) => setValue("tipoDocumento", val as "DNI" | "CUIT", { shouldValidate: true })}
               disabled={isVerificado}
             >
-              <SelectTrigger label="Tipo de Documento" variant="outlined" error={!!errors.tipoDocumento} disabled={isVerificado}>
+              <SelectTrigger label="Tipo" variant="outlined" error={!!errors.tipoDocumento} disabled={isVerificado}>
                 <SelectValue placeholder=" " />
               </SelectTrigger>
               <SelectContent>

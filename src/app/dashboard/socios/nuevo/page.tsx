@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useForm, useFieldArray, useWatch, Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Plus, Search, Check } from "lucide-react"
+import { Plus, Search, Check, X } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Separator } from "@/components/ui/separator"
 import { Card } from "@/components/ui/card"
+import { Fab } from "@/components/ui/fab"
 
 import { socioSchema, SocioFormData } from "./schema"
 import { guardarSocio, buscarSocioPorDocumento } from "./actions"
@@ -188,7 +189,7 @@ export default function NuevoSocioPage() {
         </h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-12 gap-x-6 gap-y-8">
-          <div className="col-span-12 md:col-span-3">
+          <div className="col-span-12 md:col-span-2">
             <Select
               value={tipoDocumentoValue || "DNI"}
               onValueChange={(val) => setValue("tipoDocumento", val as "DNI" | "CUIT", { shouldValidate: true })}
@@ -205,7 +206,7 @@ export default function NuevoSocioPage() {
             {errors.tipoDocumento && <p className="text-xs text-destructive mt-1 px-4">{errors.tipoDocumento.message}</p>}
           </div>
 
-          <div className="col-span-12 md:col-span-6">
+          <div className="col-span-12 md:col-span-8">
             <Input
               label="Documento"
               variant="outlined"
@@ -216,16 +217,24 @@ export default function NuevoSocioPage() {
             />
           </div>
 
-          <div className="col-span-12 md:col-span-3 flex items-end">
+          <div className="col-span-12 md:col-span-2 flex items-start gap-3">
             {!isVerificado ? (
-              <Button
-                type="button"
-                className="w-full h-14"
-                onClick={handleVerificarDocumento}
-                disabled={loadingSearch}
-              >
-                {loadingSearch ? "Buscando..." : "Buscar"}
-              </Button>
+              <>
+                <Fab
+                  type="button"
+                  onClick={handleVerificarDocumento}
+                  disabled={loadingSearch}
+                  icon={<Search />}
+                  aria-label="Buscar"
+                />
+                <Fab
+                  type="button"
+                  variant="surface"
+                  onClick={() => router.push("/dashboard/socios")}
+                  icon={<X />}
+                  aria-label="Cancelar"
+                />
+              </>
             ) : (
               <Button
                 type="button"
@@ -552,18 +561,7 @@ export default function NuevoSocioPage() {
             </>
           )}
 
-          {!isVerificado && (
-            <div className="col-span-12 flex justify-end gap-4 mt-6">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full md:w-40"
-                onClick={() => router.push("/dashboard/socios")}
-              >
-                Cancelar
-              </Button>
-            </div>
-          )}
+
         </form>
       </Card>
     </div>

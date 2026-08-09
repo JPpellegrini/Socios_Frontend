@@ -80,7 +80,8 @@ describe("Pantalla Usuarios - Lista e Integración UI", () => {
     fireEvent.click(cambiarRolBtn)
 
     expect(await screen.findByRole("heading", { name: /modificar rol/i })).toBeInTheDocument()
-    expect(screen.getByDisplayValue("CJR")).toBeInTheDocument()
+    expect(screen.getByRole("combobox")).toBeInTheDocument()
+
   })
 
   it("debe abrir el modal Modificar Password y validar contraseñas", async () => {

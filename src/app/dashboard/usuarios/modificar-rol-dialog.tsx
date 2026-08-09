@@ -4,7 +4,7 @@ import * as React from "react"
 import { Loader2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+
 import {
   Select,
   SelectContent,
@@ -75,17 +75,6 @@ export function ModificarRolDialog({
 
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
           <div className="space-y-1">
-            <Input
-              label="Usuario"
-              variant="outlined"
-              value={usuario ? usuario.usuario : ""}
-              disabled
-              readOnly
-            />
-          </div>
-
-
-          <div className="space-y-1">
             <Select value={rol} onValueChange={setRol} label="ROL" variant="outlined">
               <SelectTrigger variant="outlined">
                 <SelectValue placeholder="Seleccionar Rol" />
@@ -99,6 +88,7 @@ export function ModificarRolDialog({
               </SelectContent>
             </Select>
           </div>
+
 
 
           <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5 pt-4">

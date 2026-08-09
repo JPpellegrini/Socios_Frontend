@@ -303,6 +303,33 @@ export const MOCK_SOCIOS_DETALLE: SocioDetalle[] = [
   },
 ];
 
+export const MOCK_USUARIOS = [
+  {
+    id_Usuario: 1,
+    usuario: "CJR",
+    rol: "SECRETARIA/O",
+    estado: "ACTIVO",
+  },
+  {
+    id_Usuario: 2,
+    usuario: "ADMIN_SISTEMA",
+    rol: "ADMINISTRADOR",
+    estado: "ACTIVO",
+  },
+  {
+    id_Usuario: 3,
+    usuario: "MPEREZ",
+    rol: "TESORERO/A",
+    estado: "ACTIVO",
+  },
+  {
+    id_Usuario: 4,
+    usuario: "JALVAREZ",
+    rol: "SUPERVISOR/A",
+    estado: "BAJA",
+  },
+];
+
 export function getMockResponse(endpoint: string): unknown {
   if (endpoint === "/me" || endpoint.startsWith("/me")) {
     return { nombre: MOCK_USUARIO.nombre, rol: MOCK_USUARIO.rol };
@@ -318,5 +345,9 @@ export function getMockResponse(endpoint: string): unknown {
     }
     return socio;
   }
+  if (endpoint === "/usuarios" || endpoint.startsWith("/usuarios")) {
+    return MOCK_USUARIOS;
+  }
   throw new Error(`No hay mock definido para el endpoint: ${endpoint}`);
 }
+

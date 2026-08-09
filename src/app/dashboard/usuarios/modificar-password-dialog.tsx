@@ -97,15 +97,6 @@ export function ModificarPasswordDialog({
 
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
           <Input
-            label="Usuario"
-            variant="outlined"
-            value={usuario ? usuario.usuario : ""}
-            disabled
-            readOnly
-          />
-
-
-          <Input
             type="password"
             label="Nueva Password"
             variant="outlined"
@@ -114,6 +105,7 @@ export function ModificarPasswordDialog({
             error={!!errorPassword}
             errorText={errorPassword}
           />
+
 
           <Input
             type="password"

@@ -39,7 +39,8 @@ describe("Pantalla Nuevo Usuario - Formulario de Registro", () => {
   it("renderiza el formulario de alta de usuario correctamente", () => {
     renderPage(makeFakeService())
 
-    expect(screen.getByRole("heading", { name: /pantalla nuevo usuario/i })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: /nuevo usuario/i })).toBeInTheDocument()
+
     expect(screen.getByLabelText(/^usuario$/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/nueva password/i)).toBeInTheDocument()
 

@@ -58,7 +58,8 @@ describe("Pantalla Usuarios - Lista e Integración UI", () => {
     const service = makeFakeService()
     renderPage(service)
 
-    expect(screen.getByRole("heading", { name: /pantalla usuarios/i })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: /listado de usuarios/i })).toBeInTheDocument()
+
 
     await waitFor(() => {
       expect(screen.getByText("CJR")).toBeInTheDocument()

@@ -91,14 +91,12 @@ export default function UsuariosPage() {
         header: "Id_Usuario",
         accessor: (u) => u.id_Usuario,
         searchable: true,
-        className: "font-mono font-medium text-foreground text-center w-24",
       },
       {
         key: "usuario",
         header: "Usuario",
         accessor: (u) => u.usuario,
         searchable: true,
-        className: "font-medium text-foreground",
       },
       {
         key: "rol",
@@ -115,7 +113,7 @@ export default function UsuariosPage() {
         accessor: (u) => (
           <span
             className={cn(
-              "inline-flex items-center justify-center rounded-[8px] h-8 px-3.5 text-xs font-semibold uppercase tracking-wider",
+              "inline-flex items-center rounded-[8px] h-8 px-3.5 text-sm font-medium",
               u.estado === "ACTIVO"
                 ? "bg-primary-container text-on-primary-container"
                 : "bg-destructive/10 text-destructive"
@@ -133,26 +131,19 @@ export default function UsuariosPage() {
   )
 
   return (
-    <div className="relative min-h-full p-4 md:p-8 space-y-6 max-w-7xl mx-auto">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-1">
-          Pantalla Usuarios
-        </h1>
-        <p className="text-sm text-on-surface-variant">
-          Administración de cuentas de usuario, roles y permisos de acceso.
-        </p>
-      </div>
+    <div className="relative h-full p-4 md:p-8">
+      <h1 className="text-2xl font-bold mb-6">Listado de Usuarios</h1>
 
       <DataTable<UsuarioListItem>
         storageKey="usuarios-list"
         data={usuarios}
         columns={columns}
         getRowId={(u) => String(u.id_Usuario)}
-        searchPlaceholder="Buscar por Usuario, ID o Rol..."
+        searchPlaceholder="Buscar por usuario o rol"
         loading={loading}
         emptyMessage="No se encontraron usuarios"
         renderActions={(u) => (
-          <div className="flex items-center justify-center gap-1">
+          <>
             <Button
               variant="ghost"
               size="icon"
@@ -193,7 +184,7 @@ export default function UsuariosPage() {
                 <UserCheck />
               </Button>
             )}
-          </div>
+          </>
         )}
       />
 
@@ -201,7 +192,7 @@ export default function UsuariosPage() {
         href="/dashboard/usuarios/nuevo"
         className={cn(
           fabVariants({ variant: "primary", size: "large" }),
-          "fixed bottom-8 right-8 z-40 shadow-lg"
+          "fixed bottom-8 right-8"
         )}
         aria-label="Nuevo usuario"
       >

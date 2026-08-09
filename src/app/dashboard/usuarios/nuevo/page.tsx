@@ -92,8 +92,9 @@ function NuevoUsuarioForm() {
         style={{ "--input-bg": "var(--color-surface-container-lowest)" } as React.CSSProperties}
       >
         <h1 className="text-2xl mb-8 font-semibold tracking-tight">
-          Pantalla Nuevo Usuario
+          Nuevo usuario
         </h1>
+
 
         <form onSubmit={handleSubmit} className="grid grid-cols-12 gap-x-6 gap-y-8">
           <div className="col-span-12 md:col-span-6">

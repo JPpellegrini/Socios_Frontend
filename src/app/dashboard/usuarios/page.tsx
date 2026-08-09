@@ -87,17 +87,12 @@ export default function UsuariosPage() {
   const columns: Column<UsuarioListItem>[] = React.useMemo(
     () => [
       {
-        key: "id_Usuario",
-        header: "Id_Usuario",
-        accessor: (u) => u.id_Usuario,
-        searchable: true,
-      },
-      {
         key: "usuario",
         header: "Usuario",
         accessor: (u) => u.usuario,
         searchable: true,
       },
+
       {
         key: "rol",
         header: "Rol",

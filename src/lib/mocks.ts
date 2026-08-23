@@ -307,7 +307,7 @@ export const MOCK_USUARIOS = [
   {
     id_Usuario: 1,
     usuario: "CJR",
-    rol: "SECRETARIA/O",
+    rol: "SECRETARIO",
     estado: "ACTIVO",
   },
   {
@@ -319,13 +319,13 @@ export const MOCK_USUARIOS = [
   {
     id_Usuario: 3,
     usuario: "MPEREZ",
-    rol: "TESORERO/A",
+    rol: "CONSULTOR",
     estado: "ACTIVO",
   },
   {
     id_Usuario: 4,
     usuario: "JALVAREZ",
-    rol: "SUPERVISOR/A",
+    rol: "CONSULTOR",
     estado: "BAJA",
   },
 ];

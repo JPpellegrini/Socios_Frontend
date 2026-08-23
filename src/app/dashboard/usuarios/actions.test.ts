@@ -98,13 +98,13 @@ describe("Server Actions - Usuarios", () => {
       });
       global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => undefined }) as jest.Mock;
 
-      const ok = await cambiarRolUsuario({ id_Usuario: 5, rol: "SUPERVISOR/A" });
+      const ok = await cambiarRolUsuario({ id_Usuario: 5, rol: "CONSULTOR" });
       expect(ok).toBe(true);
       expect(global.fetch).toHaveBeenCalledWith(
         "http://localhost:5000/api/usuarios/5/rol",
         expect.objectContaining({
           method: "PATCH",
-          body: JSON.stringify({ rol: "SUPERVISOR/A" }),
+          body: JSON.stringify({ rol: "CONSULTOR" }),
         })
       );
     });

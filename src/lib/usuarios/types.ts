@@ -1,12 +1,11 @@
 export type EstadoUsuario = "ACTIVO" | "BAJA";
 
-export type RolUsuario = "SECRETARIA/O" | "ADMINISTRADOR" | "TESORERO/A" | "SUPERVISOR/A";
+export type RolUsuario = "SECRETARIO" | "CONSULTOR" | "ADMINISTRADOR";
 
 export const ROLES_DISPONIBLES: RolUsuario[] = [
-  "SECRETARIA/O",
+  "SECRETARIO",
+  "CONSULTOR",
   "ADMINISTRADOR",
-  "TESORERO/A",
-  "SUPERVISOR/A",
 ];
 
 export interface UsuarioListItem {

@@ -87,7 +87,7 @@ describe("Pantalla Nuevo Usuario - Formulario de Registro", () => {
     await waitFor(() => {
       expect(service.create).toHaveBeenCalledWith({
         usuario: "UsuarioNuevo",
-        rol: "SECRETARIA/O",
+        rol: "SECRETARIO",
         password: "ClaveValida#123",
         confirmPassword: "ClaveValida#123",
       })

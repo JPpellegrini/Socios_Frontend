@@ -22,7 +22,7 @@ function NuevoUsuarioForm() {
   const usuariosService = useUsuariosService()
 
   const [usuario, setUsuario] = React.useState("")
-  const [rol, setRol] = React.useState<string>("SECRETARIA/O")
+  const [rol, setRol] = React.useState<string>("SECRETARIO")
   const [password, setPassword] = React.useState("")
   const [confirmPassword, setConfirmPassword] = React.useState("")
 

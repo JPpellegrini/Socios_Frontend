@@ -11,14 +11,14 @@ jest.mock("next/navigation", () => ({
 const usuario1: UsuarioListItem = {
   id_Usuario: 1,
   usuario: "CJR",
-  rol: "SECRETARIA/O",
+  rol: "SECRETARIO",
   estado: "ACTIVO",
 }
 
 const usuario2: UsuarioListItem = {
   id_Usuario: 2,
   usuario: "JALVAREZ",
-  rol: "SUPERVISOR/A",
+  rol: "CONSULTOR",
   estado: "BAJA",
 }
 
@@ -63,9 +63,9 @@ describe("Pantalla Usuarios - Lista e Integración UI", () => {
 
     await waitFor(() => {
       expect(screen.getByText("CJR")).toBeInTheDocument()
-      expect(screen.getByText("SECRETARIA/O")).toBeInTheDocument()
+      expect(screen.getByText("SECRETARIO")).toBeInTheDocument()
       expect(screen.getByText("JALVAREZ")).toBeInTheDocument()
-      expect(screen.getByText("SUPERVISOR/A")).toBeInTheDocument()
+      expect(screen.getByText("CONSULTOR")).toBeInTheDocument()
     })
   })
 

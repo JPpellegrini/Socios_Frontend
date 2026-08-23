@@ -77,12 +77,12 @@ describe("MockUsuariosService", () => {
   it("updateRol() debe actualizar el rol del usuario", async () => {
     const list = await service.list();
     const target = list[0];
-    const ok = await service.updateRol({ id_Usuario: target.id_Usuario, rol: "TESORERO/A" });
+    const ok = await service.updateRol({ id_Usuario: target.id_Usuario, rol: "CONSULTOR" });
 
     expect(ok).toBe(true);
     const updatedList = await service.list();
     const updated = updatedList.find((u) => u.id_Usuario === target.id_Usuario);
-    expect(updated?.rol).toBe("TESORERO/A");
+    expect(updated?.rol).toBe("CONSULTOR");
   });
 
   it("updatePassword() debe retornar true para usuario existente", async () => {

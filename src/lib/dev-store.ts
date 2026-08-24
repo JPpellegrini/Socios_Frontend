@@ -1,6 +1,7 @@
-import { MOCK_SOCIOS, MOCK_SOCIOS_DETALLE } from "@/lib/mocks"
+import { MOCK_SOCIOS, MOCK_SOCIOS_DETALLE, MOCK_USUARIOS } from "@/lib/mocks"
 import type { SocioListItem, SocioDetalle } from "@/app/dashboard/socios/actions"
 import { normalizeContacts, type SocioFormData } from "@/app/dashboard/socios/nuevo/schema"
+import type { UsuarioListItem, CrearUsuarioDTO } from "@/lib/usuarios/types"
 
 function toListItem(d: SocioDetalle): SocioListItem {
   return {
@@ -18,6 +19,8 @@ interface DevStoreState {
   list: SocioListItem[]
   detalle: SocioDetalle[]
   nextId: number
+  usuarios: UsuarioListItem[]
+  nextUsuarioId: number
 }
 
 function seed(): DevStoreState {
@@ -25,6 +28,8 @@ function seed(): DevStoreState {
     list: MOCK_SOCIOS.map((s) => ({ ...s })),
     detalle: MOCK_SOCIOS_DETALLE.map((s) => ({ ...s })),
     nextId: MOCK_SOCIOS.reduce((max, s) => Math.max(max, Number(s.id) || 0), 0) + 1,
+    usuarios: MOCK_USUARIOS.map((u) => ({ ...u, estado: u.estado as "ACTIVO" | "BAJA" })),
+    nextUsuarioId: MOCK_USUARIOS.reduce((max, u) => Math.max(max, u.id_Usuario), 0) + 1,
   }
 }
 
@@ -33,6 +38,42 @@ let state: DevStoreState = seed()
 export function _resetDevStoreForTests(): void {
   state = seed()
 }
+
+export function devGetUsuarios(): UsuarioListItem[] {
+  return state.usuarios.map((u) => ({ ...u }))
+}
+
+export function devAddUsuario(data: CrearUsuarioDTO): UsuarioListItem {
+  const newUser: UsuarioListItem = {
+    id_Usuario: state.nextUsuarioId++,
+    usuario: data.usuario,
+    rol: data.rol,
+    estado: "ACTIVO",
+  }
+  state.usuarios.push(newUser)
+  return { ...newUser }
+}
+
+export function devUpdateUsuarioRol(id_Usuario: number, rol: string): boolean {
+  const user = state.usuarios.find((u) => u.id_Usuario === id_Usuario)
+  if (!user) return false
+  user.rol = rol
+  return true
+}
+
+export function devUpdateUsuarioPassword(id_Usuario: number, password: string): boolean {
+  const user = state.usuarios.find((u) => u.id_Usuario === id_Usuario)
+  return !!user && password.length > 0
+}
+
+
+export function devToggleUsuarioEstado(id_Usuario: number): boolean {
+  const user = state.usuarios.find((u) => u.id_Usuario === id_Usuario)
+  if (!user) return false
+  user.estado = user.estado === "ACTIVO" ? "BAJA" : "ACTIVO"
+  return true
+}
+
 
 export function devGetSocios(): SocioListItem[] {
   return state.list.map((s) => ({ ...s }))

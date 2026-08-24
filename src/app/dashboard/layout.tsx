@@ -2,6 +2,7 @@ import { DashboardLayoutClient } from "@/components/dashboard-layout-client"
 import { obtenerSesion } from "@/lib/auth"
 import { isMockMode } from "@/lib/env"
 import { SociosServiceProvider } from "@/lib/socios/service-context"
+import { UsuariosServiceProvider } from "@/lib/usuarios/service-context"
 import { redirect } from "next/navigation"
 
 export default async function DashboardLayout({
@@ -19,7 +20,12 @@ export default async function DashboardLayout({
 
   return (
     <DashboardLayoutClient usuario={session}>
-      <SociosServiceProvider mockMode={mockMode}>{children}</SociosServiceProvider>
+      <SociosServiceProvider mockMode={mockMode}>
+        <UsuariosServiceProvider mockMode={mockMode}>
+          {children}
+        </UsuariosServiceProvider>
+      </SociosServiceProvider>
     </DashboardLayoutClient>
   )
 }
+

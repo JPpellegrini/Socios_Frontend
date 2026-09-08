@@ -2,6 +2,8 @@ import { cookies } from "next/headers";
 import { fetchAPI } from "./apiClient";
 import { isMockMode } from "./env";
 
+import { MOCK_USUARIO } from "./mocks";
+
 export interface Usuario {
   logueado: boolean;
   nombre: string;
@@ -18,7 +20,7 @@ interface MeResponse {
 
 export async function obtenerSesion(): Promise<Usuario | null> {
   if (isMockMode()) {
-    return { logueado: true, nombre: "Juan Pérez", rol: "admin" };
+    return { logueado: true, nombre: MOCK_USUARIO.nombre, rol: MOCK_USUARIO.rol };
   }
 
   const cookieStore = await cookies();

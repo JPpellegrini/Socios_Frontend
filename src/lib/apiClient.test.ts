@@ -21,9 +21,10 @@ describe('fetchAPI HTTP Client', () => {
     });
 
     it('no debe llamar a fetch y debe devolver el mock del endpoint', async () => {
-      const me = await fetchAPI<{ nombre: string; rol: string }>('/me');
+      const me = await fetchAPI<{ usuarioNombre: string; rolNombre: string }>('/me');
       expect(global.fetch).not.toHaveBeenCalled();
-      expect(me).toEqual({ nombre: 'Juan Pérez', rol: 'admin' });
+      expect(me.usuarioNombre).toBe('CJR');
+      expect(me.rolNombre).toBe('Consultor');
     });
 
     it('debe devolver el listado de socios mockeado', async () => {
@@ -42,7 +43,7 @@ describe('fetchAPI HTTP Client', () => {
     it('debe agregar el header Authorization si se provee un token en base64', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
-        json: async () => ({ id: 1, name: 'Socio Test' }),
+        text: async () => JSON.stringify({ id: 1, name: 'Socio Test' }),
       });
 
       const fakeTokenBase64 = 'dXNlcjpwYXNzd29yZA==';
@@ -61,15 +62,48 @@ describe('fetchAPI HTTP Client', () => {
       expect(headersPassed.get('Authorization')).toBe(`Basic ${fakeTokenBase64}`);
     });
 
-    it('debe lanzar un error si la respuesta HTTP no es ok', async () => {
+    it('debe parsear error de negocio (409) con campo mensaje', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: false,
-        status: 401,
-        statusText: 'Unauthorized',
+        status: 409,
+        statusText: 'Conflict',
+        headers: new Headers({ 'content-type': 'application/json' }),
+        json: async () => ({ mensaje: 'El socio ya está dado de baja.' }),
       });
 
-      await expect(fetchAPI('/me')).rejects.toThrow(
-        'Error en la API: 401 Unauthorized'
+      await expect(fetchAPI('/socios/baja')).rejects.toThrow(
+        'El socio ya está dado de baja.'
+      );
+    });
+
+    it('debe parsear error de validacion ProblemDetails (400)', async () => {
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: false,
+        status: 400,
+        statusText: 'Bad Request',
+        headers: new Headers({ 'content-type': 'application/json' }),
+        json: async () => ({
+          title: 'Validation error',
+          errors: { Dni: ['El DNI debe tener 7 u 8 dígitos.'] },
+        }),
+      });
+
+      await expect(fetchAPI('/socios/crear')).rejects.toThrow(
+        /El DNI debe tener 7 u 8 dígitos/
+      );
+    });
+
+    it('debe parsear error 404 de texto plano', async () => {
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: false,
+        status: 404,
+        statusText: 'Not Found',
+        headers: new Headers({ 'content-type': 'text/plain' }),
+        text: async () => 'Entidad no encontrada.',
+      });
+
+      await expect(fetchAPI('/buscarentidad')).rejects.toThrow(
+        'Entidad no encontrada.'
       );
     });
 

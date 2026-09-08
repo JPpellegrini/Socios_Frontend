@@ -110,8 +110,8 @@ function NuevoUsuarioForm() {
 
 
           <div className="col-span-12 md:col-span-6">
-            <Select value={rol} onValueChange={setRol} label="ROL" variant="outlined">
-              <SelectTrigger variant="outlined">
+            <Select value={rol} onValueChange={setRol}>
+              <SelectTrigger label="ROL" variant="outlined">
                 <SelectValue placeholder="Seleccionar Rol" />
               </SelectTrigger>
               <SelectContent>

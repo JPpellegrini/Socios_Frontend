@@ -14,3 +14,11 @@ export const MOCK_CIUDADES: Ciudad[] = [
   { id: "8", nombre: "Firmat" },
   { id: "9", nombre: "Cañada de Gómez" },
 ];
+
+export function findCiudadIdByName(nombre?: string): number {
+  if (!nombre) return 1;
+  const found = MOCK_CIUDADES.find(
+    (c) => c.nombre.toLowerCase() === nombre.trim().toLowerCase()
+  );
+  return found ? Number(found.id) : 1;
+}

@@ -1,10 +1,30 @@
 import type { SocioListItem, SocioDetalle } from "@/app/dashboard/socios/actions";
+import { MOCK_CIUDADES } from "./ciudades";
+import { MOCK_OBRAS_SOCIALES } from "./obras-sociales";
 
 export const MOCK_USUARIO = {
+  id_Usuario: 1,
+  usuarioNombre: "CJR",
+  estado: "Activo",
+  id_Rol: 2,
+  rolNombre: "Consultor",
   logueado: true,
-  nombre: "Juan Pérez",
-  rol: "admin",
+  nombre: "CJR",
+  rol: "Consultor",
 };
+
+export const MOCK_SOCIOS_BACKEND = [
+  { idSocio: 1, nombre: "Juan", apellido: "Pérez", dni: "12345678", estado: "ACTIVO" },
+  { idSocio: 2, nombre: "María", apellido: "Gómez", dni: "20123456", estado: "ACTIVO" },
+  { idSocio: 3, nombre: "Carlos", apellido: "Rodríguez", dni: "34567890", estado: "INACTIVO" },
+  { idSocio: 4, nombre: "Ana", apellido: "Martínez", dni: "45678901", estado: "ACTIVO" },
+  { idSocio: 5, nombre: "Roberto", apellido: "López", dni: "20345678", estado: "ACTIVO" },
+  { idSocio: 6, nombre: "Laura", apellido: "Fernández", dni: "56789012", estado: "INACTIVO" },
+  { idSocio: 7, nombre: "Diego", apellido: "García", dni: "67890123", estado: "ACTIVO" },
+  { idSocio: 8, nombre: "Patricia", apellido: "Sánchez", dni: "78901234", estado: "ACTIVO" },
+  { idSocio: 9, nombre: "Fernando", apellido: "Torres", dni: "20456789", estado: "INACTIVO" },
+  { idSocio: 10, nombre: "Verónica", apellido: "Ruiz", dni: "89012345", estado: "ACTIVO" },
+];
 
 export const MOCK_SOCIOS: SocioListItem[] = [
   {
@@ -306,48 +326,144 @@ export const MOCK_SOCIOS_DETALLE: SocioDetalle[] = [
 export const MOCK_USUARIOS = [
   {
     id_Usuario: 1,
+    usuarioNombre: "CJR",
     usuario: "CJR",
-    rol: "SECRETARIO",
-    estado: "ACTIVO",
+    rolNombre: "Consultor",
+    rol: "CONSULTOR",
+    estado: "Activo",
+    descripcion: "Solo acceso a informes",
   },
   {
     id_Usuario: 2,
+    usuarioNombre: "ADMIN_SISTEMA",
     usuario: "ADMIN_SISTEMA",
-    rol: "ADMINISTRADOR",
-    estado: "ACTIVO",
+    rolNombre: "Secretaria",
+    rol: "SECRETARIO",
+    estado: "Activo",
+    descripcion: "Acceso total",
   },
   {
     id_Usuario: 3,
+    usuarioNombre: "MPEREZ",
     usuario: "MPEREZ",
+    rolNombre: "Consultor",
     rol: "CONSULTOR",
-    estado: "ACTIVO",
+    estado: "Activo",
+    descripcion: "Solo informes",
   },
   {
     id_Usuario: 4,
+    usuarioNombre: "JALVAREZ",
     usuario: "JALVAREZ",
+    rolNombre: "Consultor",
     rol: "CONSULTOR",
-    estado: "BAJA",
+    estado: "Inactivo",
+    descripcion: "Usuario inactivo",
   },
 ];
 
 export function getMockResponse(endpoint: string): unknown {
   if (endpoint === "/me" || endpoint.startsWith("/me")) {
-    return { nombre: MOCK_USUARIO.nombre, rol: MOCK_USUARIO.rol };
+    return {
+      id_Usuario: MOCK_USUARIO.id_Usuario,
+      usuarioNombre: MOCK_USUARIO.usuarioNombre,
+      estado: MOCK_USUARIO.estado,
+      id_Rol: MOCK_USUARIO.id_Rol,
+      rolNombre: MOCK_USUARIO.rolNombre,
+      nombre: MOCK_USUARIO.nombre,
+      rol: MOCK_USUARIO.rol,
+    };
+  }
+  if (endpoint === "/socios/crear") {
+    return { idSocio: 14 };
+  }
+  if (endpoint === "/socios/baja") {
+    return { mensaje: "El socio fue dado de baja correctamente." };
+  }
+  if (endpoint === "/socios/modificar") {
+    return { mensaje: "El socio fue modificado correctamente." };
   }
   if (endpoint === "/socios") {
-    return MOCK_SOCIOS;
+    return MOCK_SOCIOS_BACKEND;
   }
   if (endpoint.startsWith("/socios/")) {
     const id = endpoint.split("/socios/")[1];
     const socio = MOCK_SOCIOS_DETALLE.find((s) => s.id === id);
     if (!socio) {
-      throw new Error(`No hay mock definido para el socio con id: ${id}`);
+      throw new Error(`No se encontró el socio solicitado.`);
     }
-    return socio;
+    return {
+      idSocio: Number(socio.id),
+      tipoDocumento: "DNI",
+      dni: socio.nroDocumento,
+      nombre: socio.nombre,
+      apellido: socio.apellido,
+      fechaNacimiento: socio.fechaNacimiento,
+      sexo: socio.sexo,
+      idCiudad: 1,
+      ciudad: socio.ciudad,
+      calle: socio.calle,
+      altura: Number(socio.altura) || 0,
+      observaciones: socio.observaciones ?? null,
+      estado: socio.fechaBaja ? "INACTIVO" : "ACTIVO",
+      fechaAlta: socio.fechaAlta,
+      fechaBaja: socio.fechaBaja ?? null,
+      idObraSocial: socio.obraSocial ? 1 : null,
+      obraSocial: socio.obraSocial ?? null,
+      numeroAfiliado: socio.nroAfiliadoObraSocial ?? "",
+      plan: socio.plan,
+      sepelio: socio.sepelio ?? "NO",
+      cobrador: socio.cobrador ?? "NO",
+      telefonos: socio.telefonos,
+      emails: socio.correos,
+      codeudores: socio.codeudores,
+    };
   }
-  if (endpoint === "/usuarios" || endpoint.startsWith("/usuarios")) {
+  if (endpoint === "/usuarios/alta") {
+    return {
+      id_Usuario: 5,
+      usuarioNombre: "nuevo",
+      password: "$2a$11$mockhash",
+      estado: "Activo",
+      id_Rol: 1,
+      rol: { id_Rol: 1, rolNombre: "Secretaria", descripcion: "Secretaria" },
+    };
+  }
+  if (endpoint.startsWith("/usuarios/baja/")) {
+    return { mensaje: "Usuario dado de baja correctamente", usuario: {} };
+  }
+  if (endpoint.startsWith("/usuarios/modificar/")) {
+    return { mensaje: "Usuario modificado correctamente", usuario: {} };
+  }
+  if (endpoint === "/usuarios" || endpoint.startsWith("/usuarios/buscar") || endpoint.startsWith("/usuarios")) {
     return MOCK_USUARIOS;
+  }
+  if (endpoint.startsWith("/ciudades/buscar")) {
+    return MOCK_CIUDADES.map((c) => ({ id_Ciudad: Number(c.id), nombre: c.nombre }));
+  }
+  if (endpoint.startsWith("/obrassociales/buscar")) {
+    return MOCK_OBRAS_SOCIALES.map((o) => ({ id_ObraSocial: Number(o.id), nombreObraSocial: o.nombre }));
+  }
+  if (endpoint.startsWith("/buscarentidad/buscar")) {
+    return [{ nombre: "Juan", apellido: "Pérez", dni: "12345678" }];
+  }
+  if (endpoint.startsWith("/buscarentidad")) {
+    return {
+      id_Entidad: 1,
+      cuitCuil: "20123456789",
+      nombre: "Juan",
+      apellido: "Pérez",
+      razonSocial: null,
+      sexo: "Hombre",
+      nacimiento: "1990-01-01",
+      ciudad: { id_Ciudad: 1, nombre: "Buenos Aires" },
+      calle: "Falsa",
+      altura: 123,
+      observacion: null,
+    };
+  }
+  if (endpoint === "/codeudores/crear") {
+    return { idEntidad: 15 };
   }
   throw new Error(`No hay mock definido para el endpoint: ${endpoint}`);
 }
-

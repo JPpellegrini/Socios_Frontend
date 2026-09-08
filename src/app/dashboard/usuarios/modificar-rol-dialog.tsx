@@ -75,8 +75,8 @@ export function ModificarRolDialog({
 
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
           <div className="space-y-1">
-            <Select value={rol} onValueChange={setRol} label="ROL" variant="outlined">
-              <SelectTrigger variant="outlined">
+            <Select value={rol} onValueChange={setRol}>
+              <SelectTrigger label="ROL" variant="outlined">
                 <SelectValue placeholder="Seleccionar Rol" />
               </SelectTrigger>
               <SelectContent>

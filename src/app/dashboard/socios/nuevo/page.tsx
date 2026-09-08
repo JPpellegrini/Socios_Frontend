@@ -44,7 +44,7 @@ function NuevoSocioForm() {
     resolver: zodResolver(socioSchema) as Resolver<SocioFormData>,
     defaultValues: {
       nroDocumento: "",
-      fechaAlta: new Date().toISOString().split("T")[0],
+      fechaAlta: new Date().toISOString().substring(0, 10),
       sexo: "",
       telefonos: [],
       correos: [],
@@ -120,7 +120,7 @@ function NuevoSocioForm() {
           ciudad: "",
           calle: "",
           altura: "",
-          fechaAlta: new Date().toISOString().split("T")[0],
+          fechaAlta: new Date().toISOString().substring(0, 10),
           fechaBaja: "",
           obraSocial: "",
           nroAfiliadoObraSocial: "",
@@ -149,7 +149,7 @@ function NuevoSocioForm() {
     setIsVerificado(false)
     reset({
       nroDocumento: "",
-      fechaAlta: new Date().toISOString().split("T")[0],
+      fechaAlta: new Date().toISOString().substring(0, 10),
       sexo: "",
       telefonos: [],
       correos: [],

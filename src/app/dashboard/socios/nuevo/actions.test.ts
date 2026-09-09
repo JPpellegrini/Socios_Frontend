@@ -1,4 +1,4 @@
-import { guardarSocio, actualizarSocio, buscarSocioPorDocumento } from './actions';
+import { guardarSocio, actualizarSocio, buscarSocioPorDocumento, crearCodeudor } from './actions';
 
 jest.mock('../../../../lib/apiClient', () => ({
   fetchAPI: jest.fn(),
@@ -135,4 +135,48 @@ describe('Acciones del Servidor para Nuevo Socio (API real)', () => {
       await expect(actualizarSocio('5', datosSocio)).rejects.toThrow('network');
     });
   });
+
+  describe('crearCodeudor', () => {
+    const codeudorData = {
+      dni: '30111222',
+      nombre: 'María',
+      apellido: 'Gómez',
+      fechaNacimiento: '1985-05-15',
+      sexo: 'Mujer',
+      ciudad: 'Rosario',
+      calle: 'Mitre',
+      altura: '450',
+      telefonos: ['3415551234'],
+      correos: ['maria@test.com'],
+    };
+
+    it('con token debe hacer POST a /codeudores/crear y devolver { idEntidad }', async () => {
+      (cookies as jest.Mock).mockResolvedValue({
+        get: (n: string) => (n === 'authToken' ? { value: 'tok' } : undefined),
+      });
+      (fetchAPI as jest.Mock).mockResolvedValue({ idEntidad: 15 });
+
+      const res = await crearCodeudor(codeudorData);
+
+      expect(res).toEqual({ idEntidad: 15 });
+      expect(fetchAPI).toHaveBeenCalledWith(
+        '/codeudores/crear',
+        'tok',
+        expect.objectContaining({
+          method: 'POST',
+          body: expect.stringContaining('"dni":"30111222"'),
+        })
+      );
+    });
+
+    it('sin token debe devolver null sin llamar a la API', async () => {
+      (cookies as jest.Mock).mockResolvedValue({ get: () => undefined });
+
+      const res = await crearCodeudor(codeudorData);
+
+      expect(res).toBeNull();
+      expect(fetchAPI).not.toHaveBeenCalled();
+    });
+  });
 });
+

@@ -29,6 +29,22 @@ export const socioSchema = z.object({
 
 export type SocioFormData = z.infer<typeof socioSchema>;
 
+export const codeudorSchema = z.object({
+  dni: z.string().regex(/^\d{7,8}$/, "El DNI debe tener 7 u 8 dígitos"),
+  nombre: z.string().min(3, "El nombre debe tener al menos 3 caracteres").max(150, "Máximo 150 caracteres"),
+  apellido: z.string().min(3, "El apellido debe tener al menos 3 caracteres").max(150, "Máximo 150 caracteres"),
+  fechaNacimiento: z.string().min(1, "La fecha de nacimiento es obligatoria"),
+  sexo: z.string().optional(),
+  ciudad: z.string().min(1, "La ciudad es obligatoria"),
+  calle: z.string().min(1, "La calle es obligatoria"),
+  altura: z.string().min(1, "La altura es obligatoria"),
+  observaciones: z.string().optional(),
+  telefonos: z.array(z.union([z.string(), z.object({ value: z.string() })])).min(1, "Debe ingresar al menos un teléfono"),
+  correos: z.array(z.union([z.string(), z.object({ value: z.string().email("Correo inválido") })])).optional(),
+});
+
+export type CodeudorFormData = z.infer<typeof codeudorSchema>;
+
 export type ContactField = string | { value: string };
 
 export function contactValue(field: ContactField): string {

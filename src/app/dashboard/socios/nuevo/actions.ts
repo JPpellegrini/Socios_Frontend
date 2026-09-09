@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { fetchAPI } from "@/lib/apiClient";
-import { SocioFormData, normalizeContacts } from "./schema";
+import { SocioFormData, CodeudorFormData, normalizeContacts } from "./schema";
 import { findCiudadIdByName } from "@/lib/ciudades";
 import { findObraSocialIdByName } from "@/lib/obras-sociales";
 
@@ -137,6 +137,34 @@ export async function actualizarSocio(id: string, data: SocioFormData): Promise<
 
   await fetchAPI("/socios/modificar", token, {
     method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function crearCodeudor(
+  data: CodeudorFormData
+): Promise<{ idEntidad: number } | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("authToken")?.value;
+
+  if (!token) return null;
+
+  const payload = {
+    dni: data.dni,
+    nombre: data.nombre,
+    apellido: data.apellido,
+    fechaNacimiento: data.fechaNacimiento,
+    sexo: data.sexo || undefined,
+    idCiudad: findCiudadIdByName(data.ciudad),
+    calle: data.calle,
+    altura: parseInt(data.altura, 10) || 0,
+    observaciones: data.observaciones || undefined,
+    telefonos: normalizeContacts(data.telefonos),
+    emails: normalizeContacts(data.correos),
+  };
+
+  return await fetchAPI<{ idEntidad: number }>("/codeudores/crear", token, {
+    method: "POST",
     body: JSON.stringify(payload),
   });
 }

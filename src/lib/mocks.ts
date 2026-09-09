@@ -462,6 +462,48 @@ export const MOCK_NICHOS = [
   },
 ];
 
+export const MOCK_ENTIDADES = [
+  {
+    id_Entidad: 1,
+    cuitCuil: "20123456789",
+    nombre: "Juan",
+    apellido: "Pérez",
+    razonSocial: null,
+    sexo: "Hombre",
+    nacimiento: "1990-01-01",
+    ciudad: { id_Ciudad: 1, nombre: "Buenos Aires" },
+    calle: "Falsa",
+    altura: 123,
+    observacion: "Socio activo",
+  },
+  {
+    id_Entidad: 2,
+    cuitCuil: "27201234564",
+    nombre: "María",
+    apellido: "Gómez",
+    razonSocial: null,
+    sexo: "Mujer",
+    nacimiento: "1985-05-15",
+    ciudad: { id_Ciudad: 2, nombre: "Rosario" },
+    calle: "Mitre",
+    altura: 450,
+    observacion: null,
+  },
+  {
+    id_Entidad: 3,
+    cuitCuil: "30712345678",
+    nombre: "",
+    apellido: "",
+    razonSocial: "Emergencias Médicas S.A.",
+    sexo: "-",
+    nacimiento: "2010-03-15",
+    ciudad: { id_Ciudad: 2, nombre: "Rosario" },
+    calle: "Córdoba",
+    altura: 1540,
+    observacion: "Proveedor de salud",
+  },
+];
+
 export function getMockResponse(endpoint: string): unknown {
   if (endpoint === "/me" || endpoint.startsWith("/me")) {
     return {
@@ -545,22 +587,10 @@ export function getMockResponse(endpoint: string): unknown {
     return MOCK_OBRAS_SOCIALES.map((o) => ({ id_ObraSocial: Number(o.id), nombreObraSocial: o.nombre }));
   }
   if (endpoint.startsWith("/buscarentidad/buscar")) {
-    return [{ nombre: "Juan", apellido: "Pérez", dni: "12345678" }];
+    return MOCK_ENTIDADES;
   }
   if (endpoint.startsWith("/buscarentidad")) {
-    return {
-      id_Entidad: 1,
-      cuitCuil: "20123456789",
-      nombre: "Juan",
-      apellido: "Pérez",
-      razonSocial: null,
-      sexo: "Hombre",
-      nacimiento: "1990-01-01",
-      ciudad: { id_Ciudad: 1, nombre: "Buenos Aires" },
-      calle: "Falsa",
-      altura: 123,
-      observacion: null,
-    };
+    return MOCK_ENTIDADES[0];
   }
   if (endpoint === "/codeudores/crear") {
     return { idEntidad: 15 };

@@ -21,6 +21,7 @@ const navItems: NavItem[] = [
   { title: "Colaboradores", url: "/dashboard/colaboradores" },
   { title: "Proveedores", url: "/dashboard/proveedores" },
   { title: "Nichos", url: "/dashboard/nichos" },
+  { title: "Entidades", url: "/dashboard/entidades" },
   { title: "Reportes", url: "/dashboard/reportes" },
   { title: "Empleados", url: "/dashboard/empleados" },
   { title: "Usuarios", url: "/dashboard/usuarios" },

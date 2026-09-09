@@ -362,6 +362,51 @@ export const MOCK_USUARIOS = [
   },
 ];
 
+export const MOCK_PROVEEDORES = [
+  {
+    id_Proveedor: 1,
+    cuitCuil: "30712345678",
+    razonSocial: "Emergencias Médicas S.A.",
+    prestacion: "Servicio de ambulancia y traslados",
+    estado: "Activo",
+    fechaNacimiento: "2010-03-15",
+    ciudad: "Rosario",
+    calle: "Córdoba",
+    altura: 1540,
+    observaciones: "Convenio vigente de emergencias",
+    telefonos: ["3414201000", "3414201001"],
+    emails: ["guardia@emergencias.com.ar"],
+  },
+  {
+    id_Proveedor: 2,
+    cuitCuil: "27254443334",
+    razonSocial: "Dra. Marcela González",
+    prestacion: "Atención médica clínica",
+    estado: "Activo",
+    fechaNacimiento: "1978-09-20",
+    ciudad: "Roldán",
+    calle: "San Martín",
+    altura: 420,
+    observaciones: "Consultorio lunes a jueves",
+    telefonos: ["3413456789"],
+    emails: ["marcelagonzalez@gmail.com"],
+  },
+  {
+    id_Proveedor: 3,
+    cuitCuil: "30558889992",
+    razonSocial: "Ortopedia Central",
+    prestacion: "Insumos ortopédicos y sillas de ruedas",
+    estado: "Inactivo",
+    fechaNacimiento: "2015-06-01",
+    ciudad: "Funes",
+    calle: "Santa Fe",
+    altura: 1200,
+    observaciones: "Contrato pausado",
+    telefonos: ["3414930000"],
+    emails: ["ventas@ortopediacentral.com"],
+  },
+];
+
 export function getMockResponse(endpoint: string): unknown {
   if (endpoint === "/me" || endpoint.startsWith("/me")) {
     return {
@@ -464,6 +509,26 @@ export function getMockResponse(endpoint: string): unknown {
   }
   if (endpoint === "/codeudores/crear") {
     return { idEntidad: 15 };
+  }
+  if (endpoint.startsWith("/proveedores/crear")) {
+    return { idProveedor: 4 };
+  }
+  if (endpoint.startsWith("/proveedores/baja")) {
+    return { mensaje: "Proveedor dado de baja correctamente" };
+  }
+  if (endpoint.startsWith("/proveedores/reactivar")) {
+    return { mensaje: "Proveedor reactivado correctamente" };
+  }
+  if (endpoint.startsWith("/proveedores/modificar")) {
+    return { mensaje: "Proveedor modificado correctamente" };
+  }
+  if (endpoint.match(/^\/proveedores\/\d+$/)) {
+    const id = Number(endpoint.replace("/proveedores/", ""));
+    const found = MOCK_PROVEEDORES.find((p) => p.id_Proveedor === id);
+    return found || MOCK_PROVEEDORES[0];
+  }
+  if (endpoint.startsWith("/proveedores")) {
+    return MOCK_PROVEEDORES;
   }
   throw new Error(`No hay mock definido para el endpoint: ${endpoint}`);
 }

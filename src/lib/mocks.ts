@@ -407,6 +407,61 @@ export const MOCK_PROVEEDORES = [
   },
 ];
 
+export const MOCK_NICHOS = [
+  {
+    id_Nicho: 1,
+    nroNicho: 45,
+    sector: "A",
+    ocupado: true,
+    valorNicho: 50000,
+    valorLapida: 15000,
+    cuotas: 12,
+    interes: 0.05,
+    socio: {
+      id_Socio: 1,
+      nombre: "Luciano",
+      apellido: "Oldan",
+    },
+  },
+  {
+    id_Nicho: 2,
+    nroNicho: 46,
+    sector: "A",
+    ocupado: false,
+    valorNicho: 50000,
+    valorLapida: 15000,
+    cuotas: 12,
+    interes: 0.05,
+    socio: null,
+  },
+  {
+    id_Nicho: 3,
+    nroNicho: 12,
+    sector: "B",
+    ocupado: true,
+    valorNicho: 60000,
+    valorLapida: 18000,
+    cuotas: 24,
+    interes: 0.08,
+    socio: {
+      id_Socio: 2,
+      nombre: "María",
+      apellido: "Gómez",
+    },
+  },
+  {
+    id_Nicho: 4,
+    nroNicho: 13,
+    sector: "B",
+    ocupado: false,
+    valorNicho: 60000,
+    valorLapida: 18000,
+    cuotas: 24,
+    interes: 0.08,
+    socio: null,
+  },
+];
+
 export function getMockResponse(endpoint: string): unknown {
   if (endpoint === "/me" || endpoint.startsWith("/me")) {
     return {
@@ -529,6 +584,9 @@ export function getMockResponse(endpoint: string): unknown {
   }
   if (endpoint.startsWith("/proveedores")) {
     return MOCK_PROVEEDORES;
+  }
+  if (endpoint.startsWith("/nichos/buscar") || endpoint.startsWith("/nichos")) {
+    return MOCK_NICHOS;
   }
   throw new Error(`No hay mock definido para el endpoint: ${endpoint}`);
 }

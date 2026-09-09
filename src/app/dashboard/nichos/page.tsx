@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { Landmark, CheckCircle2, XCircle } from "lucide-react";
@@ -129,64 +129,52 @@ export default function NichosPage() {
   ];
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-surface-container-lowest">
-      <div className="flex-1 flex flex-col min-h-0 px-4 md:px-8 py-6 space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Nichos y Panteón
-          </h1>
-          <p className="text-sm text-on-surface-variant mt-1">
-            Consulta y administración del estado de ocupación, sectores y adjudicación de nichos.
-          </p>
-        </div>
+    <div className="relative h-full p-4 md:p-8 space-y-6">
+      <h1 className="text-2xl font-bold mb-6">Nichos y Panteón</h1>
 
-        {/* Tarjetas de Métricas M3 */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-            <div className="p-3 bg-primary/10 text-primary rounded-xl">
-              <Landmark className="size-6" />
-            </div>
-            <div>
-              <p className="text-xs text-on-surface-variant font-medium">Total de Nichos</p>
-              <p className="text-2xl font-bold text-foreground mt-0.5">{totalNichos}</p>
-            </div>
-          </Card>
+      {/* Tarjetas de Métricas M3 */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
+          <div className="p-3 bg-primary/10 text-primary rounded-xl">
+            <Landmark className="size-6" />
+          </div>
+          <div>
+            <p className="text-xs text-on-surface-variant font-medium">Total de Nichos</p>
+            <p className="text-2xl font-bold text-foreground mt-0.5">{totalNichos}</p>
+          </div>
+        </Card>
 
-          <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-            <div className="p-3 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl">
-              <XCircle className="size-6" />
-            </div>
-            <div>
-              <p className="text-xs text-on-surface-variant font-medium">Ocupados / Concesionados</p>
-              <p className="text-2xl font-bold text-foreground mt-0.5">{ocupados}</p>
-            </div>
-          </Card>
+        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
+          <div className="p-3 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl">
+            <XCircle className="size-6" />
+          </div>
+          <div>
+            <p className="text-xs text-on-surface-variant font-medium">Ocupados / Concesionados</p>
+            <p className="text-2xl font-bold text-foreground mt-0.5">{ocupados}</p>
+          </div>
+        </Card>
 
-          <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-            <div className="p-3 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
-              <CheckCircle2 className="size-6" />
-            </div>
-            <div>
-              <p className="text-xs text-on-surface-variant font-medium">Disponibles</p>
-              <p className="text-2xl font-bold text-foreground mt-0.5">{disponibles}</p>
-            </div>
-          </Card>
-        </div>
-
-        {/* Tabla de Nichos */}
-        <div className="flex-1 flex flex-col min-h-0">
-          <DataTable<NichoItem>
-            storageKey="nichos-table"
-            data={nichos}
-            columns={columns}
-            getRowId={(n) => n.id}
-            loading={loading}
-            searchPlaceholder="Buscar por socio, número de nicho o sector..."
-            emptyMessage={loading ? "Cargando nichos..." : "No se encontraron nichos"}
-          />
-        </div>
+        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
+          <div className="p-3 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
+            <CheckCircle2 className="size-6" />
+          </div>
+          <div>
+            <p className="text-xs text-on-surface-variant font-medium">Disponibles</p>
+            <p className="text-2xl font-bold text-foreground mt-0.5">{disponibles}</p>
+          </div>
+        </Card>
       </div>
+
+      {/* Tabla de Nichos */}
+      <DataTable<NichoItem>
+        storageKey="nichos-table"
+        data={nichos}
+        columns={columns}
+        getRowId={(n) => n.id}
+        loading={loading}
+        searchPlaceholder="Buscar por socio, número de nicho o sector..."
+        emptyMessage={loading ? "Cargando nichos..." : "No se encontraron nichos"}
+      />
     </div>
   );
 }

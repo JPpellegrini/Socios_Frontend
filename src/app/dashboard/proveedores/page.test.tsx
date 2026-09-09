@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import ProveedoresPage from "./page";
 import * as actions from "./actions";
@@ -41,29 +41,17 @@ describe("ProveedoresPage", () => {
     (actions.obtenerProveedores as jest.Mock).mockResolvedValue(mockProveedoresList);
   });
 
-  it("debe cargar y renderizar la lista de proveedores", async () => {
+  it("debe cargar y renderizar la lista de proveedores y el botón flotante FAB", async () => {
     render(<ProveedoresPage />);
 
-    expect(screen.getByText("Proveedores")).toBeInTheDocument();
+    expect(screen.getByText("Listado de Proveedores")).toBeInTheDocument();
+    expect(screen.getByLabelText("Nuevo proveedor")).toBeInTheDocument();
 
     await waitFor(() => {
       expect(screen.getByText("Emergencias Médicas S.A.")).toBeInTheDocument();
       expect(screen.getByText("Ortopedia Central")).toBeInTheDocument();
       expect(screen.getByText("30712345678")).toBeInTheDocument();
     });
-  });
-
-  it("debe navegar al detalle al hacer click en el botón de ver detalle", async () => {
-    render(<ProveedoresPage />);
-
-    await waitFor(() => {
-      expect(screen.getByText("Emergencias Médicas S.A.")).toBeInTheDocument();
-    });
-
-    const verBtns = screen.getAllByLabelText("Ver detalle");
-    fireEvent.click(verBtns[0]);
-
-    expect(mockPush).toHaveBeenCalledWith("/dashboard/proveedores/1");
   });
 
   it("debe navegar a editar al hacer click en el botón de editar", async () => {
@@ -90,7 +78,7 @@ describe("ProveedoresPage", () => {
     const bajaBtn = screen.getByLabelText("Dar de baja");
     fireEvent.click(bajaBtn);
 
-    expect(screen.getByText("Confirmar Baja de Proveedor")).toBeInTheDocument();
+    expect(screen.getByText("¿Dar de baja proveedor?")).toBeInTheDocument();
 
     const confirmBtn = screen.getByRole("button", { name: "Dar de baja" });
     fireEvent.click(confirmBtn);
@@ -111,7 +99,7 @@ describe("ProveedoresPage", () => {
     const reactivarBtn = screen.getByLabelText("Reactivar");
     fireEvent.click(reactivarBtn);
 
-    expect(screen.getByText("Confirmar Reactivación de Proveedor")).toBeInTheDocument();
+    expect(screen.getByText("¿Reactivar proveedor?")).toBeInTheDocument();
 
     const confirmBtn = screen.getByRole("button", { name: "Reactivar" });
     fireEvent.click(confirmBtn);

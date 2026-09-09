@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { Users, Building2, User, Eye, MapPin, Calendar, FileText } from "lucide-react";
@@ -136,76 +136,64 @@ export default function EntidadesPage() {
   ];
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-surface-container-lowest">
-      <div className="flex-1 flex flex-col min-h-0 px-4 md:px-8 py-6 space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Padrón General de Entidades
-          </h1>
-          <p className="text-sm text-on-surface-variant mt-1">
-            Buscador y padrón unificado de personas físicas y jurídicas registradas en el sistema.
-          </p>
-        </div>
+    <div className="relative h-full p-4 md:p-8 space-y-6">
+      <h1 className="text-2xl font-bold mb-6">Padrón General de Entidades</h1>
 
-        {/* Tarjetas de Métricas M3 */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-            <div className="p-3 bg-primary/10 text-primary rounded-xl">
-              <Users className="size-6" />
-            </div>
-            <div>
-              <p className="text-xs text-on-surface-variant font-medium">Total de Entidades</p>
-              <p className="text-2xl font-bold text-foreground mt-0.5">{total}</p>
-            </div>
-          </Card>
+      {/* Tarjetas de Métricas M3 */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
+          <div className="p-3 bg-primary/10 text-primary rounded-xl">
+            <Users className="size-6" />
+          </div>
+          <div>
+            <p className="text-xs text-on-surface-variant font-medium">Total de Entidades</p>
+            <p className="text-2xl font-bold text-foreground mt-0.5">{total}</p>
+          </div>
+        </Card>
 
-          <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-            <div className="p-3 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl">
-              <User className="size-6" />
-            </div>
-            <div>
-              <p className="text-xs text-on-surface-variant font-medium">Personas Físicas</p>
-              <p className="text-2xl font-bold text-foreground mt-0.5">{fisicas}</p>
-            </div>
-          </Card>
+        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
+          <div className="p-3 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl">
+            <User className="size-6" />
+          </div>
+          <div>
+            <p className="text-xs text-on-surface-variant font-medium">Personas Físicas</p>
+            <p className="text-2xl font-bold text-foreground mt-0.5">{fisicas}</p>
+          </div>
+        </Card>
 
-          <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-            <div className="p-3 bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded-xl">
-              <Building2 className="size-6" />
-            </div>
-            <div>
-              <p className="text-xs text-on-surface-variant font-medium">Personas Jurídicas</p>
-              <p className="text-2xl font-bold text-foreground mt-0.5">{juridicas}</p>
-            </div>
-          </Card>
-        </div>
-
-        {/* Tabla con DataTable */}
-        <div className="flex-1 flex flex-col min-h-0">
-          <DataTable<EntidadListItem>
-            storageKey="entidades-table"
-            data={entidades}
-            columns={columns}
-            getRowId={(e) => e.id}
-            loading={loading}
-            searchPlaceholder="Buscar por nombre, apellido, razón social o DNI/CUIT..."
-            emptyMessage={loading ? "Buscando entidades..." : "No se encontraron entidades"}
-            onRowClick={handleVerDetalle}
-            renderActions={(e) => (
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                aria-label="Ver ficha"
-                title="Ver ficha de domicilio"
-                onClick={() => handleVerDetalle(e)}
-              >
-                <Eye className="size-4" />
-              </Button>
-            )}
-          />
-        </div>
+        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
+          <div className="p-3 bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded-xl">
+            <Building2 className="size-6" />
+          </div>
+          <div>
+            <p className="text-xs text-on-surface-variant font-medium">Personas Jurídicas</p>
+            <p className="text-2xl font-bold text-foreground mt-0.5">{juridicas}</p>
+          </div>
+        </Card>
       </div>
+
+      {/* Tabla con DataTable */}
+      <DataTable<EntidadListItem>
+        storageKey="entidades-table"
+        data={entidades}
+        columns={columns}
+        getRowId={(e) => e.id}
+        loading={loading}
+        searchPlaceholder="Buscar por nombre, apellido, razón social o DNI/CUIT..."
+        emptyMessage={loading ? "Buscando entidades..." : "No se encontraron entidades"}
+        onRowClick={handleVerDetalle}
+        renderActions={(e) => (
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Ver ficha"
+            title="Ver ficha de domicilio"
+            onClick={() => handleVerDetalle(e)}
+          >
+            <Eye />
+          </Button>
+        )}
+      />
 
       {/* Modal Ficha Rápida de Entidad */}
       <Dialog open={openModal} onOpenChange={setOpenModal}>

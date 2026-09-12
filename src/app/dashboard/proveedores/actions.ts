@@ -216,3 +216,75 @@ export async function reactivarProveedor(id: string): Promise<boolean> {
     return false;
   }
 }
+
+interface BackendEntidadBusqueda {
+  id_Entidad?: number;
+  cuitCuil?: string;
+  nombre?: string;
+  apellido?: string;
+  razonSocial?: string | null;
+  sexo?: string;
+  nacimiento?: string;
+  fechaNacimiento?: string;
+  ciudad?: { id_Ciudad?: number; nombre?: string } | string;
+  calle?: string;
+  altura?: number | string;
+  observacion?: string | null;
+  observaciones?: string | null;
+}
+
+export async function buscarProveedorPorDocumento(
+  cuitCuil: string
+): Promise<ProveedorFormData | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("authToken")?.value;
+
+  if (!token) return null;
+
+  try {
+    const raw = await fetchAPI<BackendEntidadBusqueda | ProveedorFormData>(
+      "/buscarentidad",
+      token,
+      {
+        method: "GET",
+        body: JSON.stringify({ dni: cuitCuil }),
+      }
+    );
+
+    if (!raw) return null;
+
+    if ("prestacion" in raw && "razonSocial" in raw) {
+      return raw as ProveedorFormData;
+    }
+
+    const entidad = raw as BackendEntidadBusqueda;
+    const ciudadNombre =
+      typeof entidad.ciudad === "object" && entidad.ciudad !== null
+        ? entidad.ciudad.nombre || ""
+        : typeof entidad.ciudad === "string"
+        ? entidad.ciudad
+        : "";
+
+    const fechaRaw = entidad.fechaNacimiento || entidad.nacimiento || "";
+    const razonSocialCalculada =
+      entidad.razonSocial ||
+      (entidad.nombre && entidad.apellido
+        ? `${entidad.apellido}, ${entidad.nombre}`
+        : entidad.nombre || "");
+
+    return {
+      cuitCuil,
+      razonSocial: razonSocialCalculada,
+      prestacion: "",
+      fechaNacimiento: fechaRaw ? (fechaRaw.split("T")[0] ?? "") : "",
+      ciudad: ciudadNombre,
+      calle: entidad.calle || "",
+      altura: String(entidad.altura ?? ""),
+      observaciones: entidad.observaciones || entidad.observacion || undefined,
+      telefonos: [],
+      correos: [],
+    };
+  } catch {
+    return null;
+  }
+}

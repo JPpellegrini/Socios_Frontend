@@ -5,6 +5,7 @@ import {
   actualizarProveedor,
   darDeBajaProveedor,
   reactivarProveedor,
+  buscarProveedorPorDocumento,
 } from "./actions";
 
 jest.mock("../../../lib/apiClient", () => ({
@@ -204,6 +205,43 @@ describe("Proveedores Server Actions", () => {
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify({ idProveedor: 3 }),
+        })
+      );
+    });
+  });
+
+  describe("buscarProveedorPorDocumento", () => {
+    it("sin token devuelve null", async () => {
+      (cookies as jest.Mock).mockResolvedValue({ get: () => undefined });
+      const res = await buscarProveedorPorDocumento("30712345678");
+      expect(res).toBeNull();
+    });
+
+    it("con token consulta /buscarentidad y mapea entidad", async () => {
+      (cookies as jest.Mock).mockResolvedValue({
+        get: (name: string) => (name === "authToken" ? { value: "tok" } : undefined),
+      });
+      (fetchAPI as jest.Mock).mockResolvedValue({
+        id_Entidad: 1,
+        cuitCuil: "30712345678",
+        razonSocial: "Emergencias Médicas S.A.",
+        ciudad: { id_Ciudad: 2, nombre: "Rosario" },
+        calle: "Córdoba",
+        altura: 1540,
+        nacimiento: "2010-03-15",
+      });
+
+      const res = await buscarProveedorPorDocumento("30712345678");
+      expect(res).not.toBeNull();
+      expect(res?.razonSocial).toBe("Emergencias Médicas S.A.");
+      expect(res?.ciudad).toBe("Rosario");
+      expect(res?.calle).toBe("Córdoba");
+      expect(fetchAPI).toHaveBeenCalledWith(
+        "/buscarentidad",
+        "tok",
+        expect.objectContaining({
+          method: "GET",
+          body: JSON.stringify({ dni: "30712345678" }),
         })
       );
     });

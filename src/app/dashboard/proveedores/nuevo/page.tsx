@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -256,7 +256,11 @@ function ProveedorForm() {
 
   return (
     <div className="min-h-screen bg-surface-container-lowest text-on-surface p-4 md:p-8 flex justify-center items-start">
-      <Card variant="outlined" className="w-full max-w-6xl p-6 md:p-10 bg-background">
+      <Card
+        variant="outlined"
+        className="w-full max-w-6xl p-6 md:p-10 bg-background"
+        style={{ "--input-bg": "var(--color-surface-container-lowest)" } as React.CSSProperties}
+      >
         <h1 className="text-2xl mb-8 font-semibold tracking-tight">
           {isEditing ? "Editar proveedor" : "Nuevo proveedor"}
         </h1>

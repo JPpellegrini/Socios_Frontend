@@ -9,8 +9,9 @@ const Input = React.forwardRef<
     variant?: "filled" | "outlined"
     error?: boolean
     errorText?: string
+    onClear?: () => void
   }
->(({ className, type, label, id, variant = "filled", error, errorText, onChange, onInvalid, onFocus, onBlur, ...props }, ref) => {
+>(({ className, type, label, id, variant = "filled", error, errorText, onClear, onChange, onInvalid, onFocus, onBlur, ...props }, ref) => {
   const generatedId = React.useId()
   const inputId = id || generatedId
 
@@ -82,6 +83,9 @@ const Input = React.forwardRef<
       if (error || errorText) {
         setInternalErrorCleared(true)
       }
+    }
+    if (onClear) {
+      onClear()
     }
   }
 
@@ -162,8 +166,8 @@ const Input = React.forwardRef<
                     isError ? "text-destructive peer-focus:text-destructive"
                     : isWarning ? "text-yellow-600 dark:text-yellow-500 peer-focus:text-yellow-500"
                     : "text-on-surface-variant peer-focus:text-primary",
-                    "peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:py-px peer-focus:px-1 peer-focus:bg-[var(--input-bg,var(--background))]",
-                    "peer-[:not(:placeholder-shown)]:-translate-y-7 peer-[:not(:placeholder-shown)]:scale-75 peer-[:not(:placeholder-shown)]:py-px peer-[:not(:placeholder-shown)]:px-1 peer-[:not(:placeholder-shown)]:bg-[var(--input-bg,var(--background))]",
+                    "peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:py-px peer-focus:px-1.5 peer-focus:bg-[var(--input-bg,var(--surface-container-lowest))]",
+                    "peer-[:not(:placeholder-shown)]:-translate-y-7 peer-[:not(:placeholder-shown)]:scale-75 peer-[:not(:placeholder-shown)]:py-px peer-[:not(:placeholder-shown)]:px-1.5 peer-[:not(:placeholder-shown)]:bg-[var(--input-bg,var(--surface-container-lowest))]",
                   ],
               "peer-disabled:opacity-50"
             )}
@@ -185,7 +189,7 @@ const Input = React.forwardRef<
               {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
           )}
-          {hasValue && !isError && !isWarning && (
+          {hasValue && !isError && !isWarning && (!props.readOnly || Boolean(onClear)) && (
             <button
               type="button"
               onMouseDown={(e) => e.preventDefault()}

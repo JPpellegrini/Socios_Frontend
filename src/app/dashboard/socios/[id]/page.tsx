@@ -37,7 +37,7 @@ export default function SocioDetallePage() {
   }, [id, sociosService])
 
   return (
-    <div className="relative h-full p-4 md:p-8">
+    <div className="relative min-h-full p-4 md:p-8 pb-16">
       <div className="flex items-center gap-4 mb-6">
         <Button variant="outline" size="icon-lg" onClick={() => router.back()}>
           <ArrowLeft />

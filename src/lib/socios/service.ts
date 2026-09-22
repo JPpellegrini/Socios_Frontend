@@ -23,15 +23,16 @@ export type { SocioListItem, SocioDetalle, SocioFormData }
 export interface SociosService {
   list(): Promise<SocioListItem[]>
   get(id: string): Promise<SocioDetalle | null>
-  findByDocumento(nroDocumento: string): Promise<SocioFormData | null>
+  findByDocumento(nroDocumento: string): Promise<(SocioFormData & { id?: string }) | null>
   create(data: SocioFormData): Promise<void>
   update(id: string, data: SocioFormData): Promise<void>
   remove(id: string): Promise<boolean>
   reactivate(id: string): Promise<boolean>
 }
 
-function detalleToFormData(d: SocioDetalle): SocioFormData {
+function detalleToFormData(d: SocioDetalle): SocioFormData & { id?: string } {
   return {
+    id: d.id,
     nombre: d.nombre,
     apellido: d.apellido,
     nroDocumento: d.nroDocumento,
@@ -61,7 +62,7 @@ class MockSociosService implements SociosService {
   async get(id: string): Promise<SocioDetalle | null> {
     return devGetSocioDetalle(id)
   }
-  async findByDocumento(nroDocumento: string): Promise<SocioFormData | null> {
+  async findByDocumento(nroDocumento: string): Promise<(SocioFormData & { id?: string }) | null> {
     const d = devFindSocioByDocumento(nroDocumento)
     return d ? detalleToFormData(d) : null
   }
@@ -86,7 +87,7 @@ class ApiSociosService implements SociosService {
   async get(id: string): Promise<SocioDetalle | null> {
     return obtenerSocioDetalle(id)
   }
-  async findByDocumento(nroDocumento: string): Promise<SocioFormData | null> {
+  async findByDocumento(nroDocumento: string): Promise<(SocioFormData & { id?: string }) | null> {
     return buscarSocioPorDocumento(nroDocumento)
   }
   async create(data: SocioFormData): Promise<void> {

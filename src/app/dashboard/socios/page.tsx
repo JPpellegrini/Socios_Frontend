@@ -117,7 +117,7 @@ export default function SociosPage() {
               "inline-flex items-center rounded-[8px] h-8 px-3.5 text-sm font-medium",
               s.estado === "Activo"
                 ? "bg-primary-container text-on-primary-container"
-                : "bg-destructive/10 text-destructive"
+                : "bg-destructive text-white font-medium"
             )}
           >
             {s.estado}

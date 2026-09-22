@@ -62,6 +62,8 @@ jest.mock('../../../../components/ui/dialog', () => ({
   DialogContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   DialogHeader: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   DialogTitle: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  DialogDescription: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  DialogFooter: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   DialogTrigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   DialogClose: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
@@ -106,6 +108,8 @@ describe('Módulo de Socios - Registro (Comportamiento)', () => {
       expect(findByDocumento).toHaveBeenCalledWith('12345678');
       expect(screen.getByLabelText(/^nombre$/i)).toBeInTheDocument();
     });
+    expect(screen.queryByLabelText(/fecha de baja/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/^estado$/i)).not.toBeInTheDocument();
 
     await userEvent.type(screen.getByLabelText(/^nombre$/i), 'Juan');
     await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
@@ -149,8 +153,9 @@ describe('Módulo de Socios - Registro (Comportamiento)', () => {
     });
   }, 15000);
 
-  it('debe autocompletar el formulario si encuentra el socio con el documento ingresado', async () => {
+  it('debe autocompletar el formulario y entrar en modo edición si encuentra el socio con el documento ingresado', async () => {
     const findByDocumento = jest.fn().mockResolvedValue({
+      id: 'socio-123',
       nroDocumento: '12345678',
       nombre: 'Carlos',
       apellido: 'González',
@@ -160,6 +165,7 @@ describe('Módulo de Socios - Registro (Comportamiento)', () => {
       calle: 'Mitre',
       altura: '980',
       fechaAlta: '2023-01-10',
+      fechaBaja: '2023-12-01',
       obraSocial: 'OSDE',
       nroAfiliadoObraSocial: 'OSDE-12345678',
       plan: 'A',
@@ -170,8 +176,8 @@ describe('Módulo de Socios - Registro (Comportamiento)', () => {
       correos: ['carlos@test.com'],
     });
 
-    const create = jest.fn().mockResolvedValue(undefined);
-    renderPage(makeFake({ findByDocumento, create }));
+    const update = jest.fn().mockResolvedValue(undefined);
+    renderPage(makeFake({ findByDocumento, update }));
 
     await userEvent.type(screen.getByLabelText(/^documento$/i), '12345678');
     fireEvent.click(screen.getByRole('button', { name: /^buscar$/i }));
@@ -183,19 +189,25 @@ describe('Módulo de Socios - Registro (Comportamiento)', () => {
       expect(screen.getByTestId('mock-select-Sexo')).toHaveAttribute('data-value', 'Hombre');
       expect(screen.getByLabelText(/nº de afiliado de la obra social/i)).toHaveValue('OSDE-12345678');
       expect(screen.getByLabelText(/^observaciones$/i)).toHaveValue('Socio existente');
+      expect(screen.getByLabelText(/fecha de baja/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/^estado$/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/^estado$/i)).toHaveValue('Baja');
     });
 
     fireEvent.click(screen.getByRole('button', { name: /grabar/i }));
 
     await waitFor(() => {
-      expect(create).toHaveBeenCalledWith(expect.objectContaining({
-        nroDocumento: '12345678',
-        nombre: 'Carlos',
-        apellido: 'González',
-        sexo: 'Hombre',
-        nroAfiliadoObraSocial: 'OSDE-12345678',
-        observaciones: 'Socio existente',
-      }));
+      expect(update).toHaveBeenCalledWith(
+        'socio-123',
+        expect.objectContaining({
+          nroDocumento: '12345678',
+          nombre: 'Carlos',
+          apellido: 'González',
+          sexo: 'Hombre',
+          nroAfiliadoObraSocial: 'OSDE-12345678',
+          observaciones: 'Socio existente',
+        })
+      );
     });
   });
 
@@ -319,8 +331,8 @@ describe('Módulo de Socios - Registro (Comportamiento)', () => {
       { id: '2', nombre: 'María', apellido: 'Gómez', nroDocumento: '20123456', obraSocial: 'OSDE', plan: 'B', estado: 'Activo' },
       { id: '3', nombre: 'Carlos', apellido: 'Rodríguez', nroDocumento: '34567890', obraSocial: 'IAPOS', plan: 'A', estado: 'Baja' },
     ]);
-    const create = jest.fn().mockResolvedValue(undefined);
-    renderPage(makeFake({ findByDocumento, list, create }));
+    const update = jest.fn().mockResolvedValue(undefined);
+    renderPage(makeFake({ findByDocumento, list, update }));
 
     await userEvent.type(screen.getByLabelText(/^documento$/i), '12345678');
     fireEvent.click(screen.getByRole('button', { name: /^buscar$/i }));
@@ -339,9 +351,12 @@ describe('Módulo de Socios - Registro (Comportamiento)', () => {
     fireEvent.click(screen.getByRole('button', { name: /grabar/i }));
 
     await waitFor(() => {
-      expect(create).toHaveBeenCalledWith(expect.objectContaining({
-        codeudores: [{ id: '2', nombre: 'María', apellido: 'Gómez', nroDocumento: '20123456' }],
-      }));
+      expect(update).toHaveBeenCalledWith(
+        '12345678',
+        expect.objectContaining({
+          codeudores: [{ id: '2', nombre: 'María', apellido: 'Gómez', nroDocumento: '20123456' }],
+        })
+      );
     });
   });
 
@@ -409,6 +424,8 @@ describe('Módulo de Socios - Registro (Comportamiento)', () => {
     renderPage(makeFake({ get, update }));
 
     await waitFor(() => expect(screen.getByLabelText(/^nombre$/i)).toHaveValue('Juan'));
+    expect(screen.getByLabelText(/fecha de baja/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^estado$/i)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /grabar/i }));
 

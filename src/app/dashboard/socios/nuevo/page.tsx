@@ -24,12 +24,19 @@ import {
 function NuevoSocioForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const editId = searchParams.get("edit")
-  const isEdit = Boolean(editId)
+  const editIdParam = searchParams.get("edit")
+  const [currentEditId, setCurrentEditId] = React.useState<string | null>(editIdParam)
+  const isEdit = Boolean(currentEditId)
   const sociosService = useSociosService()
 
-  const [isVerificado, setIsVerificado] = React.useState(isEdit)
+  const [isVerificado, setIsVerificado] = React.useState(Boolean(editIdParam))
   const [loadingSearch, setLoadingSearch] = React.useState(false)
+
+  React.useEffect(() => {
+    if (editIdParam) {
+      setCurrentEditId(editIdParam)
+    }
+  }, [editIdParam])
 
   const {
     register,
@@ -44,7 +51,7 @@ function NuevoSocioForm() {
     resolver: zodResolver(socioSchema) as Resolver<SocioFormData>,
     defaultValues: {
       nroDocumento: "",
-      fechaAlta: new Date().toISOString().split("T")[0],
+      fechaAlta: new Date().toISOString().substring(0, 10),
       sexo: "",
       telefonos: [],
       correos: [],
@@ -62,6 +69,7 @@ function NuevoSocioForm() {
   const planValue = useWatch({ control, name: "plan" })
   const sepelioValue = useWatch({ control, name: "sepelio" })
   const cobradorValue = useWatch({ control, name: "cobrador" })
+  const fechaBajaValue = useWatch({ control, name: "fechaBaja" })
 
   const onSubmit = async (data: SocioFormData) => {
     const formattedData: SocioFormData = {
@@ -71,8 +79,8 @@ function NuevoSocioForm() {
     }
 
     try {
-      if (isEdit && editId) {
-        await sociosService.update(editId, formattedData)
+      if (currentEditId) {
+        await sociosService.update(currentEditId, formattedData)
       } else {
         await sociosService.create(formattedData)
       }
@@ -95,6 +103,8 @@ function NuevoSocioForm() {
     try {
       const socio = await sociosService.findByDocumento(nroDocumentoValue)
       if (socio) {
+        const foundId = socio.id ? String(socio.id) : (editIdParam || nroDocumentoValue)
+        setCurrentEditId(foundId)
         const formattedTelefonos = (socio.telefonos || []).map((t) =>
           typeof t === "string" ? { value: t } : t
         )
@@ -111,6 +121,7 @@ function NuevoSocioForm() {
           codeudores: formattedCodeudores,
         })
       } else {
+        setCurrentEditId(null)
         reset({
           nroDocumento: nroDocumentoValue,
           nombre: "",
@@ -120,7 +131,7 @@ function NuevoSocioForm() {
           ciudad: "",
           calle: "",
           altura: "",
-          fechaAlta: new Date().toISOString().split("T")[0],
+          fechaAlta: new Date().toISOString().substring(0, 10),
           fechaBaja: "",
           obraSocial: "",
           nroAfiliadoObraSocial: "",
@@ -146,10 +157,11 @@ function NuevoSocioForm() {
   }
 
   const handleCambiarDocumento = () => {
+    setCurrentEditId(null)
     setIsVerificado(false)
     reset({
       nroDocumento: "",
-      fechaAlta: new Date().toISOString().split("T")[0],
+      fechaAlta: new Date().toISOString().substring(0, 10),
       sexo: "",
       telefonos: [],
       correos: [],
@@ -163,6 +175,7 @@ function NuevoSocioForm() {
   const populate = React.useCallback(
     (socio: SocioDetalle | null) => {
       if (!socio) return
+      setCurrentEditId(editIdParam || socio.id)
       reset({
         nroDocumento: socio.nroDocumento,
         nombre: socio.nombre,
@@ -186,14 +199,14 @@ function NuevoSocioForm() {
       })
       setIsVerificado(true)
     },
-    [reset]
+    [editIdParam, reset]
   )
 
   React.useEffect(() => {
-    if (!isEdit || !editId) return
+    if (!editIdParam) return
     let cancelled = false
     sociosService
-      .get(editId)
+      .get(editIdParam)
       .then((data) => {
         if (cancelled) return
         populate(data)
@@ -205,7 +218,7 @@ function NuevoSocioForm() {
     return () => {
       cancelled = true
     }
-  }, [isEdit, editId, sociosService, populate])
+  }, [editIdParam, sociosService, populate])
 
   return (
     <div className="min-h-screen bg-surface-container-lowest text-on-surface p-4 md:p-8 flex justify-center items-start">
@@ -220,6 +233,7 @@ function NuevoSocioForm() {
             errors={errors}
             isVerificado={isVerificado}
             isEdit={isEdit}
+            isDirectEdit={Boolean(editIdParam)}
             loadingSearch={loadingSearch}
             onBuscar={handleVerificarDocumento}
             onCancelar={() => router.push("/dashboard/socios")}
@@ -234,14 +248,19 @@ function NuevoSocioForm() {
                 setValue={setValue}
                 ciudadValue={ciudadValue}
                 sexoValue={sexoValue}
-                editId={editId}
+                editId={currentEditId}
               />
 
               <div className="col-span-12 my-6">
                 <Separator />
               </div>
 
-              <FechasEstadoFields register={register} errors={errors} />
+              <FechasEstadoFields
+                register={register}
+                errors={errors}
+                isEdit={isEdit}
+                fechaBajaValue={fechaBajaValue}
+              />
 
               <ObraSocialFields
                 register={register}
@@ -255,7 +274,7 @@ function NuevoSocioForm() {
 
               <ContactosFields control={control} errors={errors} />
 
-              <CodeudoresFields control={control} errors={errors} excludeId={editId} />
+              <CodeudoresFields control={control} errors={errors} excludeId={currentEditId ?? undefined} />
 
               <ObservacionesFields register={register} errors={errors} />
 
@@ -265,6 +284,7 @@ function NuevoSocioForm() {
 
               <FormFooter
                 isEdit={isEdit}
+                isDirectEdit={Boolean(editIdParam)}
                 onIrAlListado={() => router.push("/dashboard/socios")}
                 onBuscarOtro={handleCambiarDocumento}
               />

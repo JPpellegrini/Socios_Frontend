@@ -87,9 +87,9 @@ const SelectTrigger = React.forwardRef<
               : [
                   "top-4 scale-100 text-base",
                   error ? "text-destructive peer-focus:text-destructive peer-data-[state=open]:text-destructive" : "text-on-surface-variant peer-focus:text-primary peer-data-[state=open]:text-primary",
-                  "peer-data-[has-value=true]:-translate-y-7 peer-data-[has-value=true]:scale-75 peer-data-[has-value=true]:bg-[var(--input-bg,var(--background))] peer-data-[has-value=true]:px-1",
-                  "peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:bg-[var(--input-bg,var(--background))] peer-focus:px-1",
-                  "peer-data-[state=open]:-translate-y-7 peer-data-[state=open]:scale-75 peer-data-[state=open]:bg-[var(--input-bg,var(--background))] peer-data-[state=open]:px-1",
+                  "peer-data-[has-value=true]:-translate-y-7 peer-data-[has-value=true]:scale-75 peer-data-[has-value=true]:bg-[var(--input-bg,var(--surface-container-lowest))] peer-data-[has-value=true]:px-1.5",
+                  "peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:bg-[var(--input-bg,var(--surface-container-lowest))] peer-focus:px-1.5",
+                  "peer-data-[state=open]:-translate-y-7 peer-data-[state=open]:scale-75 peer-data-[state=open]:bg-[var(--input-bg,var(--surface-container-lowest))] peer-data-[state=open]:px-1.5",
                 ]
           )}
         >

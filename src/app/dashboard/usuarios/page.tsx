@@ -53,11 +53,14 @@ export default function UsuariosPage() {
       const ok = await usuariosService.toggleEstado(userToToggleState.id_Usuario)
       if (ok) {
         setUsuarios((prev) =>
-          prev.map((u) =>
-            u.id_Usuario === userToToggleState.id_Usuario
-              ? { ...u, estado: u.estado === "ACTIVO" ? "BAJA" : "ACTIVO" }
-              : u
-          )
+          prev.map((u) => {
+            if (u.id_Usuario !== userToToggleState.id_Usuario) return u
+            const isActivo = (u.estado || "").toUpperCase() === "ACTIVO"
+            return {
+              ...u,
+              estado: isActivo ? "BAJA" : "ACTIVO",
+            }
+          })
         )
       }
     } catch (err) {
@@ -105,21 +108,24 @@ export default function UsuariosPage() {
       {
         key: "estado",
         header: "Estado",
-        accessor: (u) => (
-          <span
-            className={cn(
-              "inline-flex items-center rounded-[8px] h-8 px-3.5 text-sm font-medium",
-              u.estado === "ACTIVO"
-                ? "bg-primary-container text-on-primary-container"
-                : "bg-destructive/10 text-destructive"
-            )}
-          >
-            {u.estado}
-          </span>
-        ),
+        accessor: (u) => {
+          const isActivo = (u.estado || "").toUpperCase() === "ACTIVO"
+          return (
+            <span
+              className={cn(
+                "inline-flex items-center rounded-[8px] h-8 px-3.5 text-sm font-medium",
+                isActivo
+                  ? "bg-primary-container text-on-primary-container"
+                  : "bg-destructive text-white font-medium"
+              )}
+            >
+              {isActivo ? "ACTIVO" : "BAJA"}
+            </span>
+          )
+        },
         filterable: true,
         filterOptions: ESTADO_OPTIONS,
-        filterAccessor: (u) => u.estado,
+        filterAccessor: (u) => ((u.estado || "").toUpperCase() === "ACTIVO" ? "ACTIVO" : "BAJA"),
       },
     ],
     []
@@ -157,7 +163,7 @@ export default function UsuariosPage() {
             >
               <KeyRound />
             </Button>
-            {u.estado === "ACTIVO" ? (
+            {(u.estado || "").toUpperCase() === "ACTIVO" ? (
               <Button
                 variant="ghost"
                 size="icon"
@@ -199,21 +205,27 @@ export default function UsuariosPage() {
         onOpenChange={(open) => {
           if (!open) setUserToToggleState(null)
         }}
-        variant={userToToggleState?.estado === "ACTIVO" ? "destructive" : "primary"}
+        variant={
+          (userToToggleState?.estado || "").toUpperCase() === "ACTIVO"
+            ? "destructive"
+            : "primary"
+        }
         title={
-          userToToggleState?.estado === "ACTIVO"
+          (userToToggleState?.estado || "").toUpperCase() === "ACTIVO"
             ? "¿Dar de baja usuario?"
             : "¿Reactivar usuario?"
         }
         description={
           userToToggleState
             ? `¿Está seguro de que desea cambiar el estado del usuario "${userToToggleState.usuario}" a ${
-                userToToggleState.estado === "ACTIVO" ? "BAJA" : "ACTIVO"
+                (userToToggleState.estado || "").toUpperCase() === "ACTIVO" ? "BAJA" : "ACTIVO"
               }?`
             : "Mensaje confirmación de baja con cambio de estado."
         }
         confirmText={
-          userToToggleState?.estado === "ACTIVO" ? "Dar de Baja" : "Reactivar"
+          (userToToggleState?.estado || "").toUpperCase() === "ACTIVO"
+            ? "Dar de Baja"
+            : "Reactivar"
         }
         cancelText="Cancelar"
         onConfirm={handleConfirmToggleState}

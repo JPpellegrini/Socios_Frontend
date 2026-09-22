@@ -21,9 +21,10 @@ import { Fab } from "@/components/ui/fab"
 import { MOCK_CIUDADES, type Ciudad } from "@/lib/ciudades"
 import { MOCK_OBRAS_SOCIALES, type ObraSocial } from "@/lib/obras-sociales"
 
-import type { SocioFormData } from "./schema"
+import type { SocioFormData, Codeudor } from "./schema"
 import { contactValue } from "./schema"
 import { useSociosService, type SocioListItem } from "@/lib/socios/service-context"
+import { CrearCodeudorDialog } from "./crear-codeudor-dialog"
 
 const OBRAS_SOCIALES_COLUMNS: Column<ObraSocial>[] = [
   { key: "id", header: "Id", accessor: (o) => o.id, searchable: true },
@@ -44,7 +45,8 @@ interface DocumentoFieldProps {
   register: UseFormRegister<SocioFormData>
   errors: FieldErrors<SocioFormData>
   isVerificado: boolean
-  isEdit: boolean
+  isEdit?: boolean
+  isDirectEdit?: boolean
   loadingSearch: boolean
   onBuscar: () => void
   onCancelar: () => void
@@ -56,6 +58,7 @@ export function DocumentoField({
   errors,
   isVerificado,
   isEdit,
+  isDirectEdit = isEdit,
   loadingSearch,
   onBuscar,
   onCancelar,
@@ -93,7 +96,7 @@ export function DocumentoField({
             />
           </>
         ) : (
-          !isEdit && (
+          !isDirectEdit && (
             <Button
               type="button"
               variant="outline"
@@ -195,10 +198,11 @@ export function DatosPersonalesFields({
         <div className="flex-grow w-full">
           <Input
             label="Ciudad"
-            value={ciudadValue || "Ninguna seleccionada"}
+            value={ciudadValue || ""}
             readOnly
             variant="outlined"
             error={!!errors.ciudad}
+            onClear={() => setValue("ciudad", "", { shouldValidate: true })}
           />
         </div>
         <Dialog>
@@ -264,9 +268,16 @@ export function DatosPersonalesFields({
 interface FechasEstadoFieldsProps {
   register: UseFormRegister<SocioFormData>
   errors: FieldErrors<SocioFormData>
+  isEdit?: boolean
+  fechaBajaValue?: string
 }
 
-export function FechasEstadoFields({ register, errors }: FechasEstadoFieldsProps) {
+export function FechasEstadoFields({
+  register,
+  errors,
+  isEdit = false,
+  fechaBajaValue,
+}: FechasEstadoFieldsProps) {
   return (
     <>
       <div className="col-span-12 md:col-span-4">
@@ -280,25 +291,29 @@ export function FechasEstadoFields({ register, errors }: FechasEstadoFieldsProps
         />
       </div>
 
-      <div className="col-span-12 md:col-span-4">
-        <Input
-          label="Fecha de baja"
-          type="date"
-          variant="outlined"
-          error={!!errors.fechaBaja}
-          errorText={errors.fechaBaja?.message}
-          {...register("fechaBaja")}
-        />
-      </div>
+      {isEdit && (
+        <>
+          <div className="col-span-12 md:col-span-4">
+            <Input
+              label="Fecha de baja"
+              type="date"
+              variant="outlined"
+              error={!!errors.fechaBaja}
+              errorText={errors.fechaBaja?.message}
+              {...register("fechaBaja")}
+            />
+          </div>
 
-      <div className="col-span-12 md:col-span-4">
-        <Input
-          label="Estado"
-          value="Activo"
-          readOnly
-          variant="outlined"
-        />
-      </div>
+          <div className="col-span-12 md:col-span-4">
+            <Input
+              label="Estado"
+              value={fechaBajaValue ? "Baja" : "Activo"}
+              readOnly
+              variant="outlined"
+            />
+          </div>
+        </>
+      )}
     </>
   )
 }
@@ -328,9 +343,10 @@ export function ObraSocialFields({
         <div className="flex-grow w-full">
           <Input
             label="Obra Social"
-            value={obraSocialValue || "Ninguna seleccionada"}
+            value={obraSocialValue || ""}
             readOnly
             variant="outlined"
+            onClear={() => setValue("obraSocial", "")}
           />
         </div>
         <Dialog>
@@ -561,6 +577,7 @@ interface CodeudoresFieldsProps {
 
 export function CodeudoresFields({ control, errors, excludeId }: CodeudoresFieldsProps) {
   const sociosService = useSociosService()
+  const [openCrearDialog, setOpenCrearDialog] = React.useState(false)
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -607,47 +624,76 @@ export function CodeudoresFields({ control, errors, excludeId }: CodeudoresField
     })
   }
 
+  const handleCodeudorCreado = (codeudor: Codeudor) => {
+    append({
+      id: codeudor.id,
+      nombre: codeudor.nombre,
+      apellido: codeudor.apellido,
+      nroDocumento: codeudor.nroDocumento,
+    })
+  }
+
   return (
     <div className="col-span-12 mt-6">
       <h2 className="text-xl mb-4 font-medium">Codeudores</h2>
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-end gap-2">
-        <p className="flex-grow text-sm text-on-surface-variant w-full">
-          Los codeudores son socios que avalan al titular.
+      <div className="flex flex-col sm:flex-row items-start sm:items-end gap-2 flex-wrap">
+        <p className="flex-grow text-sm text-on-surface-variant min-w-[200px]">
+          Los codeudores son socios o personas que avalan al titular.
         </p>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="secondary" className="w-full sm:w-auto h-14 px-4">
-              <Plus className="size-4" />
-              <span>Agregar codeudor</span>
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Buscar socio</DialogTitle>
-            </DialogHeader>
-            <div className="py-4 space-y-4">
-              <DataTable<SocioListItem>
-                storageKey="codeudores-selector"
-                data={availableSocios}
-                columns={SOCIOS_COLUMNS}
-                getRowId={(s) => s.id}
-                loading={loadingSocios}
-                searchPlaceholder="Buscar socio por nombre o documento"
-                emptyMessage={loadingSocios ? "Cargando socios..." : "No se encontraron socios"}
-                columnsLabel="Columnas"
-                renderActions={(s) => (
-                  <DialogClose asChild>
-                    <Button size="sm" onClick={() => handleAgregar(s)}>
-                      Elegir
-                    </Button>
-                  </DialogClose>
-                )}
-              />
-            </div>
-          </DialogContent>
-        </Dialog>
+
+        <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="secondary" className="w-full sm:w-auto h-14 px-4" type="button">
+                <Search className="size-4" />
+                <span>Agregar codeudor</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Buscar socio</DialogTitle>
+              </DialogHeader>
+              <div className="py-4 space-y-4">
+                <DataTable<SocioListItem>
+                  storageKey="codeudores-selector"
+                  data={availableSocios}
+                  columns={SOCIOS_COLUMNS}
+                  getRowId={(s) => s.id}
+                  loading={loadingSocios}
+                  searchPlaceholder="Buscar socio por nombre o documento"
+                  emptyMessage={loadingSocios ? "Cargando socios..." : "No se encontraron socios"}
+                  columnsLabel="Columnas"
+                  renderActions={(s) => (
+                    <DialogClose asChild>
+                      <Button size="sm" onClick={() => handleAgregar(s)}>
+                        Elegir
+                      </Button>
+                    </DialogClose>
+                  )}
+                />
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto h-14 px-4"
+            type="button"
+            onClick={() => setOpenCrearDialog(true)}
+          >
+            <Plus className="size-4" />
+            <span>Crear nuevo codeudor</span>
+          </Button>
+        </div>
       </div>
+
+      <CrearCodeudorDialog
+        open={openCrearDialog}
+        onOpenChange={setOpenCrearDialog}
+        onCodeudorCreado={handleCodeudorCreado}
+      />
+
       {errors.codeudores && <p className="text-xs text-destructive mt-1 px-4">{errors.codeudores.message}</p>}
       <div className="flex flex-wrap gap-2 mt-4">
         {fields.length === 0 ? (
@@ -696,18 +742,24 @@ export function ObservacionesFields({ register, errors }: ObservacionesFieldsPro
 
 interface FormFooterProps {
   isEdit: boolean
+  isDirectEdit?: boolean
   onIrAlListado: () => void
   onBuscarOtro: () => void
 }
 
-export function FormFooter({ isEdit, onIrAlListado, onBuscarOtro }: FormFooterProps) {
+export function FormFooter({
+  isEdit,
+  isDirectEdit = isEdit,
+  onIrAlListado,
+  onBuscarOtro,
+}: FormFooterProps) {
   return (
     <div className="col-span-12 flex flex-col md:flex-row justify-end gap-4 mt-10">
       <Button
         type="button"
         variant="outline"
         className="w-full md:w-40"
-        onClick={isEdit ? onIrAlListado : onBuscarOtro}
+        onClick={isDirectEdit ? onIrAlListado : onBuscarOtro}
       >
         Cancelar
       </Button>

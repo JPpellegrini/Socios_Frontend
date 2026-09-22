@@ -41,3 +41,18 @@ export async function obtenerSesion(): Promise<Usuario | null> {
     return null;
   }
 }
+
+/**
+ * Obtiene el token de autenticación para Server Actions.
+ * - En modo 'develop' (isMockMode): si no existe cookie authToken en el navegador,
+ *   proporciona un token simulado ('mock-token') para que fetchAPI proceda con los mocks.
+ * - En 'stg' o 'prod': requiere estrictamente la presencia de la cookie authToken.
+ */
+export async function getAuthToken(): Promise<string | undefined> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("authToken")?.value;
+  if (!token && isMockMode()) {
+    return "mock-token";
+  }
+  return token;
+}

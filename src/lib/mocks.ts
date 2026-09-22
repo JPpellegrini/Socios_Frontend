@@ -330,7 +330,7 @@ export const MOCK_USUARIOS = [
     usuario: "CJR",
     rolNombre: "Consultor",
     rol: "CONSULTOR",
-    estado: "Activo",
+    estado: "ACTIVO",
     descripcion: "Solo acceso a informes",
   },
   {
@@ -339,7 +339,7 @@ export const MOCK_USUARIOS = [
     usuario: "ADMIN_SISTEMA",
     rolNombre: "Secretaria",
     rol: "SECRETARIO",
-    estado: "Activo",
+    estado: "ACTIVO",
     descripcion: "Acceso total",
   },
   {
@@ -348,7 +348,7 @@ export const MOCK_USUARIOS = [
     usuario: "MPEREZ",
     rolNombre: "Consultor",
     rol: "CONSULTOR",
-    estado: "Activo",
+    estado: "ACTIVO",
     descripcion: "Solo informes",
   },
   {
@@ -357,12 +357,154 @@ export const MOCK_USUARIOS = [
     usuario: "JALVAREZ",
     rolNombre: "Consultor",
     rol: "CONSULTOR",
-    estado: "Inactivo",
+    estado: "BAJA",
     descripcion: "Usuario inactivo",
   },
 ];
 
-export function getMockResponse(endpoint: string): unknown {
+export const MOCK_PROVEEDORES = [
+  {
+    id_Proveedor: 1,
+    cuitCuil: "30712345678",
+    razonSocial: "Emergencias Médicas S.A.",
+    prestacion: "Servicio de ambulancia y traslados",
+    estado: "Activo",
+    fechaNacimiento: "2010-03-15",
+    ciudad: "Rosario",
+    calle: "Córdoba",
+    altura: 1540,
+    observaciones: "Convenio vigente de emergencias",
+    telefonos: ["3414201000", "3414201001"],
+    emails: ["guardia@emergencias.com.ar"],
+  },
+  {
+    id_Proveedor: 2,
+    cuitCuil: "27254443334",
+    razonSocial: "Dra. Marcela González",
+    prestacion: "Atención médica clínica",
+    estado: "Activo",
+    fechaNacimiento: "1978-09-20",
+    ciudad: "Roldán",
+    calle: "San Martín",
+    altura: 420,
+    observaciones: "Consultorio lunes a jueves",
+    telefonos: ["3413456789"],
+    emails: ["marcelagonzalez@gmail.com"],
+  },
+  {
+    id_Proveedor: 3,
+    cuitCuil: "30558889992",
+    razonSocial: "Ortopedia Central",
+    prestacion: "Insumos ortopédicos y sillas de ruedas",
+    estado: "Inactivo",
+    fechaNacimiento: "2015-06-01",
+    ciudad: "Funes",
+    calle: "Santa Fe",
+    altura: 1200,
+    observaciones: "Contrato pausado",
+    telefonos: ["3414930000"],
+    emails: ["ventas@ortopediacentral.com"],
+  },
+];
+
+export const MOCK_NICHOS = [
+  {
+    id_Nicho: 1,
+    nroNicho: 45,
+    sector: "A",
+    ocupado: true,
+    valorNicho: 50000,
+    valorLapida: 15000,
+    cuotas: 12,
+    interes: 0.05,
+    socio: {
+      id_Socio: 1,
+      nombre: "Luciano",
+      apellido: "Oldan",
+    },
+  },
+  {
+    id_Nicho: 2,
+    nroNicho: 46,
+    sector: "A",
+    ocupado: false,
+    valorNicho: 50000,
+    valorLapida: 15000,
+    cuotas: 12,
+    interes: 0.05,
+    socio: null,
+  },
+  {
+    id_Nicho: 3,
+    nroNicho: 12,
+    sector: "B",
+    ocupado: true,
+    valorNicho: 60000,
+    valorLapida: 18000,
+    cuotas: 24,
+    interes: 0.08,
+    socio: {
+      id_Socio: 2,
+      nombre: "María",
+      apellido: "Gómez",
+    },
+  },
+  {
+    id_Nicho: 4,
+    nroNicho: 13,
+    sector: "B",
+    ocupado: false,
+    valorNicho: 60000,
+    valorLapida: 18000,
+    cuotas: 24,
+    interes: 0.08,
+    socio: null,
+  },
+];
+
+export const MOCK_ENTIDADES = [
+  {
+    id_Entidad: 1,
+    cuitCuil: "20123456789",
+    nombre: "Juan",
+    apellido: "Pérez",
+    razonSocial: null,
+    sexo: "Hombre",
+    nacimiento: "1990-01-01",
+    ciudad: { id_Ciudad: 1, nombre: "Buenos Aires" },
+    calle: "Falsa",
+    altura: 123,
+    observacion: "Socio activo",
+  },
+  {
+    id_Entidad: 2,
+    cuitCuil: "27201234564",
+    nombre: "María",
+    apellido: "Gómez",
+    razonSocial: null,
+    sexo: "Mujer",
+    nacimiento: "1985-05-15",
+    ciudad: { id_Ciudad: 2, nombre: "Rosario" },
+    calle: "Mitre",
+    altura: 450,
+    observacion: null,
+  },
+  {
+    id_Entidad: 3,
+    cuitCuil: "30712345678",
+    nombre: "",
+    apellido: "",
+    razonSocial: "Emergencias Médicas S.A.",
+    sexo: "-",
+    nacimiento: "2010-03-15",
+    ciudad: { id_Ciudad: 2, nombre: "Rosario" },
+    calle: "Córdoba",
+    altura: 1540,
+    observacion: "Proveedor de salud",
+  },
+];
+
+export function getMockResponse(endpoint: string, options?: RequestInit): unknown {
   if (endpoint === "/me" || endpoint.startsWith("/me")) {
     return {
       id_Usuario: MOCK_USUARIO.id_Usuario,
@@ -445,25 +587,85 @@ export function getMockResponse(endpoint: string): unknown {
     return MOCK_OBRAS_SOCIALES.map((o) => ({ id_ObraSocial: Number(o.id), nombreObraSocial: o.nombre }));
   }
   if (endpoint.startsWith("/buscarentidad/buscar")) {
-    return [{ nombre: "Juan", apellido: "Pérez", dni: "12345678" }];
+    return MOCK_ENTIDADES;
   }
   if (endpoint.startsWith("/buscarentidad")) {
-    return {
-      id_Entidad: 1,
-      cuitCuil: "20123456789",
-      nombre: "Juan",
-      apellido: "Pérez",
-      razonSocial: null,
-      sexo: "Hombre",
-      nacimiento: "1990-01-01",
-      ciudad: { id_Ciudad: 1, nombre: "Buenos Aires" },
-      calle: "Falsa",
-      altura: 123,
-      observacion: null,
-    };
+    return MOCK_ENTIDADES[0];
   }
   if (endpoint === "/codeudores/crear") {
     return { idEntidad: 15 };
+  }
+  if (endpoint.startsWith("/proveedores/crear")) {
+    return { idProveedor: 4 };
+  }
+  if (endpoint.startsWith("/proveedores/baja")) {
+    let id: number | undefined;
+    if (options?.body) {
+      try {
+        const body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+        id = Number(body?.idProveedor ?? body?.id_Proveedor ?? body?.id);
+      } catch {
+        // fallback
+      }
+    }
+    if (id) {
+      const found = MOCK_PROVEEDORES.find((p) => p.id_Proveedor === id);
+      if (found) {
+        found.estado = "Inactivo";
+      }
+    }
+    return { mensaje: "Proveedor dado de baja correctamente" };
+  }
+  if (endpoint.startsWith("/proveedores/reactivar")) {
+    let id: number | undefined;
+    if (options?.body) {
+      try {
+        const body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+        id = Number(body?.idProveedor ?? body?.id_Proveedor ?? body?.id);
+      } catch {
+        // fallback
+      }
+    }
+    if (id) {
+      const found = MOCK_PROVEEDORES.find((p) => p.id_Proveedor === id);
+      if (found) {
+        found.estado = "Activo";
+      }
+    }
+    return { mensaje: "Proveedor reactivado correctamente" };
+  }
+  if (endpoint.startsWith("/proveedores/eliminar") || (endpoint.match(/^\/proveedores\/\d+$/) && options?.method === "DELETE")) {
+    let id: number | undefined;
+    const match = endpoint.match(/^\/proveedores\/(\d+)$/);
+    if (match) {
+      id = Number(match[1]);
+    } else if (options?.body) {
+      try {
+        const body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+        id = Number(body?.idProveedor ?? body?.id_Proveedor ?? body?.id);
+      } catch {}
+    }
+    if (id) {
+      const idx = MOCK_PROVEEDORES.findIndex((p) => p.id_Proveedor === id);
+      if (idx !== -1) {
+        MOCK_PROVEEDORES.splice(idx, 1);
+      }
+    }
+    return { mensaje: "Proveedor eliminado correctamente" };
+  }
+  if (endpoint.startsWith("/proveedores/modificar")) {
+    return { mensaje: "Proveedor modificado correctamente" };
+  }
+  if (endpoint.match(/^\/proveedores\/\d+$/)) {
+    const id = Number(endpoint.replace("/proveedores/", ""));
+    const found = MOCK_PROVEEDORES.find((p) => p.id_Proveedor === id);
+    return found || MOCK_PROVEEDORES[0];
+  }
+  if (endpoint.startsWith("/proveedores")) {
+    return MOCK_PROVEEDORES;
+  }
+  if (endpoint.startsWith("/nichos/buscar") || endpoint.startsWith("/nichos")) {
+    return MOCK_NICHOS;
   }
   throw new Error(`No hay mock definido para el endpoint: ${endpoint}`);
 }

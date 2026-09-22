@@ -9,7 +9,7 @@ export async function fetchAPI<T = unknown>(
   options: RequestInit = {}
 ): Promise<T> {
   if (isMockMode()) {
-    return getMockResponse(endpoint) as T;
+    return getMockResponse(endpoint, options) as T;
   }
 
   const apiUrl = getApiUrl();

@@ -1,8 +1,8 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { fetchAPI } from "@/lib/apiClient";
-import { SocioFormData, normalizeContacts } from "./schema";
+import { getAuthToken } from "@/lib/auth";
+import { SocioFormData, CodeudorFormData, normalizeContacts } from "./schema";
 import { findCiudadIdByName } from "@/lib/ciudades";
 import { findObraSocialIdByName } from "@/lib/obras-sociales";
 
@@ -23,14 +23,13 @@ interface BackendEntidadResponse {
 
 export async function buscarSocioPorDocumento(
   nroDocumento: string
-): Promise<SocioFormData | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+): Promise<(SocioFormData & { id?: string }) | null> {
+  const token = await getAuthToken();
 
   if (!token) return null;
 
   try {
-    const raw = await fetchAPI<BackendEntidadResponse | SocioFormData>(
+    const raw = await fetchAPI<BackendEntidadResponse | (SocioFormData & { id?: string })>(
       "/buscarentidad",
       token,
       {
@@ -43,7 +42,7 @@ export async function buscarSocioPorDocumento(
 
     // Si ya viene con formato SocioFormData (por ejemplo en tests / mocks directos)
     if ("plan" in raw && "cobrador" in raw) {
-      return raw as SocioFormData;
+      return raw as (SocioFormData & { id?: string });
     }
 
     const entidad = raw as BackendEntidadResponse;
@@ -55,6 +54,7 @@ export async function buscarSocioPorDocumento(
         : "";
 
     return {
+      id: entidad.id_Entidad ? String(entidad.id_Entidad) : undefined,
       nroDocumento,
       nombre: entidad.nombre || "",
       apellido: entidad.apellido || "",
@@ -82,8 +82,7 @@ export async function buscarSocioPorDocumento(
 }
 
 export async function guardarSocio(data: SocioFormData): Promise<void> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return;
 
@@ -115,8 +114,7 @@ export async function guardarSocio(data: SocioFormData): Promise<void> {
 }
 
 export async function actualizarSocio(id: string, data: SocioFormData): Promise<void> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return;
 
@@ -137,6 +135,33 @@ export async function actualizarSocio(id: string, data: SocioFormData): Promise<
 
   await fetchAPI("/socios/modificar", token, {
     method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function crearCodeudor(
+  data: CodeudorFormData
+): Promise<{ idEntidad: number } | null> {
+  const token = await getAuthToken();
+
+  if (!token) return null;
+
+  const payload = {
+    dni: data.dni,
+    nombre: data.nombre,
+    apellido: data.apellido,
+    fechaNacimiento: data.fechaNacimiento,
+    sexo: data.sexo || undefined,
+    idCiudad: findCiudadIdByName(data.ciudad),
+    calle: data.calle,
+    altura: parseInt(data.altura, 10) || 0,
+    observaciones: data.observaciones || undefined,
+    telefonos: normalizeContacts(data.telefonos),
+    emails: normalizeContacts(data.correos),
+  };
+
+  return await fetchAPI<{ idEntidad: number }>("/codeudores/crear", token, {
+    method: "POST",
     body: JSON.stringify(payload),
   });
 }

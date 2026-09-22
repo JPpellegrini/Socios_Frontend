@@ -265,9 +265,16 @@ export function DatosPersonalesFields({
 interface FechasEstadoFieldsProps {
   register: UseFormRegister<SocioFormData>
   errors: FieldErrors<SocioFormData>
+  isEdit?: boolean
+  fechaBajaValue?: string
 }
 
-export function FechasEstadoFields({ register, errors }: FechasEstadoFieldsProps) {
+export function FechasEstadoFields({
+  register,
+  errors,
+  isEdit = false,
+  fechaBajaValue,
+}: FechasEstadoFieldsProps) {
   return (
     <>
       <div className="col-span-12 md:col-span-4">
@@ -281,25 +288,29 @@ export function FechasEstadoFields({ register, errors }: FechasEstadoFieldsProps
         />
       </div>
 
-      <div className="col-span-12 md:col-span-4">
-        <Input
-          label="Fecha de baja"
-          type="date"
-          variant="outlined"
-          error={!!errors.fechaBaja}
-          errorText={errors.fechaBaja?.message}
-          {...register("fechaBaja")}
-        />
-      </div>
+      {isEdit && (
+        <>
+          <div className="col-span-12 md:col-span-4">
+            <Input
+              label="Fecha de baja"
+              type="date"
+              variant="outlined"
+              error={!!errors.fechaBaja}
+              errorText={errors.fechaBaja?.message}
+              {...register("fechaBaja")}
+            />
+          </div>
 
-      <div className="col-span-12 md:col-span-4">
-        <Input
-          label="Estado"
-          value="Activo"
-          readOnly
-          variant="outlined"
-        />
-      </div>
+          <div className="col-span-12 md:col-span-4">
+            <Input
+              label="Estado"
+              value={fechaBajaValue ? "Baja" : "Activo"}
+              readOnly
+              variant="outlined"
+            />
+          </div>
+        </>
+      )}
     </>
   )
 }

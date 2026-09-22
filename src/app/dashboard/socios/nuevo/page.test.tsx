@@ -108,6 +108,8 @@ describe('Módulo de Socios - Registro (Comportamiento)', () => {
       expect(findByDocumento).toHaveBeenCalledWith('12345678');
       expect(screen.getByLabelText(/^nombre$/i)).toBeInTheDocument();
     });
+    expect(screen.queryByLabelText(/fecha de baja/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/^estado$/i)).not.toBeInTheDocument();
 
     await userEvent.type(screen.getByLabelText(/^nombre$/i), 'Juan');
     await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
@@ -411,6 +413,8 @@ describe('Módulo de Socios - Registro (Comportamiento)', () => {
     renderPage(makeFake({ get, update }));
 
     await waitFor(() => expect(screen.getByLabelText(/^nombre$/i)).toHaveValue('Juan'));
+    expect(screen.getByLabelText(/fecha de baja/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^estado$/i)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /grabar/i }));
 

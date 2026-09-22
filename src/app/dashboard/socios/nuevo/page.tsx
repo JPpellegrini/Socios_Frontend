@@ -62,6 +62,7 @@ function NuevoSocioForm() {
   const planValue = useWatch({ control, name: "plan" })
   const sepelioValue = useWatch({ control, name: "sepelio" })
   const cobradorValue = useWatch({ control, name: "cobrador" })
+  const fechaBajaValue = useWatch({ control, name: "fechaBaja" })
 
   const onSubmit = async (data: SocioFormData) => {
     const formattedData: SocioFormData = {
@@ -241,7 +242,12 @@ function NuevoSocioForm() {
                 <Separator />
               </div>
 
-              <FechasEstadoFields register={register} errors={errors} />
+              <FechasEstadoFields
+                register={register}
+                errors={errors}
+                isEdit={isEdit}
+                fechaBajaValue={fechaBajaValue}
+              />
 
               <ObraSocialFields
                 register={register}

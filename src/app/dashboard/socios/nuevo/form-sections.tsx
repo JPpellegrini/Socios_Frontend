@@ -45,7 +45,8 @@ interface DocumentoFieldProps {
   register: UseFormRegister<SocioFormData>
   errors: FieldErrors<SocioFormData>
   isVerificado: boolean
-  isEdit: boolean
+  isEdit?: boolean
+  isDirectEdit?: boolean
   loadingSearch: boolean
   onBuscar: () => void
   onCancelar: () => void
@@ -57,6 +58,7 @@ export function DocumentoField({
   errors,
   isVerificado,
   isEdit,
+  isDirectEdit = isEdit,
   loadingSearch,
   onBuscar,
   onCancelar,
@@ -94,7 +96,7 @@ export function DocumentoField({
             />
           </>
         ) : (
-          !isEdit && (
+          !isDirectEdit && (
             <Button
               type="button"
               variant="outline"
@@ -740,18 +742,24 @@ export function ObservacionesFields({ register, errors }: ObservacionesFieldsPro
 
 interface FormFooterProps {
   isEdit: boolean
+  isDirectEdit?: boolean
   onIrAlListado: () => void
   onBuscarOtro: () => void
 }
 
-export function FormFooter({ isEdit, onIrAlListado, onBuscarOtro }: FormFooterProps) {
+export function FormFooter({
+  isEdit,
+  isDirectEdit = isEdit,
+  onIrAlListado,
+  onBuscarOtro,
+}: FormFooterProps) {
   return (
     <div className="col-span-12 flex flex-col md:flex-row justify-end gap-4 mt-10">
       <Button
         type="button"
         variant="outline"
         className="w-full md:w-40"
-        onClick={isEdit ? onIrAlListado : onBuscarOtro}
+        onClick={isDirectEdit ? onIrAlListado : onBuscarOtro}
       >
         Cancelar
       </Button>

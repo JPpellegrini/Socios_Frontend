@@ -23,13 +23,13 @@ interface BackendEntidadResponse {
 
 export async function buscarSocioPorDocumento(
   nroDocumento: string
-): Promise<SocioFormData | null> {
+): Promise<(SocioFormData & { id?: string }) | null> {
   const token = await getAuthToken();
 
   if (!token) return null;
 
   try {
-    const raw = await fetchAPI<BackendEntidadResponse | SocioFormData>(
+    const raw = await fetchAPI<BackendEntidadResponse | (SocioFormData & { id?: string })>(
       "/buscarentidad",
       token,
       {
@@ -42,7 +42,7 @@ export async function buscarSocioPorDocumento(
 
     // Si ya viene con formato SocioFormData (por ejemplo en tests / mocks directos)
     if ("plan" in raw && "cobrador" in raw) {
-      return raw as SocioFormData;
+      return raw as (SocioFormData & { id?: string });
     }
 
     const entidad = raw as BackendEntidadResponse;
@@ -54,6 +54,7 @@ export async function buscarSocioPorDocumento(
         : "";
 
     return {
+      id: entidad.id_Entidad ? String(entidad.id_Entidad) : undefined,
       nroDocumento,
       nombre: entidad.nombre || "",
       apellido: entidad.apellido || "",

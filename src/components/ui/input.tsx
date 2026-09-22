@@ -9,8 +9,9 @@ const Input = React.forwardRef<
     variant?: "filled" | "outlined"
     error?: boolean
     errorText?: string
+    onClear?: () => void
   }
->(({ className, type, label, id, variant = "filled", error, errorText, onChange, onInvalid, onFocus, onBlur, ...props }, ref) => {
+>(({ className, type, label, id, variant = "filled", error, errorText, onClear, onChange, onInvalid, onFocus, onBlur, ...props }, ref) => {
   const generatedId = React.useId()
   const inputId = id || generatedId
 
@@ -82,6 +83,9 @@ const Input = React.forwardRef<
       if (error || errorText) {
         setInternalErrorCleared(true)
       }
+    }
+    if (onClear) {
+      onClear()
     }
   }
 
@@ -185,7 +189,7 @@ const Input = React.forwardRef<
               {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
           )}
-          {hasValue && !isError && !isWarning && (
+          {hasValue && !isError && !isWarning && (!props.readOnly || Boolean(onClear)) && (
             <button
               type="button"
               onMouseDown={(e) => e.preventDefault()}

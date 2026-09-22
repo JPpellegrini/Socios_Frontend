@@ -245,11 +245,12 @@ export function CrearCodeudorDialog({
               <div className="flex-grow w-full">
                 <Input
                   label="Ciudad"
-                  value={ciudadValue || "Ninguna seleccionada"}
+                  value={ciudadValue || ""}
                   readOnly
                   variant="outlined"
                   error={!!errors.ciudad}
                   errorText={errors.ciudad?.message}
+                  onClear={() => setValue("ciudad", "", { shouldValidate: true })}
                 />
               </div>
               <Dialog>

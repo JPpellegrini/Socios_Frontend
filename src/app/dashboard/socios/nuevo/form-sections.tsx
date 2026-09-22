@@ -196,10 +196,11 @@ export function DatosPersonalesFields({
         <div className="flex-grow w-full">
           <Input
             label="Ciudad"
-            value={ciudadValue || "Ninguna seleccionada"}
+            value={ciudadValue || ""}
             readOnly
             variant="outlined"
             error={!!errors.ciudad}
+            onClear={() => setValue("ciudad", "", { shouldValidate: true })}
           />
         </div>
         <Dialog>
@@ -340,9 +341,10 @@ export function ObraSocialFields({
         <div className="flex-grow w-full">
           <Input
             label="Obra Social"
-            value={obraSocialValue || "Ninguna seleccionada"}
+            value={obraSocialValue || ""}
             readOnly
             variant="outlined"
+            onClear={() => setValue("obraSocial", "")}
           />
         </div>
         <Dialog>

@@ -351,10 +351,11 @@ function ProveedorForm() {
                 <div className="flex-grow w-full">
                   <Input
                     label="Ciudad"
-                    value={ciudadValue || "Ninguna seleccionada"}
+                    value={ciudadValue || ""}
                     readOnly
                     variant="outlined"
                     error={!!errors.ciudad}
+                    onClear={() => setValue("ciudad", "", { shouldValidate: true })}
                   />
                 </div>
                 <Dialog>

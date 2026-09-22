@@ -1,7 +1,7 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { fetchAPI } from "@/lib/apiClient";
+import { getAuthToken } from "@/lib/auth";
 import { type NichoItem, type NichoFiltros } from "./schema";
 
 interface BackendNichoItem {
@@ -27,8 +27,7 @@ interface BackendNichoItem {
 export async function obtenerNichos(
   filtros?: NichoFiltros
 ): Promise<NichoItem[]> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return [];
 

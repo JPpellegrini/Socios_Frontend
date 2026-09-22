@@ -20,6 +20,7 @@ import {
   HeartHandshake,
   Lock,
   TrendingUp,
+  Contact,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter, usePathname } from "next/navigation"
@@ -70,7 +71,7 @@ const navItems: NavItem[] = [
         id: "alta_nichos",
         label: "Alta nichos",
         icon: <Grid size={18} />,
-        url: "/dashboard/socios/alta-nichos",
+        url: "/dashboard/nichos",
       },
       {
         id: "config_cuotas",
@@ -95,6 +96,7 @@ const navItems: NavItem[] = [
     ],
   },
   { id: "proveedores", label: "Proveedores", icon: <Truck size={22} />, url: "/dashboard/proveedores" },
+  { id: "entidades", label: "Entidades", icon: <Contact size={22} />, url: "/dashboard/entidades" },
   { id: "reportes", label: "Reportes", icon: <TrendingUp size={22} />, url: "/dashboard/reportes" },
   { id: "empleados", label: "Empleados", icon: <Briefcase size={22} />, url: "/dashboard/empleados" },
   { id: "usuarios", label: "Usuarios", icon: <Users size={22} />, url: "/dashboard/usuarios" },
@@ -113,14 +115,18 @@ export function DashboardLayoutClient({
   const activeItem = React.useMemo(() => {
     const matchingItem = navItems.find(item => 
       (item.url && (pathname === item.url || pathname.startsWith(item.url + "/"))) || 
-      (item.subItems && item.subItems.some(sub => sub.url && (pathname === sub.url || pathname.startsWith(sub.url + "/"))))
+      (item.subItems && item.subItems.some(sub =>
+        sub.url && (pathname === sub.url || pathname.startsWith(sub.url + "/") || (sub.id === "alta_nichos" && pathname === "/dashboard/socios/alta-nichos"))
+      ))
     )
     return matchingItem ? matchingItem.id : "usuarios"
   }, [pathname])
 
   const activeSubItem = React.useMemo(() => {
     const allSubItems = navItems.flatMap(i => i.subItems || [])
-    const matchingSub = allSubItems.find(sub => sub.url && (pathname === sub.url || pathname.startsWith(sub.url + "/")))
+    const matchingSub = allSubItems.find(sub =>
+      sub.url && (pathname === sub.url || pathname.startsWith(sub.url + "/") || (sub.id === "alta_nichos" && pathname === "/dashboard/socios/alta-nichos"))
+    )
     return matchingSub ? matchingSub.id : null
   }, [pathname])
 
@@ -136,7 +142,9 @@ export function DashboardLayoutClient({
   const activeParentId = React.useMemo(() => {
     const matchingItem = navItems.find(item =>
       (item.url && pathname === item.url) ||
-      (item.subItems && item.subItems.some(sub => pathname === sub.url))
+      (item.subItems && item.subItems.some(sub =>
+        pathname === sub.url || (sub.id === "alta_nichos" && pathname === "/dashboard/socios/alta-nichos")
+      ))
     )
     return matchingItem && matchingItem.subItems ? matchingItem.id : null
   }, [pathname])

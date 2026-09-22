@@ -1,7 +1,7 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { fetchAPI } from "@/lib/apiClient";
+import { getAuthToken } from "@/lib/auth";
 import { SocioFormData, CodeudorFormData, normalizeContacts } from "./schema";
 import { findCiudadIdByName } from "@/lib/ciudades";
 import { findObraSocialIdByName } from "@/lib/obras-sociales";
@@ -24,8 +24,7 @@ interface BackendEntidadResponse {
 export async function buscarSocioPorDocumento(
   nroDocumento: string
 ): Promise<SocioFormData | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return null;
 
@@ -82,8 +81,7 @@ export async function buscarSocioPorDocumento(
 }
 
 export async function guardarSocio(data: SocioFormData): Promise<void> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return;
 
@@ -115,8 +113,7 @@ export async function guardarSocio(data: SocioFormData): Promise<void> {
 }
 
 export async function actualizarSocio(id: string, data: SocioFormData): Promise<void> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return;
 
@@ -144,8 +141,7 @@ export async function actualizarSocio(id: string, data: SocioFormData): Promise<
 export async function crearCodeudor(
   data: CodeudorFormData
 ): Promise<{ idEntidad: number } | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return null;
 

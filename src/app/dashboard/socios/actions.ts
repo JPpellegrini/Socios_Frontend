@@ -1,7 +1,7 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { fetchAPI } from "@/lib/apiClient";
+import { getAuthToken } from "@/lib/auth";
 import type { Codeudor } from "@/app/dashboard/socios/nuevo/schema";
 
 export interface SocioListItem {
@@ -81,8 +81,7 @@ export interface BackendSocioDetalle {
 }
 
 export async function obtenerSocios(): Promise<SocioListItem[]> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) {
     return [];
@@ -116,8 +115,7 @@ export async function obtenerSocios(): Promise<SocioListItem[]> {
 }
 
 export async function obtenerSocioDetalle(id: string): Promise<SocioDetalle | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) {
     return null;
@@ -157,8 +155,7 @@ export async function eliminarSocio(
   id: string,
   motivo: "RENUNCIA" | "MORA" | "FALLECIMIENTO" = "RENUNCIA"
 ): Promise<boolean> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return false;
 
@@ -174,8 +171,7 @@ export async function eliminarSocio(
 }
 
 export async function reactivarSocio(id: string): Promise<boolean> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return false;
 

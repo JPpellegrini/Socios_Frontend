@@ -20,16 +20,32 @@ import { fetchAPI } from "../../../lib/apiClient";
 import { cookies } from "next/headers";
 
 describe("Proveedores Server Actions", () => {
+  const originalEnv = process.env.ENV;
+
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
+    process.env.ENV = "stg";
+  });
+
+  afterAll(() => {
+    process.env.ENV = originalEnv;
   });
 
   describe("obtenerProveedores", () => {
-    it("sin token devuelve array vacío", async () => {
+    it("sin token en stg devuelve array vacío", async () => {
       (cookies as jest.Mock).mockResolvedValue({ get: () => undefined });
       const res = await obtenerProveedores();
       expect(res).toEqual([]);
       expect(fetchAPI).not.toHaveBeenCalled();
+    });
+
+    it("en develop (mock mode) sin cookie permite consultar mocks", async () => {
+      process.env.ENV = "develop";
+      (cookies as jest.Mock).mockResolvedValue({ get: () => undefined });
+      (fetchAPI as jest.Mock).mockResolvedValue([]);
+
+      await obtenerProveedores();
+      expect(fetchAPI).toHaveBeenCalledWith("/proveedores", "mock-token");
     });
 
     it("con token consulta /proveedores y mapea los datos", async () => {

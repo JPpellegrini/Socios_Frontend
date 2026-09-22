@@ -1,7 +1,7 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { fetchAPI } from "@/lib/apiClient";
+import { getAuthToken } from "@/lib/auth";
 import type {
   UsuarioListItem,
   CrearUsuarioDTO,
@@ -37,8 +37,7 @@ function rolToId(rol: string): number {
 }
 
 export async function obtenerUsuarios(): Promise<UsuarioListItem[]> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return [];
 
@@ -70,8 +69,7 @@ export async function obtenerUsuarios(): Promise<UsuarioListItem[]> {
 }
 
 export async function crearUsuario(data: CrearUsuarioDTO): Promise<UsuarioListItem | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return null;
 
@@ -103,8 +101,7 @@ export async function crearUsuario(data: CrearUsuarioDTO): Promise<UsuarioListIt
 }
 
 export async function cambiarRolUsuario(data: ModificarRolDTO): Promise<boolean> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return false;
 
@@ -120,8 +117,7 @@ export async function cambiarRolUsuario(data: ModificarRolDTO): Promise<boolean>
 }
 
 export async function cambiarPasswordUsuario(data: ModificarPasswordDTO): Promise<boolean> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return false;
 
@@ -140,8 +136,7 @@ export async function cambiarEstadoUsuario(
   id_Usuario: number,
   nuevoEstado?: "ACTIVO" | "BAJA"
 ): Promise<boolean> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return false;
 

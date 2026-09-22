@@ -88,7 +88,7 @@ describe('DashboardLayoutClient', () => {
     expect(sociosBtn).toHaveClass('bg-primary-container')
   })
 
-  it('debe resaltar el sub-ítem activo basado en el pathname', () => {
+  it('debe resaltar el sub-ítem activo basado en el pathname (/dashboard/socios/alta-nichos)', () => {
     mockPathname.mockReturnValue('/dashboard/socios/alta-nichos')
     
     render(
@@ -101,4 +101,18 @@ describe('DashboardLayoutClient', () => {
     expect(altaNichosBtn).toHaveClass('bg-secondary-container')
   })
 
+  it('debe resaltar el sub-ítem Alta nichos y navegar a /dashboard/nichos cuando pathname es /dashboard/nichos', () => {
+    mockPathname.mockReturnValue('/dashboard/nichos')
+    
+    render(
+      <DashboardLayoutClient usuario={mockUsuario as Usuario}>
+        <div>Contenido</div>
+      </DashboardLayoutClient>
+    )
+    
+    const altaNichosBtn = screen.getByRole('button', { name: /alta nichos/i })
+    expect(altaNichosBtn).toHaveClass('bg-secondary-container')
+    fireEvent.click(altaNichosBtn)
+    expect(mockPush).toHaveBeenCalledWith('/dashboard/nichos')
+  })
 })

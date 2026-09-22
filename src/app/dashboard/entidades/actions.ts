@@ -1,7 +1,7 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { fetchAPI } from "@/lib/apiClient";
+import { getAuthToken } from "@/lib/auth";
 import { type EntidadListItem, type EntidadDetalle } from "./schema";
 
 interface BackendEntidadRaw {
@@ -25,8 +25,7 @@ interface BackendEntidadRaw {
 export async function buscarEntidades(
   filtro?: string
 ): Promise<EntidadListItem[]> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return [];
 
@@ -67,8 +66,7 @@ export async function buscarEntidades(
 export async function obtenerEntidadPorDni(
   dni: string
 ): Promise<EntidadDetalle | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token || !dni) return null;
 

@@ -1,7 +1,7 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { fetchAPI } from "@/lib/apiClient";
+import { getAuthToken } from "@/lib/auth";
 import {
   type ProveedorListItem,
   type ProveedorDetalle,
@@ -39,8 +39,7 @@ export async function obtenerProveedores(filtros?: {
   cuitCuil?: string;
   estado?: string;
 }): Promise<ProveedorListItem[]> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return [];
 
@@ -84,8 +83,7 @@ export async function obtenerProveedores(filtros?: {
 export async function obtenerProveedorDetalle(
   id: string
 ): Promise<ProveedorDetalle | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return null;
 
@@ -132,8 +130,7 @@ export async function obtenerProveedorDetalle(
 export async function crearProveedor(
   data: ProveedorFormData
 ): Promise<{ idProveedor: number } | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return null;
 
@@ -160,8 +157,7 @@ export async function actualizarProveedor(
   id: string,
   data: ProveedorFormData
 ): Promise<void> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return;
 
@@ -184,8 +180,7 @@ export async function actualizarProveedor(
 }
 
 export async function darDeBajaProveedor(id: string): Promise<boolean> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return false;
 
@@ -201,8 +196,7 @@ export async function darDeBajaProveedor(id: string): Promise<boolean> {
 }
 
 export async function reactivarProveedor(id: string): Promise<boolean> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return false;
 
@@ -236,8 +230,7 @@ interface BackendEntidadBusqueda {
 export async function buscarProveedorPorDocumento(
   cuitCuil: string
 ): Promise<ProveedorFormData | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("authToken")?.value;
+  const token = await getAuthToken();
 
   if (!token) return null;
 

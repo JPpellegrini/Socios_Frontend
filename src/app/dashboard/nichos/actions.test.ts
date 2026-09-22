@@ -12,16 +12,32 @@ import { fetchAPI } from "../../../lib/apiClient";
 import { cookies } from "next/headers";
 
 describe("Nichos Server Actions", () => {
+  const originalEnv = process.env.ENV;
+
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
+    process.env.ENV = "stg";
   });
 
-  it("sin token devuelve array vacío sin llamar a la API", async () => {
+  afterAll(() => {
+    process.env.ENV = originalEnv;
+  });
+
+  it("sin token en stg devuelve array vacío sin llamar a la API", async () => {
     (cookies as jest.Mock).mockResolvedValue({ get: () => undefined });
 
     const res = await obtenerNichos();
     expect(res).toEqual([]);
     expect(fetchAPI).not.toHaveBeenCalled();
+  });
+
+  it("en develop (mock mode) sin cookie permite consultar mocks", async () => {
+    process.env.ENV = "develop";
+    (cookies as jest.Mock).mockResolvedValue({ get: () => undefined });
+    (fetchAPI as jest.Mock).mockResolvedValue([]);
+
+    await obtenerNichos();
+    expect(fetchAPI).toHaveBeenCalledWith("/nichos/buscar", "mock-token");
   });
 
   it("con token consulta /nichos/buscar y mapea los nichos correctamente", async () => {

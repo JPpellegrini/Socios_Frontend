@@ -12,16 +12,32 @@ import { fetchAPI } from "../../../lib/apiClient";
 import { cookies } from "next/headers";
 
 describe("Entidades Server Actions", () => {
+  const originalEnv = process.env.ENV;
+
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
+    process.env.ENV = "stg";
+  });
+
+  afterAll(() => {
+    process.env.ENV = originalEnv;
   });
 
   describe("buscarEntidades", () => {
-    it("sin token devuelve array vacío", async () => {
+    it("sin token en stg devuelve array vacío", async () => {
       (cookies as jest.Mock).mockResolvedValue({ get: () => undefined });
       const res = await buscarEntidades();
       expect(res).toEqual([]);
       expect(fetchAPI).not.toHaveBeenCalled();
+    });
+
+    it("en develop (mock mode) sin cookie permite consultar mocks", async () => {
+      process.env.ENV = "develop";
+      (cookies as jest.Mock).mockResolvedValue({ get: () => undefined });
+      (fetchAPI as jest.Mock).mockResolvedValue([]);
+
+      await buscarEntidades();
+      expect(fetchAPI).toHaveBeenCalledWith("/buscarentidad/buscar", "mock-token");
     });
 
     it("con token consulta /buscarentidad/buscar con filtro y mapea personas físicas y jurídicas", async () => {

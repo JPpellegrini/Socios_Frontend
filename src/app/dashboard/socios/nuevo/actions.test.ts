@@ -25,8 +25,15 @@ const datosSocio = {
 };
 
 describe('Acciones del Servidor para Nuevo Socio (API real)', () => {
+  const originalEnv = process.env.ENV;
+
   beforeEach(() => {
     jest.resetAllMocks();
+    process.env.ENV = 'stg';
+  });
+
+  afterAll(() => {
+    process.env.ENV = originalEnv;
   });
 
   describe('buscarSocioPorDocumento', () => {

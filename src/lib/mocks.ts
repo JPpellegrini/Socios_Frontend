@@ -504,7 +504,7 @@ export const MOCK_ENTIDADES = [
   },
 ];
 
-export function getMockResponse(endpoint: string): unknown {
+export function getMockResponse(endpoint: string, options?: RequestInit): unknown {
   if (endpoint === "/me" || endpoint.startsWith("/me")) {
     return {
       id_Usuario: MOCK_USUARIO.id_Usuario,
@@ -599,10 +599,59 @@ export function getMockResponse(endpoint: string): unknown {
     return { idProveedor: 4 };
   }
   if (endpoint.startsWith("/proveedores/baja")) {
+    let id: number | undefined;
+    if (options?.body) {
+      try {
+        const body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+        id = Number(body?.idProveedor ?? body?.id_Proveedor ?? body?.id);
+      } catch {
+        // fallback
+      }
+    }
+    if (id) {
+      const found = MOCK_PROVEEDORES.find((p) => p.id_Proveedor === id);
+      if (found) {
+        found.estado = "Inactivo";
+      }
+    }
     return { mensaje: "Proveedor dado de baja correctamente" };
   }
   if (endpoint.startsWith("/proveedores/reactivar")) {
+    let id: number | undefined;
+    if (options?.body) {
+      try {
+        const body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+        id = Number(body?.idProveedor ?? body?.id_Proveedor ?? body?.id);
+      } catch {
+        // fallback
+      }
+    }
+    if (id) {
+      const found = MOCK_PROVEEDORES.find((p) => p.id_Proveedor === id);
+      if (found) {
+        found.estado = "Activo";
+      }
+    }
     return { mensaje: "Proveedor reactivado correctamente" };
+  }
+  if (endpoint.startsWith("/proveedores/eliminar") || (endpoint.match(/^\/proveedores\/\d+$/) && options?.method === "DELETE")) {
+    let id: number | undefined;
+    const match = endpoint.match(/^\/proveedores\/(\d+)$/);
+    if (match) {
+      id = Number(match[1]);
+    } else if (options?.body) {
+      try {
+        const body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+        id = Number(body?.idProveedor ?? body?.id_Proveedor ?? body?.id);
+      } catch {}
+    }
+    if (id) {
+      const idx = MOCK_PROVEEDORES.findIndex((p) => p.id_Proveedor === id);
+      if (idx !== -1) {
+        MOCK_PROVEEDORES.splice(idx, 1);
+      }
+    }
+    return { mensaje: "Proveedor eliminado correctamente" };
   }
   if (endpoint.startsWith("/proveedores/modificar")) {
     return { mensaje: "Proveedor modificado correctamente" };

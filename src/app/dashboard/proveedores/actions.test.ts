@@ -5,6 +5,7 @@ import {
   actualizarProveedor,
   darDeBajaProveedor,
   reactivarProveedor,
+  eliminarProveedor,
   buscarProveedorPorDocumento,
 } from "./actions";
 
@@ -202,7 +203,7 @@ describe("Proveedores Server Actions", () => {
         "tok",
         expect.objectContaining({
           method: "POST",
-          body: JSON.stringify({ idProveedor: 3 }),
+          body: JSON.stringify({ idProveedor: 3, id_Proveedor: 3 }),
         })
       );
     });
@@ -220,7 +221,25 @@ describe("Proveedores Server Actions", () => {
         "tok",
         expect.objectContaining({
           method: "POST",
-          body: JSON.stringify({ idProveedor: 3 }),
+          body: JSON.stringify({ idProveedor: 3, id_Proveedor: 3 }),
+        })
+      );
+    });
+
+    it("eliminarProveedor hace DELETE a /proveedores/:id", async () => {
+      (cookies as jest.Mock).mockResolvedValue({
+        get: (name: string) => (name === "authToken" ? { value: "tok" } : undefined),
+      });
+      (fetchAPI as jest.Mock).mockResolvedValue({ mensaje: "ok" });
+
+      const ok = await eliminarProveedor("3");
+      expect(ok).toBe(true);
+      expect(fetchAPI).toHaveBeenCalledWith(
+        "/proveedores/3",
+        "tok",
+        expect.objectContaining({
+          method: "DELETE",
+          body: JSON.stringify({ idProveedor: 3, id_Proveedor: 3 }),
         })
       );
     });

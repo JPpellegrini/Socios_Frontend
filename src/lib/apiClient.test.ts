@@ -32,6 +32,24 @@ describe('fetchAPI HTTP Client', () => {
       expect(Array.isArray(socios)).toBe(true);
       expect(socios.length).toBeGreaterThan(0);
     });
+
+    it('en proveedores/baja y reactivar debe mutar el estado en MOCK_PROVEEDORES', async () => {
+      await fetchAPI('/proveedores/baja', undefined, {
+        method: 'POST',
+        body: JSON.stringify({ idProveedor: 1 }),
+      });
+      const provs = await fetchAPI<{ id_Proveedor: number; estado: string }[]>('/proveedores');
+      const p1 = provs.find((p) => p.id_Proveedor === 1);
+      expect(p1?.estado).toBe('Inactivo');
+
+      await fetchAPI('/proveedores/reactivar', undefined, {
+        method: 'POST',
+        body: JSON.stringify({ idProveedor: 1 }),
+      });
+      const provs2 = await fetchAPI<{ id_Proveedor: number; estado: string }[]>('/proveedores');
+      const p1Reactivado = provs2.find((p) => p.id_Proveedor === 1);
+      expect(p1Reactivado?.estado).toBe('Activo');
+    });
   });
 
   describe('rama no-develop (fetch mockeado, sin red)', () => {

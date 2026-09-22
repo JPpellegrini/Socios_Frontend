@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import Link from "next/link";
@@ -54,9 +54,23 @@ export default function ProveedoresPage() {
 
     try {
       if (dialogAction === "baja") {
-        await darDeBajaProveedor(selectedProveedor.id);
+        const ok = await darDeBajaProveedor(selectedProveedor.id);
+        if (ok) {
+          setProveedores((prev) =>
+            prev.map((p) =>
+              p.id === selectedProveedor.id ? { ...p, estado: "Inactivo" } : p
+            )
+          );
+        }
       } else {
-        await reactivarProveedor(selectedProveedor.id);
+        const ok = await reactivarProveedor(selectedProveedor.id);
+        if (ok) {
+          setProveedores((prev) =>
+            prev.map((p) =>
+              p.id === selectedProveedor.id ? { ...p, estado: "Activo" } : p
+            )
+          );
+        }
       }
       await cargarProveedores();
     } finally {
@@ -198,7 +212,7 @@ export default function ProveedoresPage() {
         }
         description={
           dialogAction === "baja"
-            ? `¿Está seguro de que desea dar de baja al proveedor "${selectedProveedor?.razonSocial}"? Esta acción no se puede deshacer.`
+            ? `¿Está seguro de que desea dar de baja al proveedor "${selectedProveedor?.razonSocial}"? Su estado pasará a Inactivo.`
             : `¿Está seguro de que desea reactivar al proveedor "${selectedProveedor?.razonSocial}"?`
         }
         confirmText={dialogAction === "baja" ? "Dar de baja" : "Reactivar"}

@@ -187,7 +187,7 @@ export async function darDeBajaProveedor(id: string): Promise<boolean> {
   try {
     await fetchAPI("/proveedores/baja", token, {
       method: "POST",
-      body: JSON.stringify({ idProveedor: Number(id) }),
+      body: JSON.stringify({ idProveedor: Number(id), id_Proveedor: Number(id) }),
     });
     return true;
   } catch {
@@ -203,7 +203,23 @@ export async function reactivarProveedor(id: string): Promise<boolean> {
   try {
     await fetchAPI("/proveedores/reactivar", token, {
       method: "POST",
-      body: JSON.stringify({ idProveedor: Number(id) }),
+      body: JSON.stringify({ idProveedor: Number(id), id_Proveedor: Number(id) }),
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function eliminarProveedor(id: string): Promise<boolean> {
+  const token = await getAuthToken();
+
+  if (!token) return false;
+
+  try {
+    await fetchAPI(`/proveedores/${id}`, token, {
+      method: "DELETE",
+      body: JSON.stringify({ idProveedor: Number(id), id_Proveedor: Number(id) }),
     });
     return true;
   } catch {

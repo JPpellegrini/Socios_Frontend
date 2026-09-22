@@ -29,7 +29,7 @@ function FieldRow({ label, value }: { label: string; value: string | null | unde
 
 export function SocioDetalleCard({ socio }: { socio: SocioDetalle }) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 mb-8">
       <Card variant="elevated">
         <CardHeader>
           <div className="flex items-start justify-between gap-4 flex-wrap">

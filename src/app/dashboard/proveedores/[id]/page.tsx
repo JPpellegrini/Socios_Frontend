@@ -56,8 +56,8 @@ export default function ProveedorDetallePage() {
   }
 
   return (
-    <div className="flex-1 min-h-0 bg-surface-container-lowest p-4 md:p-8 flex justify-center items-start">
-      <Card variant="outlined" className="w-full max-w-4xl p-6 md:p-10 bg-background space-y-8">
+    <div className="flex-1 min-h-0 bg-surface-container-lowest p-4 md:p-8 pb-16 flex justify-center items-start">
+      <Card variant="outlined" className="w-full max-w-4xl p-6 md:p-10 mb-8 bg-background space-y-8">
         {/* Header con botón atrás, título y botón editar */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-outline-variant/30 pb-6">
           <div className="flex items-center gap-3">

@@ -46,7 +46,8 @@ describe("ProveedorDetallePage", () => {
       expect(screen.getByText("CUIT/CUIL: 30712345678")).toBeInTheDocument();
       expect(screen.getByText("Servicio de ambulancia")).toBeInTheDocument();
       expect(screen.getByText("Rosario")).toBeInTheDocument();
-      expect(screen.getByText("Córdoba 1540")).toBeInTheDocument();
+      expect(screen.getByText("Córdoba")).toBeInTheDocument();
+      expect(screen.getByText("1540")).toBeInTheDocument();
       expect(screen.getByText("3414201000")).toBeInTheDocument();
       expect(screen.getByText("guardia@emergencias.com")).toBeInTheDocument();
       expect(screen.getByText("Convenio vigente")).toBeInTheDocument();
@@ -63,7 +64,7 @@ describe("ProveedorDetallePage", () => {
     });
   });
 
-  it("debe navegar a la edición al presionar Editar Proveedor", async () => {
+  it("no debe mostrar botón de editar y debe permitir volver atrás", async () => {
     (actions.obtenerProveedorDetalle as jest.Mock).mockResolvedValue(mockDetalle);
 
     render(<ProveedorDetallePage />);
@@ -72,9 +73,9 @@ describe("ProveedorDetallePage", () => {
       expect(screen.getByText("Emergencias Médicas S.A.")).toBeInTheDocument();
     });
 
-    const editBtn = screen.getByRole("button", { name: /Editar Proveedor/i });
-    fireEvent.click(editBtn);
+    expect(screen.queryByRole("button", { name: /Editar Proveedor/i })).not.toBeInTheDocument();
 
-    expect(mockPush).toHaveBeenCalledWith("/dashboard/proveedores/nuevo?edit=1");
+    const backBtn = screen.getByRole("button", { name: /Volver/i });
+    expect(backBtn).toBeInTheDocument();
   });
 });

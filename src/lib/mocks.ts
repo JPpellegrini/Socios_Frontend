@@ -330,7 +330,7 @@ export const MOCK_USUARIOS = [
     usuario: "CJR",
     rolNombre: "Consultor",
     rol: "CONSULTOR",
-    estado: "Activo",
+    estado: "ACTIVO",
     descripcion: "Solo acceso a informes",
   },
   {
@@ -339,7 +339,7 @@ export const MOCK_USUARIOS = [
     usuario: "ADMIN_SISTEMA",
     rolNombre: "Secretaria",
     rol: "SECRETARIO",
-    estado: "Activo",
+    estado: "ACTIVO",
     descripcion: "Acceso total",
   },
   {
@@ -348,7 +348,7 @@ export const MOCK_USUARIOS = [
     usuario: "MPEREZ",
     rolNombre: "Consultor",
     rol: "CONSULTOR",
-    estado: "Activo",
+    estado: "ACTIVO",
     descripcion: "Solo informes",
   },
   {
@@ -357,7 +357,7 @@ export const MOCK_USUARIOS = [
     usuario: "JALVAREZ",
     rolNombre: "Consultor",
     rol: "CONSULTOR",
-    estado: "Inactivo",
+    estado: "BAJA",
     descripcion: "Usuario inactivo",
   },
 ];

@@ -28,7 +28,10 @@ function seed(): DevStoreState {
     list: MOCK_SOCIOS.map((s) => ({ ...s })),
     detalle: MOCK_SOCIOS_DETALLE.map((s) => ({ ...s })),
     nextId: MOCK_SOCIOS.reduce((max, s) => Math.max(max, Number(s.id) || 0), 0) + 1,
-    usuarios: MOCK_USUARIOS.map((u) => ({ ...u, estado: u.estado as "ACTIVO" | "BAJA" })),
+    usuarios: MOCK_USUARIOS.map((u) => ({
+      ...u,
+      estado: ((u.estado || "").toUpperCase() === "ACTIVO" ? "ACTIVO" : "BAJA") as "ACTIVO" | "BAJA",
+    })),
     nextUsuarioId: MOCK_USUARIOS.reduce((max, u) => Math.max(max, u.id_Usuario), 0) + 1,
   }
 }
@@ -70,7 +73,8 @@ export function devUpdateUsuarioPassword(id_Usuario: number, password: string): 
 export function devToggleUsuarioEstado(id_Usuario: number): boolean {
   const user = state.usuarios.find((u) => u.id_Usuario === id_Usuario)
   if (!user) return false
-  user.estado = user.estado === "ACTIVO" ? "BAJA" : "ACTIVO"
+  const current = (user.estado || "").toUpperCase()
+  user.estado = current === "ACTIVO" ? "BAJA" : "ACTIVO"
   return true
 }
 

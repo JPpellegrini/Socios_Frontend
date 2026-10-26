@@ -836,7 +836,16 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
     return filtered.map((c) => ({ id_Ciudad: Number(c.id), nombre: c.nombre }));
   }
   if (endpoint.startsWith("/obrassociales/buscar")) {
-    return MOCK_OBRAS_SOCIALES.map((o) => ({ id_ObraSocial: Number(o.id), nombreObraSocial: o.nombre }));
+    const queryIdx = endpoint.indexOf("?");
+    let busqueda = "";
+    if (queryIdx !== -1) {
+      const params = new URLSearchParams(endpoint.slice(queryIdx));
+      busqueda = (params.get("Busqueda") || params.get("busqueda") || "").toLowerCase().trim();
+    }
+    const filtered = busqueda
+      ? MOCK_OBRAS_SOCIALES.filter((o) => o.nombre.toLowerCase().includes(busqueda))
+      : MOCK_OBRAS_SOCIALES;
+    return filtered.map((o) => ({ id_ObraSocial: Number(o.id), nombreObraSocial: o.nombre }));
   }
   if (endpoint.startsWith("/buscarentidad/buscar")) {
     return MOCK_ENTIDADES;

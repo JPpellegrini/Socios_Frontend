@@ -707,10 +707,57 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
     return { mensaje: "El socio fue dado de baja correctamente." };
   }
   if (endpoint === "/socios/modificar") {
+    let body: {
+      idSocio?: number;
+      calle?: string;
+      altura?: number;
+      observaciones?: string;
+      plan?: string;
+      sepelio?: string;
+      cobrador?: string;
+      telefonos?: string[];
+      emails?: string[];
+    } = {};
+    if (options?.body) {
+      try {
+        body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+      } catch {}
+    }
+    const socio = MOCK_SOCIOS_DETALLE.find((s) => s.id === String(body.idSocio));
+    if (socio) {
+      socio.calle = body.calle ?? socio.calle;
+      socio.altura = body.altura ? String(body.altura) : socio.altura;
+      socio.observaciones = body.observaciones ?? socio.observaciones;
+      socio.plan = body.plan ?? socio.plan;
+      socio.sepelio = body.sepelio ?? socio.sepelio;
+      socio.cobrador = body.cobrador ?? socio.cobrador;
+      if (body.telefonos) socio.telefonos = body.telefonos;
+      if (body.emails) socio.correos = body.emails;
+    }
     return { mensaje: "El socio fue modificado correctamente." };
   }
   if (endpoint === "/socios") {
-    return MOCK_SOCIOS_BACKEND;
+    let filtro: { busqueda?: string; dni?: string; incluirInactivos?: boolean } = {};
+    if (options?.body) {
+      try {
+        filtro = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+      } catch {}
+    }
+    let result = [...MOCK_SOCIOS_BACKEND];
+    if (filtro.incluirInactivos === false) {
+      result = result.filter((s) => s.estado === "ACTIVO");
+    }
+    if (filtro.busqueda) {
+      const b = filtro.busqueda.toLowerCase().trim();
+      result = result.filter(
+        (s) => s.nombre.toLowerCase().includes(b) || s.apellido.toLowerCase().includes(b)
+      );
+    }
+    if (filtro.dni) {
+      const d = filtro.dni.trim();
+      result = result.filter((s) => s.dni.includes(d));
+    }
+    return result;
   }
   if (endpoint.startsWith("/socios/asignables-nicho")) {
     const query = endpoint.includes("?") ? endpoint.split("?")[1] : "";

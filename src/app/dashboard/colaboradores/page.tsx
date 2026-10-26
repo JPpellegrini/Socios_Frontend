@@ -9,6 +9,8 @@ import { DataTable, type Column } from "@/components/ui/data-table";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { fabVariants } from "@/components/ui/fab";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -176,11 +178,12 @@ export default function ColaboradoresPage() {
         header: "Estado",
         accessor: (c) => (
           <span
-            className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs ${
-              c.estado === "Inactivo"
-                ? "bg-destructive text-white font-medium"
-                : "bg-emerald-100 text-emerald-900 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium"
-            }`}
+            className={cn(
+              "inline-flex items-center rounded-[8px] h-8 px-3.5 text-sm font-medium",
+              c.estado === "Activo"
+                ? "bg-primary-container text-on-primary-container"
+                : "bg-destructive text-white font-medium"
+            )}
           >
             {c.estado}
           </span>
@@ -195,22 +198,7 @@ export default function ColaboradoresPage() {
 
   return (
     <div className="relative h-full p-4 md:p-8 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans">
-            Colaboradores
-          </h1>
-          <p className="text-sm text-on-surface-variant mt-1">
-            Gestione los profesionales, farmacias y entidades que prestan servicios al centro.
-          </p>
-        </div>
-        <Button asChild variant="default" className="gap-2 self-start sm:self-auto">
-          <Link href="/dashboard/colaboradores/nuevo">
-            <Plus className="size-4" />
-            <span>Nuevo Colaborador</span>
-          </Link>
-        </Button>
-      </div>
+      <h1 className="text-2xl font-bold mb-6">Listado de Colaboradores</h1>
 
       {/* Tarjetas de Métricas M3 */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -225,7 +213,7 @@ export default function ColaboradoresPage() {
         </Card>
 
         <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-          <div className="p-3 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
+          <div className="p-3 bg-primary-container/40 text-on-primary-container rounded-xl">
             <CheckCircle2 className="size-6" />
           </div>
           <div>
@@ -264,10 +252,10 @@ export default function ColaboradoresPage() {
               aria-label={`Reactivar colaborador ${c.nombre}`}
               onClick={() => setColaboradorParaReactivar(c)}
             >
-              <UserCheck className="size-4 text-emerald-600" />
+              <UserCheck />
             </Button>
           ) : (
-            <div className="flex items-center gap-1">
+            <>
               <Button
                 variant="ghost"
                 size="icon"
@@ -275,26 +263,37 @@ export default function ColaboradoresPage() {
                 aria-label={`Editar colaborador ${c.nombre}`}
                 onClick={() => router.push(`/dashboard/colaboradores/${c.id}`)}
               >
-                <Edit className="size-4 text-primary" />
+                <Edit />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
                 title="Dar de baja"
                 aria-label={`Dar de baja colaborador ${c.nombre}`}
-                className="text-destructive hover:bg-destructive/10"
+                className="text-destructive"
                 onClick={() => {
                   setColaboradorParaBaja(c);
                   setMotivoBaja("");
                   setBajaError(null);
                 }}
               >
-                <Trash2 className="size-4" />
+                <Trash2 />
               </Button>
-            </div>
+            </>
           )
         }
       />
+
+      <Link
+        href="/dashboard/colaboradores/nuevo"
+        className={cn(
+          fabVariants({ variant: "primary", size: "large" }),
+          "fixed bottom-8 right-8"
+        )}
+        aria-label="Nuevo colaborador"
+      >
+        <Plus />
+      </Link>
 
       {/* Modal de Baja con Motivo */}
       <Dialog

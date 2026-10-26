@@ -52,7 +52,7 @@ describe("NichosPage", () => {
 
     render(<NichosPage />);
 
-    expect(screen.getByText("Nichos y Panteón")).toBeInTheDocument();
+    expect(screen.getByText("Gestión de Nichos")).toBeInTheDocument();
 
     await waitFor(() => {
       // Métricas

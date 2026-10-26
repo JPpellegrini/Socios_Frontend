@@ -50,7 +50,7 @@ describe("ColaboradoresPage", () => {
 
     render(<ColaboradoresPage />);
 
-    expect(screen.getByText("Colaboradores")).toBeInTheDocument();
+    expect(screen.getByText("Listado de Colaboradores")).toBeInTheDocument();
 
     await waitFor(() => {
       expect(screen.getByText("Total Colaboradores")).toBeInTheDocument();

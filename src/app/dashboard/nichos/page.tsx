@@ -7,6 +7,8 @@ import { DataTable, type Column } from "@/components/ui/data-table";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { fabVariants } from "@/components/ui/fab";
+import { cn } from "@/lib/utils";
 import { type NichoItem } from "./schema";
 import { obtenerNichos, darDeBajaNicho } from "./actions";
 import { CrearNichoDialog } from "./crear-nicho-dialog";
@@ -98,11 +100,12 @@ export default function NichosPage() {
       header: "Estado",
       accessor: (n) => (
         <span
-          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${
+          className={cn(
+            "inline-flex items-center rounded-[8px] h-8 px-3.5 text-sm font-medium",
             n.ocupado
-              ? "bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-300"
-              : "bg-emerald-100 text-emerald-900 dark:bg-emerald-900/30 dark:text-emerald-300"
-          }`}
+              ? "bg-primary-container text-on-primary-container"
+              : "bg-surface-variant text-on-surface-variant font-medium"
+          )}
         >
           {n.ocupado ? "Ocupado" : "Disponible"}
         </span>
@@ -187,24 +190,7 @@ export default function NichosPage() {
 
   return (
     <div className="relative h-full p-4 md:p-8 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans">
-            Nichos y Panteón
-          </h1>
-          <p className="text-sm text-on-surface-variant mt-1">
-            Administre los nichos del cementerio, dé de alta nuevas unidades y asigne concesiones a socios.
-          </p>
-        </div>
-        <Button
-          variant="default"
-          onClick={() => setModalCrearOpen(true)}
-          className="gap-2 self-start sm:self-auto"
-        >
-          <Plus className="size-4" />
-          <span>Nuevo Nicho</span>
-        </Button>
-      </div>
+      <h1 className="text-2xl font-bold mb-6">Gestión de Nichos</h1>
 
       {/* Tarjetas de Métricas M3 */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -219,7 +205,7 @@ export default function NichosPage() {
         </Card>
 
         <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-          <div className="p-3 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl">
+          <div className="p-3 bg-primary-container/40 text-on-primary-container rounded-xl">
             <XCircle className="size-6" />
           </div>
           <div>
@@ -229,7 +215,7 @@ export default function NichosPage() {
         </Card>
 
         <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-          <div className="p-3 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
+          <div className="p-3 bg-surface-variant/40 text-on-surface-variant rounded-xl">
             <CheckCircle2 className="size-6" />
           </div>
           <div>
@@ -249,6 +235,18 @@ export default function NichosPage() {
         searchPlaceholder="Buscar por socio, número de nicho o sector..."
         emptyMessage={loading ? "Cargando nichos..." : "No se encontraron nichos"}
       />
+
+      <button
+        type="button"
+        onClick={() => setModalCrearOpen(true)}
+        className={cn(
+          fabVariants({ variant: "primary", size: "large" }),
+          "fixed bottom-8 right-8"
+        )}
+        aria-label="Nuevo nicho"
+      >
+        <Plus />
+      </button>
 
       {/* Modal de Creación */}
       <CrearNichoDialog

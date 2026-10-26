@@ -48,7 +48,7 @@ describe("EmpleadosPage", () => {
 
     render(<EmpleadosPage />);
 
-    expect(screen.getByText("Empleados")).toBeInTheDocument();
+    expect(screen.getByText("Listado de Empleados")).toBeInTheDocument();
 
     await waitFor(() => {
       expect(screen.getByText("Total Empleados")).toBeInTheDocument();

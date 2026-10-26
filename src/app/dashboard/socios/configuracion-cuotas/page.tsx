@@ -260,14 +260,7 @@ export default function ConfiguracionCuotasPage() {
 
   return (
     <div className="relative h-full p-4 md:p-8 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans">
-          Configuración de Cuotas
-        </h1>
-        <p className="text-sm text-on-surface-variant mt-1">
-          Gestione los importes vigentes y topes de edad para cuotas de socios, planes de sepelio y nichos.
-        </p>
-      </div>
+      <h1 className="text-2xl font-bold mb-6">Configuración de Cuotas</h1>
 
       {/* Tarjetas de Métricas M3 */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -311,6 +304,7 @@ export default function ConfiguracionCuotasPage() {
         columns={columns}
         getRowId={(c) => String(c.id_TipoCuota)}
         loading={loading}
+        onRowClick={(c) => abrirEdicion(c)}
         searchPlaceholder="Buscar por concepto, plan o tramo..."
         emptyMessage={loading ? "Cargando cuotas..." : "No se encontraron configuraciones de cuota"}
       />

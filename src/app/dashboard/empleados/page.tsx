@@ -3,11 +3,13 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Plus, Edit, Trash2, Users, CheckCircle2, XCircle } from "lucide-react";
+import { Plus, Edit, Trash2, UserCheck, Users, CheckCircle2, XCircle } from "lucide-react";
 
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { fabVariants } from "@/components/ui/fab";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -137,11 +139,12 @@ export default function EmpleadosPage() {
         header: "Estado",
         accessor: (e) => (
           <span
-            className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs ${
-              e.estado === "Inactivo"
-                ? "bg-destructive text-white font-medium"
-                : "bg-emerald-100 text-emerald-900 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium"
-            }`}
+            className={cn(
+              "inline-flex items-center rounded-[8px] h-8 px-3.5 text-sm font-medium",
+              e.estado === "Activo"
+                ? "bg-primary-container text-on-primary-container"
+                : "bg-destructive text-white font-medium"
+            )}
           >
             {e.estado}
           </span>
@@ -156,56 +159,35 @@ export default function EmpleadosPage() {
 
   return (
     <div className="relative h-full p-4 md:p-8 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans">
-            Empleados
-          </h1>
-          <p className="text-sm text-on-surface-variant mt-1">
-            Gestión integral de personal de la institución
-          </p>
-        </div>
-        <Button asChild variant="default">
-          <Link href="/dashboard/empleados/nuevo">
-            <Plus className="size-4" />
-            Nuevo Empleado
-          </Link>
-        </Button>
-      </div>
+      <h1 className="text-2xl font-bold mb-6">Listado de Empleados</h1>
 
       {/* Tarjetas de Métricas */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card variant="filled" className="p-4 flex items-center gap-4">
-          <div className="p-3 rounded-full bg-primary/10 text-primary">
+        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
+          <div className="p-3 bg-primary/10 text-primary rounded-xl">
             <Users className="size-6" />
           </div>
           <div>
-            <p className="text-xs font-medium text-on-surface-variant uppercase tracking-wider">
-              Total Empleados
-            </p>
-            <p className="text-2xl font-bold text-foreground">{totalEmpleados}</p>
+            <p className="text-xs text-on-surface-variant font-medium">Total Empleados</p>
+            <p className="text-2xl font-bold text-foreground mt-0.5">{totalEmpleados}</p>
           </div>
         </Card>
-        <Card variant="filled" className="p-4 flex items-center gap-4">
-          <div className="p-3 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
+          <div className="p-3 bg-primary-container/40 text-on-primary-container rounded-xl">
             <CheckCircle2 className="size-6" />
           </div>
           <div>
-            <p className="text-xs font-medium text-on-surface-variant uppercase tracking-wider">
-              Activos
-            </p>
-            <p className="text-2xl font-bold text-foreground">{activos}</p>
+            <p className="text-xs text-on-surface-variant font-medium">Activos</p>
+            <p className="text-2xl font-bold text-foreground mt-0.5">{activos}</p>
           </div>
         </Card>
-        <Card variant="filled" className="p-4 flex items-center gap-4">
-          <div className="p-3 rounded-full bg-destructive/10 text-destructive">
+        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
+          <div className="p-3 bg-destructive/10 text-destructive rounded-xl">
             <XCircle className="size-6" />
           </div>
           <div>
-            <p className="text-xs font-medium text-on-surface-variant uppercase tracking-wider">
-              Inactivos
-            </p>
-            <p className="text-2xl font-bold text-foreground">{inactivos}</p>
+            <p className="text-xs text-on-surface-variant font-medium">Inactivos</p>
+            <p className="text-2xl font-bold text-foreground mt-0.5">{inactivos}</p>
           </div>
         </Card>
       </div>
@@ -219,29 +201,35 @@ export default function EmpleadosPage() {
         loading={loading}
         searchPlaceholder="Buscar por nombre, apellido o DNI"
         emptyMessage="No se encontraron empleados"
-        renderActions={(e) => (
-          <div className="flex items-center justify-end gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push(`/dashboard/empleados/${e.id}`)}
-            >
-              Ver detalle
-            </Button>
+        onRowClick={(e) => router.push(`/dashboard/empleados/${e.id}`)}
+        renderActions={(e) =>
+          e.estado === "Inactivo" ? (
             <Button
               variant="ghost"
               size="icon"
               title="Editar empleado"
+              aria-label={`Editar empleado ${e.nombre}`}
               onClick={() => router.push(`/dashboard/empleados/${e.id}?edit=true`)}
             >
               <Edit className="size-4" />
             </Button>
-            {e.estado === "Activo" && (
+          ) : (
+            <>
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                title="Editar empleado"
+                aria-label={`Editar empleado ${e.nombre}`}
+                onClick={() => router.push(`/dashboard/empleados/${e.id}?edit=true`)}
+              >
+                <Edit className="size-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-destructive"
                 title="Dar de baja"
+                aria-label={`Dar de baja empleado ${e.nombre}`}
                 onClick={() => {
                   setEmpleadoParaBaja(e);
                   setMotivoBaja("");
@@ -250,10 +238,21 @@ export default function EmpleadosPage() {
               >
                 <Trash2 className="size-4" />
               </Button>
-            )}
-          </div>
-        )}
+            </>
+          )
+        }
       />
+
+      <Link
+        href="/dashboard/empleados/nuevo"
+        className={cn(
+          fabVariants({ variant: "primary", size: "large" }),
+          "fixed bottom-8 right-8"
+        )}
+        aria-label="Nuevo empleado"
+      >
+        <Plus />
+      </Link>
 
       {/* Diálogo de Baja con Motivo */}
       <Dialog

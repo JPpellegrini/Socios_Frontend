@@ -527,6 +527,43 @@ export const MOCK_COLABORADORES = [
   },
 ];
 
+export const MOCK_EMPLEADOS = [
+  {
+    id_Entidad: 101,
+    id_EntidadTipo: 101,
+    dni: "31222333",
+    cuitCuil: "20312223334",
+    nombre: "Carlos",
+    apellido: "López",
+    sexo: "Masculino",
+    nacimiento: "1988-04-12",
+    estado: "Activo",
+    ciudad: { id_Ciudad: 2, nombre: "Rosario" },
+    calle: "Pellegrini",
+    altura: 1240,
+    observacion: "Empleado del área contable",
+    telefonos: ["3414998877"],
+    emails: ["carlos.lopez@example.com"],
+  },
+  {
+    id_Entidad: 102,
+    id_EntidadTipo: 102,
+    dni: "32444555",
+    cuitCuil: "27324445558",
+    nombre: "Mariana",
+    apellido: "Ríos",
+    sexo: "Femenino",
+    nacimiento: "1992-09-20",
+    estado: "Inactivo",
+    ciudad: { id_Ciudad: 2, nombre: "Rosario" },
+    calle: "Corrientes",
+    altura: 780,
+    observacion: null,
+    telefonos: ["3415123456"],
+    emails: ["mariana.rios@example.com"],
+  },
+];
+
 export const MOCK_SOCIOS_ASIGNABLES_NICHO = [
   {
     idSocio: 1,
@@ -1117,6 +1154,120 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
         (c.razonSocial && c.razonSocial.toLowerCase().includes(busqueda)) ||
         (c.dni && c.dni.includes(busqueda)) ||
         (c.cuitCuil && c.cuitCuil.includes(busqueda))
+    );
+  }
+  if (endpoint.startsWith("/Empleados/alta") || endpoint.startsWith("/empleados/alta")) {
+    let body: {
+      dni?: string;
+      nombre?: string;
+      apellido?: string;
+      sexo?: string;
+      nacimiento?: string;
+      idCiudad?: number;
+      calle?: string;
+      altura?: number;
+      observaciones?: string;
+      telefonos?: string[];
+      emails?: string[];
+    } = {};
+    if (options?.body) {
+      try {
+        body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+      } catch {}
+    }
+    const nextId =
+      MOCK_EMPLEADOS.length > 0
+        ? Math.max(...MOCK_EMPLEADOS.map((e) => e.id_Entidad)) + 1
+        : 101;
+    const nuevo = {
+      id_Entidad: nextId,
+      id_EntidadTipo: nextId,
+      dni: body.dni || "",
+      cuitCuil: body.dni ? `20${body.dni}9` : null,
+      nombre: body.nombre || "",
+      apellido: body.apellido || "",
+      sexo: body.sexo || "Otro",
+      nacimiento: body.nacimiento || "1990-01-01",
+      estado: "Activo",
+      ciudad: { id_Ciudad: body.idCiudad || 1, nombre: "Rosario" },
+      calle: body.calle || "",
+      altura: Number(body.altura) || 0,
+      observacion: body.observaciones || null,
+      telefonos: body.telefonos || [],
+      emails: body.emails || [],
+    };
+    MOCK_EMPLEADOS.push(nuevo);
+    return { id: nextId, mensaje: `Empleado ${body.nombre} ${body.apellido} creado correctamente.` };
+  }
+  if (endpoint.startsWith("/Empleados/baja/") || endpoint.startsWith("/empleados/baja/")) {
+    const rawId = endpoint.replace(/^\/[eE]mpleados\/baja\//, "");
+    const idEntidadTipo = Number(rawId);
+    let motivo = "Baja solicitada";
+    if (options?.body) {
+      try {
+        const parsed = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+        if (parsed.motivo) motivo = parsed.motivo;
+      } catch {}
+    }
+    const emp = MOCK_EMPLEADOS.find(
+      (e) => e.id_EntidadTipo === idEntidadTipo || e.id_Entidad === idEntidadTipo
+    );
+    if (emp) {
+      emp.estado = "Inactivo";
+    }
+    return { mensaje: `Empleado dado de baja correctamente con motivo: ${motivo}` };
+  }
+  if (endpoint.startsWith("/Empleados/modificar") || endpoint.startsWith("/empleados/modificar")) {
+    let body: {
+      idEntidad?: number;
+      nombre?: string;
+      apellido?: string;
+      sexo?: string;
+      nacimiento?: string;
+      idCiudad?: number;
+      calle?: string;
+      altura?: number;
+      observaciones?: string;
+      telefonos?: string[];
+      emails?: string[];
+    } = {};
+    if (options?.body) {
+      try {
+        body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+      } catch {}
+    }
+    const emp = MOCK_EMPLEADOS.find((e) => e.id_Entidad === body.idEntidad);
+    if (emp) {
+      emp.nombre = body.nombre ?? emp.nombre;
+      emp.apellido = body.apellido ?? emp.apellido;
+      emp.sexo = body.sexo ?? emp.sexo;
+      emp.nacimiento = body.nacimiento ?? emp.nacimiento;
+      emp.calle = body.calle ?? emp.calle;
+      emp.altura = body.altura ?? emp.altura;
+      emp.observacion = body.observaciones ?? emp.observacion;
+      if (body.telefonos) emp.telefonos = body.telefonos;
+      if (body.emails) emp.emails = body.emails;
+    }
+    return { mensaje: `Empleado ${body.idEntidad} modificado correctamente.` };
+  }
+  if (endpoint.match(/^\/[eE]mpleados\/\d+$/)) {
+    const id = Number(endpoint.replace(/^\/[eE]mpleados\//, ""));
+    const found = MOCK_EMPLEADOS.find(
+      (e) => e.id_Entidad === id || e.id_EntidadTipo === id
+    );
+    return found || MOCK_EMPLEADOS[0];
+  }
+  if (endpoint.startsWith("/Empleados/buscar") || endpoint.startsWith("/empleados/buscar") || endpoint.startsWith("/Empleados") || endpoint.startsWith("/empleados")) {
+    const query = endpoint.includes("?") ? endpoint.split("?")[1] : "";
+    const params = new URLSearchParams(query);
+    const busqueda = (params.get("busqueda") || "").toLowerCase().trim();
+    if (!busqueda) return MOCK_EMPLEADOS;
+    return MOCK_EMPLEADOS.filter(
+      (e) =>
+        (e.nombre && e.nombre.toLowerCase().includes(busqueda)) ||
+        (e.apellido && e.apellido.toLowerCase().includes(busqueda)) ||
+        (e.dni && e.dni.includes(busqueda)) ||
+        (e.cuitCuil && e.cuitCuil.includes(busqueda))
     );
   }
   throw new Error(`No hay mock definido para el endpoint: ${endpoint}`);

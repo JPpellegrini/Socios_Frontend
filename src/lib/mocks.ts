@@ -848,7 +848,20 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
     return filtered.map((o) => ({ id_ObraSocial: Number(o.id), nombreObraSocial: o.nombre }));
   }
   if (endpoint.startsWith("/buscarentidad/buscar")) {
-    return MOCK_ENTIDADES;
+    const queryIdx = endpoint.indexOf("?");
+    let busqueda = "";
+    if (queryIdx !== -1) {
+      const params = new URLSearchParams(endpoint.slice(queryIdx));
+      busqueda = (params.get("Busqueda") || params.get("busqueda") || params.get("filtro") || "").toLowerCase().trim();
+    }
+    const filtered = busqueda
+      ? MOCK_ENTIDADES.filter((e) =>
+          e.nombre.toLowerCase().includes(busqueda) ||
+          e.apellido.toLowerCase().includes(busqueda) ||
+          e.cuitCuil.includes(busqueda)
+        )
+      : MOCK_ENTIDADES;
+    return filtered;
   }
   if (endpoint.startsWith("/buscarentidad")) {
     return MOCK_ENTIDADES[0];
@@ -923,7 +936,19 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
     return found || MOCK_PROVEEDORES[0];
   }
   if (endpoint.startsWith("/proveedores")) {
-    return MOCK_PROVEEDORES;
+    const queryIdx = endpoint.indexOf("?");
+    let busqueda = "";
+    if (queryIdx !== -1) {
+      const params = new URLSearchParams(endpoint.slice(queryIdx));
+      busqueda = (params.get("Busqueda") || params.get("busqueda") || params.get("filtro") || "").toLowerCase().trim();
+    }
+    const filtered = busqueda
+      ? MOCK_PROVEEDORES.filter((p) =>
+          (p.razonSocial && p.razonSocial.toLowerCase().includes(busqueda)) ||
+          p.cuitCuil.includes(busqueda)
+        )
+      : MOCK_PROVEEDORES;
+    return filtered;
   }
   if (endpoint === "/nichos/crear") {
     let body: { sector?: string; nroNicho?: string } = {};

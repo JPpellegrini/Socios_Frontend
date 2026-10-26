@@ -410,12 +410,16 @@ export const MOCK_PROVEEDORES = [
 export const MOCK_NICHOS = [
   {
     id_Nicho: 1,
-    nroNicho: 45,
+    id_Entidad: 1,
+    entidadNombre: "Oldan, Luciano",
+    nroNicho: "45",
     sector: "A",
-    ocupado: true,
+    ocupado: "SI",
+    conLapida: "SI",
     valorNicho: 50000,
     valorLapida: 15000,
     cuotas: 12,
+    interesMensual: 0.05,
     interes: 0.05,
     socio: {
       id_Socio: 1,
@@ -425,23 +429,31 @@ export const MOCK_NICHOS = [
   },
   {
     id_Nicho: 2,
-    nroNicho: 46,
+    id_Entidad: null,
+    entidadNombre: null,
+    nroNicho: "46",
     sector: "A",
-    ocupado: false,
+    ocupado: "NO",
+    conLapida: "NO",
     valorNicho: 50000,
-    valorLapida: 15000,
-    cuotas: 12,
-    interes: 0.05,
+    valorLapida: 0,
+    cuotas: 0,
+    interesMensual: 0,
+    interes: 0,
     socio: null,
   },
   {
     id_Nicho: 3,
-    nroNicho: 12,
+    id_Entidad: 2,
+    entidadNombre: "Gómez, María",
+    nroNicho: "12",
     sector: "B",
-    ocupado: true,
+    ocupado: "SI",
+    conLapida: "SI",
     valorNicho: 60000,
     valorLapida: 18000,
     cuotas: 24,
+    interesMensual: 0.08,
     interes: 0.08,
     socio: {
       id_Socio: 2,
@@ -451,14 +463,49 @@ export const MOCK_NICHOS = [
   },
   {
     id_Nicho: 4,
-    nroNicho: 13,
+    id_Entidad: null,
+    entidadNombre: null,
+    nroNicho: "13",
     sector: "B",
-    ocupado: false,
+    ocupado: "NO",
+    conLapida: "NO",
     valorNicho: 60000,
-    valorLapida: 18000,
-    cuotas: 24,
-    interes: 0.08,
+    valorLapida: 0,
+    cuotas: 0,
+    interesMensual: 0,
+    interes: 0,
     socio: null,
+  },
+];
+
+export const MOCK_SOCIOS_ASIGNABLES_NICHO = [
+  {
+    idSocio: 1,
+    idEntidad: 1,
+    nombre: "Juan",
+    apellido: "Pérez",
+    dni: "12345678",
+  },
+  {
+    idSocio: 2,
+    idEntidad: 2,
+    nombre: "María",
+    apellido: "Gómez",
+    dni: "20123456",
+  },
+  {
+    idSocio: 4,
+    idEntidad: 4,
+    nombre: "Ana",
+    apellido: "Martínez",
+    dni: "45678901",
+  },
+  {
+    idSocio: 5,
+    idEntidad: 5,
+    nombre: "Roberto",
+    apellido: "López",
+    dni: "20345678",
   },
 ];
 
@@ -578,6 +625,18 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
   }
   if (endpoint === "/socios") {
     return MOCK_SOCIOS_BACKEND;
+  }
+  if (endpoint.startsWith("/socios/asignables-nicho")) {
+    const query = endpoint.includes("?") ? endpoint.split("?")[1] : "";
+    const params = new URLSearchParams(query);
+    const busqueda = (params.get("busqueda") || "").toLowerCase().trim();
+    if (!busqueda) return MOCK_SOCIOS_ASIGNABLES_NICHO;
+    return MOCK_SOCIOS_ASIGNABLES_NICHO.filter(
+      (s) =>
+        s.nombre.toLowerCase().includes(busqueda) ||
+        s.apellido.toLowerCase().includes(busqueda) ||
+        s.dni.includes(busqueda)
+    );
   }
   if (endpoint.startsWith("/socios/")) {
     const id = endpoint.split("/socios/")[1];
@@ -715,8 +774,113 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
   if (endpoint.startsWith("/proveedores")) {
     return MOCK_PROVEEDORES;
   }
+  if (endpoint === "/nichos/crear") {
+    let body: { sector?: string; nroNicho?: string } = {};
+    if (options?.body) {
+      try {
+        body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+      } catch {}
+    }
+    const nextId = Math.max(...MOCK_NICHOS.map((n) => n.id_Nicho), 0) + 1;
+    const nuevo = {
+      id_Nicho: nextId,
+      id_Entidad: null,
+      entidadNombre: null,
+      sector: String(body.sector || "A"),
+      nroNicho: String(body.nroNicho || nextId),
+      valorNicho: 0,
+      valorLapida: 0,
+      conLapida: "NO",
+      ocupado: "NO",
+      cuotas: 0,
+      interesMensual: 0,
+      interes: 0,
+      socio: null,
+    };
+    MOCK_NICHOS.push(nuevo);
+    return { idNicho: nextId };
+  }
+  if (endpoint === "/nichos/baja") {
+    let body: { idNicho?: number } = {};
+    if (options?.body) {
+      try {
+        body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+      } catch {}
+    }
+    const idx = MOCK_NICHOS.findIndex((n) => n.id_Nicho === body.idNicho);
+    if (idx !== -1) {
+      MOCK_NICHOS.splice(idx, 1);
+    }
+    return { mensaje: "El nicho fue eliminado correctamente." };
+  }
+  if (endpoint === "/nichos/asignar") {
+    let body: {
+      idNicho?: number;
+      idEntidad?: number;
+      valorTotal?: number;
+      cuotas?: number;
+      interesPorCuota?: number;
+      conLapida?: string;
+      valorLapida?: number;
+    } = {};
+    if (options?.body) {
+      try {
+        body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+      } catch {}
+    }
+    const nicho = MOCK_NICHOS.find((n) => n.id_Nicho === body.idNicho);
+    if (nicho) {
+      nicho.ocupado = "SI";
+      nicho.id_Entidad = body.idEntidad ?? null;
+      const socioFound = MOCK_SOCIOS_ASIGNABLES_NICHO.find((s) => s.idEntidad === body.idEntidad);
+      if (socioFound) {
+        nicho.entidadNombre = `${socioFound.apellido}, ${socioFound.nombre}`;
+        nicho.socio = {
+          id_Socio: socioFound.idSocio,
+          nombre: socioFound.nombre,
+          apellido: socioFound.apellido,
+        };
+      }
+      nicho.valorNicho = Number(body.valorTotal) || 0;
+      nicho.cuotas = Number(body.cuotas) || 0;
+      nicho.interesMensual = Number(body.interesPorCuota) || 0;
+      nicho.interes = nicho.interesMensual;
+      nicho.conLapida = body.conLapida === "SI" ? "SI" : "NO";
+      nicho.valorLapida = Number(body.valorLapida) || 0;
+    }
+    return { mensaje: "El nicho fue asignado correctamente." };
+  }
   if (endpoint.startsWith("/nichos/buscar") || endpoint.startsWith("/nichos")) {
-    return MOCK_NICHOS;
+    const query = endpoint.includes("?") ? endpoint.split("?")[1] : "";
+    const params = new URLSearchParams(query);
+    const busqueda = (params.get("Busqueda") || params.get("busqueda") || "").toLowerCase().trim();
+    const sectorNumero = (params.get("SectorNumero") || params.get("sectorNumero") || "").toLowerCase().trim();
+    const ocupadoParam = params.get("Ocupado") || params.get("ocupado");
+
+    let result = [...MOCK_NICHOS];
+    if (busqueda) {
+      result = result.filter(
+        (n) =>
+          (n.entidadNombre && n.entidadNombre.toLowerCase().includes(busqueda)) ||
+          (n.socio &&
+            (n.socio.nombre.toLowerCase().includes(busqueda) ||
+              n.socio.apellido.toLowerCase().includes(busqueda)))
+      );
+    }
+    if (sectorNumero) {
+      result = result.filter(
+        (n) =>
+          n.sector.toLowerCase().includes(sectorNumero) ||
+          String(n.nroNicho).includes(sectorNumero)
+      );
+    }
+    if (ocupadoParam !== null && ocupadoParam !== undefined) {
+      const soloLibres = ocupadoParam === "false";
+      if (soloLibres) {
+        result = result.filter((n) => n.ocupado === "NO" || n.ocupado === false);
+      }
+    }
+    return result;
   }
   if (endpoint.startsWith("/configuracion-cuotas/modificar-socio")) {
     let body: { id_TipoCuota?: number; importe?: number } = {};

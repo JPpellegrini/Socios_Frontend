@@ -478,6 +478,55 @@ export const MOCK_NICHOS = [
   },
 ];
 
+export const MOCK_COLABORADORES = [
+  {
+    id_Colaborador: 1,
+    id_Entidad: 10,
+    tipoDocumento: "DNI",
+    documento: "28111222",
+    dni: "28111222",
+    cuitCuil: null,
+    nombre: "Esteban",
+    apellido: "Quito",
+    razonSocial: null,
+    sexo: "Hombre",
+    nacimiento: "1980-04-12",
+    fechaNacimiento: "1980-04-12",
+    prestacion: "Atención Médica",
+    idPrestacion: 1,
+    estado: "Activo",
+    ciudad: { id_Ciudad: 2, nombre: "Rosario" },
+    calle: "Corrientes",
+    altura: 450,
+    observacion: "Atiende por la mañana",
+    telefonos: ["3414556677"],
+    emails: ["esteban.quito@example.com"],
+  },
+  {
+    id_Colaborador: 2,
+    id_Entidad: 11,
+    tipoDocumento: "CUIT",
+    documento: "30708090102",
+    dni: null,
+    cuitCuil: "30708090102",
+    nombre: "Farmacia",
+    apellido: "Central",
+    razonSocial: "Farmacia Central S.R.L.",
+    sexo: "-",
+    nacimiento: "2012-08-20",
+    fechaNacimiento: "2012-08-20",
+    prestacion: "Farmacia",
+    idPrestacion: 2,
+    estado: "Inactivo",
+    ciudad: { id_Ciudad: 1, nombre: "Buenos Aires" },
+    calle: "Rivadavia",
+    altura: 1200,
+    observacion: null,
+    telefonos: ["1144556677"],
+    emails: ["contacto@farmaciacentral.com"],
+  },
+];
+
 export const MOCK_SOCIOS_ASIGNABLES_NICHO = [
   {
     idSocio: 1,
@@ -941,6 +990,134 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
       );
     }
     return MOCK_CONFIGURACION_CUOTAS;
+  }
+  if (endpoint === "/colaboradores/crear") {
+    let body: {
+      tipoDocumento?: string;
+      documento?: string;
+      nombre?: string;
+      apellido?: string;
+      razonSocial?: string;
+      fechaNacimiento?: string;
+      prestacion?: string;
+      idPrestacion?: number;
+      idCiudad?: number;
+      calle?: string;
+      altura?: number;
+      observaciones?: string;
+      telefonos?: string[];
+      emails?: string[];
+    } = {};
+    if (options?.body) {
+      try {
+        body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+      } catch {}
+    }
+    const nextColabId = Math.max(...MOCK_COLABORADORES.map((c) => c.id_Colaborador), 0) + 1;
+    const nextEntidadId = Math.max(...MOCK_COLABORADORES.map((c) => c.id_Entidad), 0) + 1;
+    const nuevo = {
+      id_Colaborador: nextColabId,
+      id_Entidad: nextEntidadId,
+      tipoDocumento: body.tipoDocumento || "DNI",
+      documento: body.documento || "",
+      dni: body.tipoDocumento === "DNI" ? body.documento : null,
+      cuitCuil: body.tipoDocumento === "CUIT" ? body.documento : null,
+      nombre: body.nombre || "",
+      apellido: body.apellido || "",
+      razonSocial: body.razonSocial || null,
+      sexo: "Otro",
+      nacimiento: body.fechaNacimiento || "1990-01-01",
+      fechaNacimiento: body.fechaNacimiento || "1990-01-01",
+      prestacion: body.prestacion || "Atención Médica",
+      idPrestacion: body.idPrestacion || 1,
+      estado: "Activo",
+      ciudad: { id_Ciudad: body.idCiudad || 1, nombre: "Rosario" },
+      calle: body.calle || "",
+      altura: Number(body.altura) || 0,
+      observacion: body.observaciones || null,
+      telefonos: body.telefonos || [],
+      emails: body.emails || [],
+    };
+    MOCK_COLABORADORES.push(nuevo);
+    return { idColaborador: nextColabId };
+  }
+  if (endpoint.startsWith("/colaboradores/baja/")) {
+    const idEntidadTipo = Number(endpoint.replace("/colaboradores/baja/", ""));
+    const colab = MOCK_COLABORADORES.find(
+      (c) => c.id_Colaborador === idEntidadTipo || c.id_Entidad === idEntidadTipo
+    );
+    if (colab) {
+      colab.estado = "Inactivo";
+    }
+    return { mensaje: "Colaborador dado de baja correctamente" };
+  }
+  if (endpoint.startsWith("/colaboradores/reactivar")) {
+    let body: { idEntidad?: number } = {};
+    if (options?.body) {
+      try {
+        body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+      } catch {}
+    }
+    const colab = MOCK_COLABORADORES.find(
+      (c) => c.id_Entidad === body.idEntidad || c.id_Colaborador === body.idEntidad
+    );
+    if (colab) {
+      colab.estado = "Activo";
+    }
+    return { mensaje: "El colaborador fue reactivado correctamente." };
+  }
+  if (endpoint.startsWith("/colaboradores/modificar")) {
+    let body: {
+      idEntidad?: number;
+      nombre?: string;
+      apellido?: string;
+      razonSocial?: string;
+      calle?: string;
+      altura?: number;
+      observaciones?: string;
+      telefonos?: string[];
+      emails?: string[];
+    } = {};
+    if (options?.body) {
+      try {
+        body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+      } catch {}
+    }
+    const colab = MOCK_COLABORADORES.find(
+      (c) => c.id_Entidad === body.idEntidad || c.id_Colaborador === body.idEntidad
+    );
+    if (colab) {
+      colab.nombre = body.nombre ?? colab.nombre;
+      colab.apellido = body.apellido ?? colab.apellido;
+      colab.razonSocial = body.razonSocial ?? colab.razonSocial;
+      colab.calle = body.calle ?? colab.calle;
+      colab.altura = body.altura ?? colab.altura;
+      colab.observacion = body.observaciones ?? colab.observacion;
+      if (body.telefonos) colab.telefonos = body.telefonos;
+      if (body.emails) colab.emails = body.emails;
+    }
+    return { mensaje: "El colaborador fue modificado correctamente." };
+  }
+  if (endpoint.match(/^\/colaboradores\/\d+$/)) {
+    const id = Number(endpoint.replace("/colaboradores/", ""));
+    const found = MOCK_COLABORADORES.find(
+      (c) => c.id_Entidad === id || c.id_Colaborador === id
+    );
+    return found || MOCK_COLABORADORES[0];
+  }
+  if (endpoint.startsWith("/colaboradores/buscar") || endpoint.startsWith("/colaboradores")) {
+    const query = endpoint.includes("?") ? endpoint.split("?")[1] : "";
+    const params = new URLSearchParams(query);
+    const busqueda = (params.get("busqueda") || "").toLowerCase().trim();
+    if (!busqueda) return MOCK_COLABORADORES;
+    return MOCK_COLABORADORES.filter(
+      (c) =>
+        (c.nombre && c.nombre.toLowerCase().includes(busqueda)) ||
+        (c.apellido && c.apellido.toLowerCase().includes(busqueda)) ||
+        (c.razonSocial && c.razonSocial.toLowerCase().includes(busqueda)) ||
+        (c.dni && c.dni.includes(busqueda)) ||
+        (c.cuitCuil && c.cuitCuil.includes(busqueda))
+    );
   }
   throw new Error(`No hay mock definido para el endpoint: ${endpoint}`);
 }

@@ -504,6 +504,57 @@ export const MOCK_ENTIDADES = [
   },
 ];
 
+export const MOCK_CONFIGURACION_CUOTAS = [
+  {
+    id_TipoCuota: 1,
+    concepto: "SOCIO",
+    importe: 4500,
+    edad: "SIN TOPE",
+    plan: "-",
+    ultimaModificacion: "2026-03-10T00:00:00",
+  },
+  {
+    id_TipoCuota: 2,
+    concepto: "SEPELIO",
+    importe: 10000,
+    edad: "HASTA 65",
+    plan: "A",
+    ultimaModificacion: "2026-03-10T00:00:00",
+  },
+  {
+    id_TipoCuota: 3,
+    concepto: "SEPELIO",
+    importe: 12000,
+    edad: "HASTA 65",
+    plan: "B",
+    ultimaModificacion: "2026-03-10T00:00:00",
+  },
+  {
+    id_TipoCuota: 4,
+    concepto: "SEPELIO",
+    importe: 12000,
+    edad: "MAS DE 65",
+    plan: "A",
+    ultimaModificacion: "2026-03-10T00:00:00",
+  },
+  {
+    id_TipoCuota: 5,
+    concepto: "SEPELIO",
+    importe: 14000,
+    edad: "MAS DE 65",
+    plan: "B",
+    ultimaModificacion: "2026-03-10T00:00:00",
+  },
+  {
+    id_TipoCuota: 6,
+    concepto: "NICHO",
+    importe: 300000,
+    edad: "SIN TOPE",
+    plan: "-",
+    ultimaModificacion: "2026-03-10T00:00:00",
+  },
+];
+
 export function getMockResponse(endpoint: string, options?: RequestInit): unknown {
   if (endpoint === "/me" || endpoint.startsWith("/me")) {
     return {
@@ -666,6 +717,66 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
   }
   if (endpoint.startsWith("/nichos/buscar") || endpoint.startsWith("/nichos")) {
     return MOCK_NICHOS;
+  }
+  if (endpoint.startsWith("/configuracion-cuotas/modificar-socio")) {
+    let body: { id_TipoCuota?: number; importe?: number } = {};
+    if (options?.body) {
+      try {
+        body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+      } catch {}
+    }
+    const cuota = MOCK_CONFIGURACION_CUOTAS.find((c) => c.id_TipoCuota === body.id_TipoCuota);
+    if (cuota) {
+      cuota.importe = Number(body.importe);
+      cuota.ultimaModificacion = new Date().toISOString();
+    }
+    return { mensaje: "El importe de la cuota de socio fue modificado correctamente." };
+  }
+  if (endpoint.startsWith("/configuracion-cuotas/modificar-sepelio-con-tope")) {
+    let body: { id_TipoCuota?: number; importe?: number; edadTope?: number } = {};
+    if (options?.body) {
+      try {
+        body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+      } catch {}
+    }
+    const cuota = MOCK_CONFIGURACION_CUOTAS.find((c) => c.id_TipoCuota === body.id_TipoCuota);
+    if (cuota) {
+      cuota.importe = Number(body.importe);
+      cuota.edad = `HASTA ${body.edadTope}`;
+      cuota.ultimaModificacion = new Date().toISOString();
+      const hermana = MOCK_CONFIGURACION_CUOTAS.find(
+        (c) => c.concepto === "SEPELIO" && c.plan === cuota.plan && c.edad.startsWith("MAS DE")
+      );
+      if (hermana) {
+        hermana.edad = `MAS DE ${body.edadTope}`;
+      }
+    }
+    return { mensaje: "La cuota de sepelio (con tope) fue modificada correctamente." };
+  }
+  if (endpoint.startsWith("/configuracion-cuotas/modificar-sepelio-sin-tope")) {
+    let body: { id_TipoCuota?: number; importe?: number } = {};
+    if (options?.body) {
+      try {
+        body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+      } catch {}
+    }
+    const cuota = MOCK_CONFIGURACION_CUOTAS.find((c) => c.id_TipoCuota === body.id_TipoCuota);
+    if (cuota) {
+      cuota.importe = Number(body.importe);
+      cuota.ultimaModificacion = new Date().toISOString();
+    }
+    return { mensaje: "La cuota de sepelio (más de) fue modificada correctamente." };
+  }
+  if (endpoint.startsWith("/configuracion-cuotas")) {
+    const query = endpoint.includes("?") ? endpoint.split("?")[1] : "";
+    const params = new URLSearchParams(query);
+    const concepto = params.get("Concepto") || params.get("concepto");
+    if (concepto && concepto.toLowerCase() !== "todos") {
+      return MOCK_CONFIGURACION_CUOTAS.filter(
+        (c) => c.concepto.toLowerCase() === concepto.toLowerCase()
+      );
+    }
+    return MOCK_CONFIGURACION_CUOTAS;
   }
   throw new Error(`No hay mock definido para el endpoint: ${endpoint}`);
 }

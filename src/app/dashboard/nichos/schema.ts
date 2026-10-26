@@ -52,24 +52,24 @@ export const asignarNichoSchema = z
   .object({
     idNicho: z.number().int().positive("El id del nicho es obligatorio."),
     idEntidad: z
-      .number({ invalid_type_error: "Debe seleccionar un socio titular." })
+      .number({ message: "Debe seleccionar un socio titular." })
       .int()
       .positive("Debe seleccionar un socio titular."),
     valorTotal: z
-      .number({ invalid_type_error: "El valor del nicho debe ser un número válido." })
+      .number({ message: "El valor del nicho debe ser un número válido." })
       .min(0, "El valor total no puede ser negativo."),
     cuotas: z
-      .number({ invalid_type_error: "La cantidad de cuotas debe ser un número entero." })
+      .number({ message: "La cantidad de cuotas debe ser un número entero." })
       .int()
       .min(1, "La cantidad de cuotas debe ser al menos 1."),
     interesPorCuota: z
-      .number({ invalid_type_error: "El interés por cuota debe ser un número válido." })
+      .number({ message: "El interés por cuota debe ser un número válido." })
       .min(0, "El interés no puede ser negativo."),
     conLapida: z.enum(["SI", "NO"], {
-      errorMap: () => ({ message: "Debe indicar si el nicho lleva lápida ('SI' o 'NO')." }),
+      message: "Debe indicar si el nicho lleva lápida ('SI' o 'NO').",
     }),
     valorLapida: z
-      .number({ invalid_type_error: "El valor de la lápida debe ser un número válido." })
+      .number({ message: "El valor de la lápida debe ser un número válido." })
       .optional(),
   })
   .refine(

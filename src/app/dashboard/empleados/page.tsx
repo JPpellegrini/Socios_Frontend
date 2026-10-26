@@ -165,7 +165,7 @@ export default function EmpleadosPage() {
             Gestión integral de personal de la institución
           </p>
         </div>
-        <Button asChild variant="filled">
+        <Button asChild variant="default">
           <Link href="/dashboard/empleados/nuevo">
             <Plus className="size-4" />
             Nuevo Empleado
@@ -303,7 +303,7 @@ export default function EmpleadosPage() {
               </Button>
               <Button
                 type="submit"
-                variant="filled"
+                variant="default"
                 className="bg-destructive text-white hover:bg-destructive/90"
                 disabled={bajaLoading}
               >

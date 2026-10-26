@@ -53,7 +53,7 @@ describe('Acciones del Servidor - Socios (API)', () => {
         plan: '',
         estado: 'Activo',
       });
-      expect(res[1].estado).toBe('Baja');
+      expect(res[1]?.estado).toBe('Baja');
     });
   });
 

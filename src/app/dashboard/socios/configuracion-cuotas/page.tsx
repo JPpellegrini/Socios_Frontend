@@ -380,13 +380,13 @@ export default function ConfiguracionCuotasPage() {
             <DialogFooter className="gap-2 sm:gap-0">
               <Button
                 type="button"
-                variant="outlined"
+                variant="outline"
                 onClick={cerrarEdicion}
                 disabled={submitting}
               >
                 Cancelar
               </Button>
-              <Button type="submit" variant="filled" disabled={submitting}>
+              <Button type="submit" variant="default" disabled={submitting}>
                 {submitting ? "Guardando..." : "Guardar Cambios"}
               </Button>
             </DialogFooter>

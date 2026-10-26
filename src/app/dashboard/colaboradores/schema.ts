@@ -42,7 +42,7 @@ export function normalizeContacts(items?: ContactField[]): string[] {
 
 export const colaboradorSchema = z.object({
   tipoDocumento: z.enum(["DNI", "CUIT"], {
-    errorMap: () => ({ message: "El tipo de documento debe ser 'DNI' o 'CUIT'" }),
+    message: "El tipo de documento debe ser 'DNI' o 'CUIT'",
   }),
   documento: z
     .string()

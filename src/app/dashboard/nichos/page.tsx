@@ -197,7 +197,7 @@ export default function NichosPage() {
           </p>
         </div>
         <Button
-          variant="filled"
+          variant="default"
           onClick={() => setModalCrearOpen(true)}
           className="gap-2 self-start sm:self-auto"
         >

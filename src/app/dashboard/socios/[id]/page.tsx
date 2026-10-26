@@ -47,7 +47,7 @@ export default function SocioDetallePage() {
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
-  const id = Array.isArray(params.id) ? params.id[0] : (params.id as string);
+  const id = (Array.isArray(params?.id) ? params.id[0] : params?.id) ?? "";
   const sociosService = useSociosService();
 
   const [socio, setSocio] = React.useState<SocioDetalle | null>(null);

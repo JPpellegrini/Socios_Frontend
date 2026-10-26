@@ -204,7 +204,7 @@ export default function ColaboradoresPage() {
             Gestione los profesionales, farmacias y entidades que prestan servicios al centro.
           </p>
         </div>
-        <Button asChild variant="filled" className="gap-2 self-start sm:self-auto">
+        <Button asChild variant="default" className="gap-2 self-start sm:self-auto">
           <Link href="/dashboard/colaboradores/nuevo">
             <Plus className="size-4" />
             <span>Nuevo Colaborador</span>
@@ -332,7 +332,7 @@ export default function ColaboradoresPage() {
             <DialogFooter className="gap-2 sm:gap-0">
               <Button
                 type="button"
-                variant="outlined"
+                variant="outline"
                 onClick={() => setColaboradorParaBaja(null)}
                 disabled={bajaLoading}
               >

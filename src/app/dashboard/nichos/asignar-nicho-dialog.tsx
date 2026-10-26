@@ -208,7 +208,7 @@ export function AsignarNichoDialog({
                     />
                     <Button
                       type="button"
-                      variant="outlined"
+                      variant="outline"
                       onClick={handleBuscarSocio}
                       disabled={buscandoSocios}
                     >
@@ -324,13 +324,13 @@ export function AsignarNichoDialog({
           <DialogFooter className="gap-2 sm:gap-0">
             <Button
               type="button"
-              variant="outlined"
+              variant="outline"
               onClick={handleClose}
               disabled={loading}
             >
               Cancelar
             </Button>
-            <Button type="submit" variant="filled" disabled={loading}>
+            <Button type="submit" variant="default" disabled={loading}>
               {loading ? "Asignando..." : "Confirmar Asignación"}
             </Button>
           </DialogFooter>

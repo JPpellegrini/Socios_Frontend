@@ -1053,7 +1053,7 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
     if (ocupadoParam !== null && ocupadoParam !== undefined) {
       const soloLibres = ocupadoParam === "false";
       if (soloLibres) {
-        result = result.filter((n) => n.ocupado === "NO" || n.ocupado === false);
+        result = result.filter((n) => n.ocupado === "NO" || String(n.ocupado).toUpperCase() === "NO");
       }
     }
     return result;
@@ -1165,7 +1165,7 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
       telefonos: body.telefonos || [],
       emails: body.emails || [],
     };
-    MOCK_COLABORADORES.push(nuevo);
+    MOCK_COLABORADORES.push(nuevo as any);
     return { idColaborador: nextColabId };
   }
   if (endpoint.startsWith("/colaboradores/baja/")) {
@@ -1286,7 +1286,7 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
       telefonos: body.telefonos || [],
       emails: body.emails || [],
     };
-    MOCK_EMPLEADOS.push(nuevo);
+    MOCK_EMPLEADOS.push(nuevo as any);
     return { id: nextId, mensaje: `Empleado ${body.nombre} ${body.apellido} creado correctamente.` };
   }
   if (endpoint.startsWith("/Empleados/baja/") || endpoint.startsWith("/empleados/baja/")) {

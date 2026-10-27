@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Landmark, CheckCircle2, XCircle, Plus, Trash2, UserPlus } from "lucide-react";
+import { Plus, Trash2, UserPlus } from "lucide-react";
 
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { Card } from "@/components/ui/card";
@@ -156,72 +156,36 @@ export default function NichosPage() {
           : "-",
       className: "text-xs text-on-surface-variant",
     },
-    {
-      key: "acciones",
-      header: "Acciones",
-      accessor: (n) =>
-        !n.ocupado ? (
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setNichoParaAsignar(n)}
-              className="h-8 px-2 text-primary hover:bg-primary/10 gap-1"
-              aria-label={`Asignar nicho ${n.nroNicho}`}
-            >
-              <UserPlus className="size-3.5" />
-              <span className="text-xs font-medium">Asignar</span>
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setNichoParaEliminar(n)}
-              className="h-8 px-2 text-destructive hover:bg-destructive/10"
-              aria-label={`Eliminar nicho ${n.nroNicho}`}
-            >
-              <Trash2 className="size-3.5" />
-            </Button>
-          </div>
-        ) : (
-          <span className="text-xs text-on-surface-variant/70 italic px-2">Concesionado</span>
-        ),
-    },
   ];
 
   return (
     <div className="relative h-full p-4 md:p-8 space-y-6">
       <h1 className="text-2xl font-bold mb-6">Gestión de Nichos</h1>
 
-      {/* Tarjetas de Métricas M3 */}
+      {/* Tarjetas de Métricas */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-          <div className="p-3 bg-primary/10 text-primary rounded-xl">
-            <Landmark className="size-6" />
-          </div>
-          <div>
-            <p className="text-xs text-on-surface-variant font-medium">Total de Nichos</p>
-            <p className="text-2xl font-bold text-foreground mt-0.5">{totalNichos}</p>
-          </div>
+        <Card
+          interactive={false}
+          className="p-5 flex flex-col items-center justify-center text-center rounded-2xl border-0 shadow-none bg-rose-400 text-white"
+        >
+          <p className="text-3xl font-bold tracking-tight">{totalNichos}</p>
+          <p className="text-xs font-medium mt-1 text-white/90">Total de Nichos</p>
         </Card>
 
-        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-          <div className="p-3 bg-primary-container/40 text-on-primary-container rounded-xl">
-            <XCircle className="size-6" />
-          </div>
-          <div>
-            <p className="text-xs text-on-surface-variant font-medium">Ocupados / Concesionados</p>
-            <p className="text-2xl font-bold text-foreground mt-0.5">{ocupados}</p>
-          </div>
+        <Card
+          interactive={false}
+          className="p-5 flex flex-col items-center justify-center text-center rounded-2xl border-0 shadow-none bg-sky-500 text-white"
+        >
+          <p className="text-3xl font-bold tracking-tight">{ocupados}</p>
+          <p className="text-xs font-medium mt-1 text-white/90">Ocupados / Concesionados</p>
         </Card>
 
-        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-          <div className="p-3 bg-surface-variant/40 text-on-surface-variant rounded-xl">
-            <CheckCircle2 className="size-6" />
-          </div>
-          <div>
-            <p className="text-xs text-on-surface-variant font-medium">Disponibles</p>
-            <p className="text-2xl font-bold text-foreground mt-0.5">{disponibles}</p>
-          </div>
+        <Card
+          interactive={false}
+          className="p-5 flex flex-col items-center justify-center text-center rounded-2xl border-0 shadow-none bg-violet-400 text-white"
+        >
+          <p className="text-3xl font-bold tracking-tight">{disponibles}</p>
+          <p className="text-xs font-medium mt-1 text-white/90">Disponibles</p>
         </Card>
       </div>
 
@@ -234,6 +198,33 @@ export default function NichosPage() {
         loading={loading}
         searchPlaceholder="Buscar por socio, número de nicho o sector..."
         emptyMessage={loading ? "Cargando nichos..." : "No se encontraron nichos"}
+        renderActions={(n) =>
+          !n.ocupado ? (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                title="Asignar"
+                aria-label={`Asignar nicho ${n.nroNicho}`}
+                onClick={() => setNichoParaAsignar(n)}
+              >
+                <UserPlus />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                title="Eliminar"
+                aria-label={`Eliminar nicho ${n.nroNicho}`}
+                className="text-destructive"
+                onClick={() => setNichoParaEliminar(n)}
+              >
+                <Trash2 />
+              </Button>
+            </>
+          ) : (
+            <span className="text-xs text-on-surface-variant/70 italic px-2">Concesionado</span>
+          )
+        }
       />
 
       <button

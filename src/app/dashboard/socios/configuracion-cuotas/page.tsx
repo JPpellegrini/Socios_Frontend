@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { CreditCard, ShieldCheck, Landmark, Pencil, AlertCircle } from "lucide-react";
+import { Edit, AlertCircle } from "lucide-react";
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -236,22 +236,6 @@ export default function ConfiguracionCuotasPage() {
         </span>
       ),
     },
-    {
-      key: "acciones",
-      header: "Acciones",
-      accessor: (c) => (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => abrirEdicion(c)}
-          className="h-8 px-2 text-primary hover:bg-primary/10 gap-1.5"
-          aria-label={`Modificar cuota ${c.concepto} ${c.plan !== "-" ? c.plan : ""}`}
-        >
-          <Pencil className="size-3.5" />
-          <span className="text-xs font-medium">Editar</span>
-        </Button>
-      ),
-    },
   ];
 
   const esSepelioConTopeActual =
@@ -262,38 +246,32 @@ export default function ConfiguracionCuotasPage() {
     <div className="relative h-full p-4 md:p-8 space-y-6">
       <h1 className="text-2xl font-bold mb-6">Configuración de Cuotas</h1>
 
-      {/* Tarjetas de Métricas M3 */}
+      {/* Tarjetas de Métricas */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-          <div className="p-3 bg-primary/10 text-primary rounded-xl">
-            <CreditCard className="size-6" />
-          </div>
-          <div>
-            <p className="text-xs text-on-surface-variant font-medium">Total de Tipos de Cuota</p>
-            <p className="text-2xl font-bold text-foreground mt-0.5">{totalCuotas}</p>
-          </div>
+        <Card
+          interactive={false}
+          className="p-5 flex flex-col items-center justify-center text-center rounded-2xl border-0 shadow-none bg-rose-400 text-white"
+        >
+          <p className="text-3xl font-bold tracking-tight">{totalCuotas}</p>
+          <p className="text-xs font-medium mt-1 text-white/90">Total de Tipos de Cuota</p>
         </Card>
 
-        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-          <div className="p-3 bg-secondary-container text-on-secondary-container rounded-xl">
-            <ShieldCheck className="size-6" />
-          </div>
-          <div>
-            <p className="text-xs text-on-surface-variant font-medium">Planes de Sepelio</p>
-            <p className="text-2xl font-bold text-foreground mt-0.5">{sepelioCount}</p>
-          </div>
+        <Card
+          interactive={false}
+          className="p-5 flex flex-col items-center justify-center text-center rounded-2xl border-0 shadow-none bg-sky-500 text-white"
+        >
+          <p className="text-3xl font-bold tracking-tight">{sepelioCount}</p>
+          <p className="text-xs font-medium mt-1 text-white/90">Planes de Sepelio</p>
         </Card>
 
-        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-          <div className="p-3 bg-tertiary-container text-on-tertiary-container rounded-xl">
-            <Landmark className="size-6" />
-          </div>
-          <div>
-            <p className="text-xs text-on-surface-variant font-medium">Cuota Social Vigente</p>
-            <p className="text-2xl font-bold text-foreground mt-0.5">
-              {cuotaSocio ? formatCurrency(cuotaSocio.importe) : "-"}
-            </p>
-          </div>
+        <Card
+          interactive={false}
+          className="p-5 flex flex-col items-center justify-center text-center rounded-2xl border-0 shadow-none bg-violet-400 text-white"
+        >
+          <p className="text-3xl font-bold tracking-tight">
+            {cuotaSocio ? formatCurrency(cuotaSocio.importe) : "-"}
+          </p>
+          <p className="text-xs font-medium mt-1 text-white/90">Cuota Social Vigente</p>
         </Card>
       </div>
 
@@ -307,6 +285,17 @@ export default function ConfiguracionCuotasPage() {
         onRowClick={(c) => abrirEdicion(c)}
         searchPlaceholder="Buscar por concepto, plan o tramo..."
         emptyMessage={loading ? "Cargando cuotas..." : "No se encontraron configuraciones de cuota"}
+        renderActions={(c) => (
+          <Button
+            variant="ghost"
+            size="icon"
+            title="Editar"
+            aria-label={`Modificar cuota ${c.concepto} ${c.plan !== "-" ? c.plan : ""}`}
+            onClick={() => abrirEdicion(c)}
+          >
+            <Edit />
+          </Button>
+        )}
       />
 
       {/* Modal de Modificación */}

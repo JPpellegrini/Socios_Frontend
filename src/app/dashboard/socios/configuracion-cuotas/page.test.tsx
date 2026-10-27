@@ -72,10 +72,10 @@ describe("ConfiguracionCuotasPage", () => {
     render(<ConfiguracionCuotasPage />);
 
     await waitFor(() => {
-      expect(screen.getAllByText("Editar").length).toBeGreaterThan(0);
+      expect(screen.getAllByTitle("Editar").length).toBeGreaterThan(0);
     });
 
-    const editBtns = screen.getAllByText("Editar");
+    const editBtns = screen.getAllByTitle("Editar");
     fireEvent.click(editBtns[0]!);
 
     await waitFor(() => {
@@ -109,11 +109,11 @@ describe("ConfiguracionCuotasPage", () => {
     render(<ConfiguracionCuotasPage />);
 
     await waitFor(() => {
-      expect(screen.getAllByText("Editar").length).toBe(3);
+      expect(screen.getAllByTitle("Editar").length).toBe(3);
     });
 
     // El segundo botón es sepelio con tope (HASTA 65)
-    const editBtns = screen.getAllByText("Editar");
+    const editBtns = screen.getAllByTitle("Editar");
     fireEvent.click(editBtns[1]!);
 
     await waitFor(() => {
@@ -147,10 +147,10 @@ describe("ConfiguracionCuotasPage", () => {
     render(<ConfiguracionCuotasPage />);
 
     await waitFor(() => {
-      expect(screen.getAllByText("Editar").length).toBeGreaterThan(0);
+      expect(screen.getAllByTitle("Editar").length).toBeGreaterThan(0);
     });
 
-    const editBtns = screen.getAllByText("Editar");
+    const editBtns = screen.getAllByTitle("Editar");
     fireEvent.click(editBtns[0]!);
 
     const submitBtn = screen.getByRole("button", { name: /Guardar Cambios/i });

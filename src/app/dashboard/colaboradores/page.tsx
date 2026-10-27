@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Plus, Edit, Trash2, UserCheck, Users, CheckCircle2, XCircle } from "lucide-react";
+import { Plus, Edit, Trash2, UserCheck } from "lucide-react";
 
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { Card } from "@/components/ui/card";
@@ -200,36 +200,30 @@ export default function ColaboradoresPage() {
     <div className="relative h-full p-4 md:p-8 space-y-6">
       <h1 className="text-2xl font-bold mb-6">Listado de Colaboradores</h1>
 
-      {/* Tarjetas de Métricas M3 */}
+      {/* Tarjetas de Métricas */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-          <div className="p-3 bg-primary/10 text-primary rounded-xl">
-            <Users className="size-6" />
-          </div>
-          <div>
-            <p className="text-xs text-on-surface-variant font-medium">Total Colaboradores</p>
-            <p className="text-2xl font-bold text-foreground mt-0.5">{totalColaboradores}</p>
-          </div>
+        <Card
+          interactive={false}
+          className="p-5 flex flex-col items-center justify-center text-center rounded-2xl border-0 shadow-none bg-rose-400 text-white"
+        >
+          <p className="text-3xl font-bold tracking-tight">{totalColaboradores}</p>
+          <p className="text-xs font-medium mt-1 text-white/90">Total Colaboradores</p>
         </Card>
 
-        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-          <div className="p-3 bg-primary-container/40 text-on-primary-container rounded-xl">
-            <CheckCircle2 className="size-6" />
-          </div>
-          <div>
-            <p className="text-xs text-on-surface-variant font-medium">Activos</p>
-            <p className="text-2xl font-bold text-foreground mt-0.5">{activos}</p>
-          </div>
+        <Card
+          interactive={false}
+          className="p-5 flex flex-col items-center justify-center text-center rounded-2xl border-0 shadow-none bg-sky-500 text-white"
+        >
+          <p className="text-3xl font-bold tracking-tight">{activos}</p>
+          <p className="text-xs font-medium mt-1 text-white/90">Activos</p>
         </Card>
 
-        <Card variant="outlined" className="p-4 bg-background flex items-center gap-4">
-          <div className="p-3 bg-destructive/10 text-destructive rounded-xl">
-            <XCircle className="size-6" />
-          </div>
-          <div>
-            <p className="text-xs text-on-surface-variant font-medium">Inactivos</p>
-            <p className="text-2xl font-bold text-foreground mt-0.5">{inactivos}</p>
-          </div>
+        <Card
+          interactive={false}
+          className="p-5 flex flex-col items-center justify-center text-center rounded-2xl border-0 shadow-none bg-violet-400 text-white"
+        >
+          <p className="text-3xl font-bold tracking-tight">{inactivos}</p>
+          <p className="text-xs font-medium mt-1 text-white/90">Inactivos</p>
         </Card>
       </div>
 

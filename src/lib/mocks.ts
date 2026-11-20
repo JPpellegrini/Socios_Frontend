@@ -428,8 +428,8 @@ export const MOCK_NICHOS = [
     valorNicho: 50000,
     valorLapida: 15000,
     cuotas: 12,
-    interesMensual: 0.05,
-    interes: 0.05,
+    interesMensual: 5,
+    interes: 5,
     socio: {
       id_Socio: 1,
       nombre: "Luciano",
@@ -1099,6 +1099,51 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
       nicho.valorLapida = Number(body.valorLapida) || 0;
     }
     return { mensaje: "El nicho fue asignado correctamente." };
+  }
+  if (endpoint === "/nichos/simular-cuotas") {
+    let body: {
+      valorTotal?: number;
+      cuotas?: number;
+      interesPorCuota?: number;
+      primerVencimiento?: string;
+      conLapida?: string;
+      valorLapida?: number;
+    } = {};
+    if (options?.body) {
+      try {
+        body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+      } catch {}
+    }
+    const llevaLapida = String(body.conLapida || "NO").toUpperCase() === "SI";
+    const valorTotal = Number(body.valorTotal) || 0;
+    const valorLapida = llevaLapida ? Number(body.valorLapida) || 0 : 0;
+    const cantidad = Math.max(1, Number(body.cuotas) || 1);
+    const interes = Math.max(0, Number(body.interesPorCuota) || 0);
+    const totalAFinanciar = valorTotal + valorLapida;
+    const montoCuota =
+      Math.round((totalAFinanciar / cantidad) * (1 + interes / 100) * 100) / 100;
+    const baseDate = body.primerVencimiento
+      ? new Date(`${body.primerVencimiento}T00:00:00`)
+      : new Date();
+    const cuotasList = Array.from({ length: cantidad }, (_, i) => {
+      const venc = new Date(baseDate);
+      venc.setMonth(venc.getMonth() + i);
+      return {
+        numero: i + 1,
+        mes: venc.getMonth() + 1,
+        anio: venc.getFullYear(),
+        vencimiento: venc.toISOString().split("T")[0] ?? "",
+        monto: montoCuota,
+      };
+    });
+    return {
+      totalAFinanciar,
+      interesPorCuota: interes,
+      cantidadCuotas: cantidad,
+      montoCuota,
+      totalAPagar: Math.round(montoCuota * cantidad * 100) / 100,
+      cuotas: cuotasList,
+    };
   }
   if (endpoint.startsWith("/nichos/buscar") || endpoint.startsWith("/nichos")) {
     const query = endpoint.includes("?") ? endpoint.split("?")[1] : "";

@@ -20,8 +20,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { type NichoItem, type SocioAsignableNicho } from "./schema";
-import { buscarSociosAsignablesNicho, asignarNicho } from "./actions";
+import {
+  type NichoItem,
+  type SocioAsignableNicho,
+  type NichoSimulacionCuotas,
+} from "./schema";
+import {
+  buscarSociosAsignablesNicho,
+  asignarNicho,
+  simularCuotasNicho,
+} from "./actions";
+
+function getDefaultPrimerVencimiento(): string {
+  const date = new Date();
+  date.setMonth(date.getMonth() + 1);
+  return date.toISOString().split("T")[0] ?? "";
+}
+
+function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat("es-AR", {
+    style: "currency",
+    currency: "ARS",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+}
 
 interface AsignarNichoDialogProps {
   open: boolean;
@@ -43,10 +66,16 @@ export function AsignarNichoDialog({
 
   // Formulario
   const [valorTotal, setValorTotal] = React.useState("50000");
-  const [cuotas, setCuotas] = React.useState("12");
+  const [cuotas, setCuotas] = React.useState("1");
   const [interes, setInteres] = React.useState("0");
+  const [primerVencimiento, setPrimerVencimiento] = React.useState(getDefaultPrimerVencimiento);
   const [conLapida, setConLapida] = React.useState<"SI" | "NO">("NO");
   const [valorLapida, setValorLapida] = React.useState("0");
+
+  // Flujo de resumen previo
+  const [paso, setPaso] = React.useState<"formulario" | "resumen">("formulario");
+  const [simulacion, setSimulacion] = React.useState<NichoSimulacionCuotas | null>(null);
+  const [simulando, setSimulando] = React.useState(false);
 
   const [loading, setLoading] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
@@ -67,16 +96,21 @@ export function AsignarNichoDialog({
   React.useEffect(() => {
     if (open) {
       cargarSocios();
+      setPaso("formulario");
+      setSimulacion(null);
       if (nicho) {
         setValorTotal(String(nicho.valorNicho || 50000));
-        setCuotas(String(nicho.cuotas || 12));
+        setCuotas(String(nicho.cuotas && nicho.cuotas > 0 ? nicho.cuotas : 1));
         setInteres(String(nicho.interes || 0));
+        setPrimerVencimiento(getDefaultPrimerVencimiento());
         setConLapida(nicho.conLapida ? "SI" : "NO");
         setValorLapida(String(nicho.valorLapida || 0));
       }
     } else {
       setSocioSeleccionado(null);
       setBusquedaSocio("");
+      setPaso("formulario");
+      setSimulacion(null);
       setErrorMsg(null);
     }
   }, [open, nicho, cargarSocios]);
@@ -89,17 +123,21 @@ export function AsignarNichoDialog({
   const handleClose = () => {
     setSocioSeleccionado(null);
     setBusquedaSocio("");
+    setPaso("formulario");
+    setSimulacion(null);
     setErrorMsg(null);
     onOpenChange(false);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!nicho) return;
-
+  const validarFormulario = (): {
+    valorTotalNum: number;
+    cuotasNum: number;
+    interesNum: number;
+    valorLapidaNum: number;
+  } | null => {
     if (!socioSeleccionado) {
       setErrorMsg("Debe seleccionar un socio activo titular.");
-      return;
+      return null;
     }
 
     const valorTotalNum = Number(valorTotal);
@@ -109,20 +147,68 @@ export function AsignarNichoDialog({
 
     if (isNaN(valorTotalNum) || valorTotalNum < 0) {
       setErrorMsg("El valor del nicho no puede ser negativo.");
-      return;
+      return null;
     }
     if (isNaN(cuotasNum) || cuotasNum < 1) {
       setErrorMsg("La cantidad de cuotas debe ser al menos 1.");
-      return;
+      return null;
     }
     if (isNaN(interesNum) || interesNum < 0) {
       setErrorMsg("El interés no puede ser negativo.");
-      return;
+      return null;
+    }
+    const today = new Date().toISOString().split("T")[0] ?? "";
+    if (!primerVencimiento || primerVencimiento <= today) {
+      setErrorMsg("La fecha del primer vencimiento debe ser posterior a hoy.");
+      return null;
     }
     if (conLapida === "SI" && (isNaN(valorLapidaNum) || valorLapidaNum <= 0)) {
       setErrorMsg("El valor de la lápida debe ser mayor a 0 cuando lleva lápida.");
-      return;
+      return null;
     }
+
+    return { valorTotalNum, cuotasNum, interesNum, valorLapidaNum };
+  };
+
+  const handleRevisarResumen = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!nicho) return;
+
+    const datos = validarFormulario();
+    if (!datos) return;
+
+    setSimulando(true);
+    setErrorMsg(null);
+
+    try {
+      const res = await simularCuotasNicho({
+        valorTotal: datos.valorTotalNum,
+        cuotas: datos.cuotasNum,
+        interesPorCuota: datos.interesNum,
+        primerVencimiento,
+        conLapida,
+        valorLapida: conLapida === "SI" ? datos.valorLapidaNum : 0,
+      });
+
+      if (res.success && res.simulacion) {
+        setSimulacion(res.simulacion);
+        setPaso("resumen");
+      } else {
+        setErrorMsg(res.mensaje || "Error al calcular el resumen de financiación.");
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Error inesperado al simular.";
+      setErrorMsg(msg);
+    } finally {
+      setSimulando(false);
+    }
+  };
+
+  const handleConfirmarAsignacion = async () => {
+    if (!nicho || !socioSeleccionado) return;
+
+    const datos = validarFormulario();
+    if (!datos) return;
 
     setLoading(true);
     setErrorMsg(null);
@@ -131,11 +217,12 @@ export function AsignarNichoDialog({
       const res = await asignarNicho({
         idNicho: Number(nicho.id),
         idEntidad: socioSeleccionado.idEntidad,
-        valorTotal: valorTotalNum,
-        cuotas: cuotasNum,
-        interesPorCuota: interesNum,
+        valorTotal: datos.valorTotalNum,
+        cuotas: datos.cuotasNum,
+        interesPorCuota: datos.interesNum,
+        primerVencimiento,
         conLapida,
-        valorLapida: conLapida === "SI" ? valorLapidaNum : 0,
+        valorLapida: conLapida === "SI" ? datos.valorLapidaNum : 0,
       });
 
       if (res.success) {
@@ -155,20 +242,21 @@ export function AsignarNichoDialog({
   return (
     <Dialog open={open} onOpenChange={(o) => (!o ? handleClose() : onOpenChange(true))}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>Asignar Nicho #{nicho?.nroNicho} ({nicho?.sector})</DialogTitle>
-            <DialogDescription>
-              Seleccione el socio titular (activo con sepelio) y configure los valores de concesión.
-            </DialogDescription>
-          </DialogHeader>
+        {paso === "formulario" ? (
+          <form onSubmit={handleRevisarResumen}>
+            <DialogHeader>
+              <DialogTitle>Asignar Nicho #{nicho?.nroNicho} ({nicho?.sector})</DialogTitle>
+              <DialogDescription>
+                Seleccione el socio titular (activo con sepelio) y configure los valores de concesión.
+              </DialogDescription>
+            </DialogHeader>
 
-          {errorMsg && (
-            <div className="mt-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm flex items-center gap-2">
-              <AlertCircle className="size-4 shrink-0" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
+            {errorMsg && (
+              <div className="mt-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm flex items-center gap-2">
+                <AlertCircle className="size-4 shrink-0" />
+                <span>{errorMsg}</span>
+              </div>
+            )}
 
           <div className="space-y-4 py-4">
             {/* Buscador de Socio */}
@@ -274,17 +362,30 @@ export function AsignarNichoDialog({
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="interes-nicho">Interés Mensual (ej: 0.05 para 5%)</Label>
-              <Input
-                id="interes-nicho"
-                type="number"
-                step="0.01"
-                min="0"
-                value={interes}
-                onChange={(e) => setInteres(e.target.value)}
-                required
-              />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="interes-nicho">Interés Mensual (%)</Label>
+                <Input
+                  id="interes-nicho"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  value={interes}
+                  onChange={(e) => setInteres(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="primer-vencimiento">Primer Vencimiento</Label>
+                <Input
+                  id="primer-vencimiento"
+                  type="date"
+                  value={primerVencimiento}
+                  onChange={(e) => setPrimerVencimiento(e.target.value)}
+                  required
+                />
+              </div>
             </div>
 
             {/* Lápida */}
@@ -326,15 +427,97 @@ export function AsignarNichoDialog({
               type="button"
               variant="outline"
               onClick={handleClose}
-              disabled={loading}
+              disabled={simulando}
             >
               Cancelar
             </Button>
-            <Button type="submit" variant="default" disabled={loading}>
-              {loading ? "Asignando..." : "Confirmar Asignación"}
+            <Button type="submit" variant="default" disabled={simulando}>
+              {simulando ? "Calculando..." : "Revisar Resumen"}
             </Button>
           </DialogFooter>
         </form>
+        ) : (
+          <div className="space-y-4">
+            <DialogHeader>
+              <DialogTitle>Confirmar Asignación — Nicho #{nicho?.nroNicho} ({nicho?.sector})</DialogTitle>
+              <DialogDescription>
+                Verifique los datos antes de confirmar la concesión y generar las cuotas.
+              </DialogDescription>
+            </DialogHeader>
+
+            {errorMsg && (
+              <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm flex items-center gap-2">
+                <AlertCircle className="size-4 shrink-0" />
+                <span>{errorMsg}</span>
+              </div>
+            )}
+
+            <div className="rounded-xl border border-outline-variant bg-surface-container-low p-4 space-y-2.5 text-sm">
+              <div className="flex justify-between gap-4">
+                <span className="text-on-surface-variant">Socio Titular</span>
+                <span className="font-semibold text-foreground text-right">
+                  {socioSeleccionado?.apellido}, {socioSeleccionado?.nombre} (DNI: {socioSeleccionado?.dni})
+                </span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="text-on-surface-variant">Valor del Nicho</span>
+                <span className="font-medium tabular-nums">{formatCurrency(Number(valorTotal) || 0)}</span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="text-on-surface-variant">¿Lleva Lápida?</span>
+                <span className="font-medium tabular-nums">
+                  {conLapida === "SI" ? `Sí (${formatCurrency(Number(valorLapida) || 0)})` : "No"}
+                </span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="text-on-surface-variant">Cantidad de Cuotas</span>
+                <span className="font-medium">{simulacion?.cantidadCuotas ?? Number(cuotas)}</span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="text-on-surface-variant">Interés Mensual</span>
+                <span className="font-medium">{simulacion?.interesPorCuota ?? Number(interes)}%</span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="text-on-surface-variant">Primer Vencimiento</span>
+                <span className="font-medium font-mono">{primerVencimiento}</span>
+              </div>
+              <div className="border-t border-outline-variant pt-2.5 flex justify-between gap-4">
+                <span className="font-semibold text-foreground">Valor de cada cuota (con interés)</span>
+                <span className="font-bold text-primary tabular-nums">
+                  {formatCurrency(simulacion?.montoCuota ?? 0)}
+                </span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="font-semibold text-foreground">Total a pagar</span>
+                <span className="font-bold text-foreground tabular-nums">
+                  {formatCurrency(simulacion?.totalAPagar ?? 0)}
+                </span>
+              </div>
+            </div>
+
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setErrorMsg(null);
+                  setPaso("formulario");
+                }}
+                disabled={loading}
+              >
+                Volver
+              </Button>
+              <Button
+                type="button"
+                variant="default"
+                onClick={handleConfirmarAsignacion}
+                disabled={loading}
+              >
+                {loading ? "Asignando..." : "Confirmar Asignación"}
+              </Button>
+            </DialogFooter>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

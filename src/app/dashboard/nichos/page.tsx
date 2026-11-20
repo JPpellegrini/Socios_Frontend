@@ -150,7 +150,7 @@ export default function NichosPage() {
       header: "Financiación",
       accessor: (n) =>
         n.cuotas > 0
-          ? `${n.cuotas} cuotas (${(n.interes * 100).toFixed(0)}% int.)`
+          ? `${n.cuotas} cuotas (${n.interes}% int.)`
           : n.ocupado
           ? "Contado"
           : "-",

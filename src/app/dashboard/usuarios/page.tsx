@@ -132,7 +132,7 @@ export default function UsuariosPage() {
   )
 
   return (
-    <div className="relative h-full p-4 md:p-8">
+    <div className="relative h-full p-4 md:p-8 pb-24">
       <h1 className="text-2xl font-bold mb-6">Listado de Usuarios</h1>
 
       <DataTable<UsuarioListItem>
@@ -192,7 +192,7 @@ export default function UsuariosPage() {
       <Link
         href="/dashboard/usuarios/nuevo"
         className={cn(
-          fabVariants({ variant: "primary", size: "large" }),
+          fabVariants({ variant: "primary", size: "default" }),
           "fixed bottom-8 right-8"
         )}
         aria-label="Nuevo usuario"

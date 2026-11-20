@@ -904,6 +904,52 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
   if (endpoint.startsWith("/proveedores/crear")) {
     return { idProveedor: 4 };
   }
+  if (endpoint.startsWith("/prestaciones/modificar/")) {
+    const id = Number(endpoint.replace("/prestaciones/modificar/", ""));
+    let body: { nombre?: string; tipo?: string } = {};
+    if (options?.body) {
+      try {
+        body = typeof options.body === "string" ? JSON.parse(options.body) : (options.body as typeof body);
+      } catch {}
+    }
+    const nombreNorm = (body.nombre || "").trim().toUpperCase();
+    if (nombreNorm.length < 3 || nombreNorm.length > 100) {
+      throw new Error("El nombre de la prestación debe tener entre 3 y 100 caracteres.");
+    }
+    const item = MOCK_PRESTACIONES_CATALOG.find((p) => p.idPrestacion === id);
+    if (!item) {
+      throw new Error("No se encontró la prestación.");
+    }
+    const duplicada = MOCK_PRESTACIONES_CATALOG.some(
+      (p) => p.idPrestacion !== id && p.nombre.toUpperCase() === nombreNorm
+    );
+    if (duplicada) {
+      throw new Error("Ya existe otra prestación con ese nombre.");
+    }
+    item.nombre = nombreNorm;
+    if (body.tipo === "COLABORACION" || body.tipo === "PRESTACION") {
+      item.tipo = body.tipo;
+    }
+    return { mensaje: "Prestación modificada correctamente.", prestacion: item };
+  }
+  if (endpoint.startsWith("/prestaciones/baja/")) {
+    const id = Number(endpoint.replace("/prestaciones/baja/", ""));
+    const item = MOCK_PRESTACIONES_CATALOG.find((p) => p.idPrestacion === id);
+    if (!item) {
+      throw new Error("No se encontró la prestación.");
+    }
+    item.estado = "INACTIVA";
+    return { mensaje: "Prestación dada de baja correctamente.", prestacion: item };
+  }
+  if (endpoint.startsWith("/prestaciones/reactivar/")) {
+    const id = Number(endpoint.replace("/prestaciones/reactivar/", ""));
+    const item = MOCK_PRESTACIONES_CATALOG.find((p) => p.idPrestacion === id);
+    if (!item) {
+      throw new Error("No se encontró la prestación.");
+    }
+    item.estado = "ACTIVA";
+    return { mensaje: "Prestación reactivada correctamente.", prestacion: item };
+  }
   if (endpoint.startsWith("/prestaciones")) {
     const method = (options?.method || "GET").toUpperCase();
     if (method === "POST") {

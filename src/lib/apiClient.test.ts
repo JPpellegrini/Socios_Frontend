@@ -1,4 +1,5 @@
 import { fetchAPI, isMockMode } from './apiClient';
+import { getMockResponse } from './mocks';
 
 global.fetch = jest.fn();
 
@@ -139,6 +140,25 @@ describe('fetchAPI HTTP Client', () => {
       expect(isMockMode()).toBe(false);
       process.env.ENV = 'prod';
       expect(isMockMode()).toBe(false);
+    });
+  });
+
+  describe('getMockResponse /buscarentidad', () => {
+    it('debe devolver null si el DNI no corresponde a ninguna entidad mock', () => {
+      const res = getMockResponse('/buscarentidad', {
+        method: 'GET',
+        body: JSON.stringify({ dni: '13458796' }),
+      });
+      expect(res).toBeNull();
+    });
+
+    it('debe devolver la entidad correspondiente si el DNI coincide', () => {
+      const res = getMockResponse('/buscarentidad', {
+        method: 'GET',
+        body: JSON.stringify({ dni: '12345678' }),
+      }) as { nombre?: string } | null;
+      expect(res).not.toBeNull();
+      expect(res?.nombre).toBe('Juan');
     });
   });
 });

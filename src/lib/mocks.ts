@@ -864,7 +864,30 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
     return filtered;
   }
   if (endpoint.startsWith("/buscarentidad")) {
-    return MOCK_ENTIDADES[0];
+    let dni = "";
+    if (options?.body) {
+      try {
+        const parsed = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+        dni = String(parsed?.dni || parsed?.busqueda || "").trim();
+      } catch {
+        // fallback
+      }
+    }
+    if (!dni) {
+      const queryIdx = endpoint.indexOf("?");
+      if (queryIdx !== -1) {
+        const params = new URLSearchParams(endpoint.slice(queryIdx));
+        dni = (params.get("dni") || params.get("busqueda") || "").trim();
+      }
+    }
+    if (!dni) return null;
+
+    const found = MOCK_ENTIDADES.find(
+      (e) =>
+        e.cuitCuil === dni ||
+        (e.cuitCuil.length === 11 && e.cuitCuil.slice(2, 10) === dni)
+    );
+    return found ?? null;
   }
   if (endpoint === "/codeudores/crear") {
     return { idEntidad: 15 };

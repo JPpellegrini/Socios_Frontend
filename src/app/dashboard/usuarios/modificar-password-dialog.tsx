@@ -90,7 +90,14 @@ export function ModificarPasswordDialog({
             Modificar Password
           </DialogTitle>
           <DialogDescription className="text-xs text-on-surface-variant">
-            Establezca una nueva contraseña para la cuenta del usuario.
+            {usuario ? (
+              <>
+                Establezca una nueva contraseña para la cuenta de{" "}
+                <span className="font-semibold text-foreground">{usuario.usuario}</span>.
+              </>
+            ) : (
+              "Establezca una nueva contraseña para la cuenta del usuario."
+            )}
           </DialogDescription>
         </DialogHeader>
 

@@ -8,6 +8,7 @@ import {
   type SocioAsignableNicho,
   type CrearNichoFormData,
   type AsignarNichoFormData,
+  type NichoSimulacionCuotas,
   crearNichoSchema,
   asignarNichoSchema,
   bajaNichoSchema,
@@ -219,6 +220,7 @@ export async function asignarNicho(
       valorTotal: parsed.data.valorTotal,
       cuotas: parsed.data.cuotas,
       interesPorCuota: parsed.data.interesPorCuota,
+      primerVencimiento: parsed.data.primerVencimiento,
       conLapida: parsed.data.conLapida,
       valorLapida: parsed.data.conLapida === "SI" ? parsed.data.valorLapida : 0,
     };
@@ -230,6 +232,43 @@ export async function asignarNicho(
     return { success: true, mensaje: res?.mensaje };
   } catch (err: unknown) {
     const mensaje = err instanceof Error ? err.message : "Error al asignar el nicho";
+    return { success: false, mensaje };
+  }
+}
+
+export async function simularCuotasNicho(data: {
+  valorTotal: number;
+  cuotas: number;
+  interesPorCuota: number;
+  primerVencimiento: string;
+  conLapida: "SI" | "NO";
+  valorLapida?: number;
+}): Promise<{ success: boolean; simulacion?: NichoSimulacionCuotas; mensaje?: string }> {
+  const token = await getAuthToken();
+  if (!token) return { success: false, mensaje: "No autenticado" };
+
+  try {
+    const payload = {
+      valorTotal: data.valorTotal,
+      cuotas: data.cuotas,
+      interesPorCuota: data.interesPorCuota,
+      primerVencimiento: data.primerVencimiento,
+      conLapida: data.conLapida,
+      valorLapida: data.conLapida === "SI" ? data.valorLapida : undefined,
+    };
+
+    const res = await fetchAPI<NichoSimulacionCuotas>(
+      "/nichos/simular-cuotas",
+      token,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }
+    );
+    return { success: true, simulacion: res };
+  } catch (err: unknown) {
+    const mensaje =
+      err instanceof Error ? err.message : "Error al simular las cuotas del nicho";
     return { success: false, mensaje };
   }
 }

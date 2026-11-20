@@ -34,10 +34,17 @@ import {
   crearProveedor,
   actualizarProveedor,
   buscarProveedorPorDocumento,
+  obtenerPrestacionesProveedor,
+  crearPrestacionProveedor,
+  type PrestacionOption,
 } from "../actions";
 
 const CIUDADES_COLUMNS: Column<Ciudad>[] = [
   { key: "nombre", header: "Nombre", accessor: (c) => c.nombre, searchable: true },
+];
+
+const PRESTACIONES_COLUMNS: Column<PrestacionOption>[] = [
+  { key: "nombre", header: "Prestación", accessor: (p) => p.nombre, searchable: true },
 ];
 
 function ProveedorForm() {
@@ -77,6 +84,58 @@ function ProveedorForm() {
 
   const cuitCuilValue = useWatch({ control, name: "cuitCuil" });
   const ciudadValue = useWatch({ control, name: "ciudad" });
+  const prestacionValue = useWatch({ control, name: "prestacion" });
+
+  const [prestaciones, setPrestaciones] = React.useState<PrestacionOption[]>([]);
+  const [loadingPrestaciones, setLoadingPrestaciones] = React.useState(false);
+  const [newPrestacionNombre, setNewPrestacionNombre] = React.useState("");
+  const [creandoPrestacion, setCreandoPrestacion] = React.useState(false);
+  const [prestacionError, setPrestacionError] = React.useState("");
+
+  React.useEffect(() => {
+    let cancelled = false;
+    setLoadingPrestaciones(true);
+    obtenerPrestacionesProveedor()
+      .then((list) => {
+        if (!cancelled) setPrestaciones(list);
+      })
+      .catch(() => {
+        if (!cancelled) setPrestaciones([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingPrestaciones(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handleCrearPrestacion = async () => {
+    setPrestacionError("");
+    const nombreTrim = newPrestacionNombre.trim();
+    if (nombreTrim.length < 3 || nombreTrim.length > 100) {
+      setPrestacionError("Debe tener entre 3 y 100 caracteres.");
+      return;
+    }
+
+    setCreandoPrestacion(true);
+    try {
+      const res = await crearPrestacionProveedor(nombreTrim);
+      if (res.success && res.prestacion) {
+        const creada = res.prestacion;
+        setPrestaciones((prev) =>
+          prev.some((p) => p.idPrestacion === creada.idPrestacion) ? prev : [...prev, creada]
+        );
+        setValue("prestacion", creada.nombre, { shouldValidate: true });
+        setValue("idPrestacion", creada.idPrestacion);
+        setNewPrestacionNombre("");
+      } else {
+        setPrestacionError(res.mensaje || "No se pudo crear la prestación.");
+      }
+    } finally {
+      setCreandoPrestacion(false);
+    }
+  };
 
   const {
     fields: telefonoFields,
@@ -112,6 +171,7 @@ function ProveedorForm() {
         reset({
           cuitCuil: detalle.cuitCuil,
           razonSocial: detalle.razonSocial,
+          idPrestacion: detalle.idPrestacion,
           prestacion: detalle.prestacion,
           fechaNacimiento: detalle.fechaNacimiento || new Date().toISOString().substring(0, 10),
           ciudad: detalle.ciudad,
@@ -323,15 +383,109 @@ function ProveedorForm() {
                 />
               </div>
 
-              {/* Prestación */}
-              <div className="col-span-12 md:col-span-6">
-                <Input
-                  label="Prestación / Especialidad / Servicio"
-                  variant="outlined"
-                  error={!!errors.prestacion}
-                  errorText={errors.prestacion?.message}
-                  {...register("prestacion")}
-                />
+              {/* Prestación con selector popup */}
+              <div className="col-span-12 md:col-span-6 flex flex-col sm:flex-row items-start sm:items-end gap-2">
+                <div className="flex-grow w-full">
+                  <Input
+                    label="Prestación / Especialidad / Servicio"
+                    value={prestacionValue || ""}
+                    readOnly
+                    variant="outlined"
+                    error={!!errors.prestacion}
+                    errorText={errors.prestacion?.message}
+                    onClear={() => {
+                      setValue("prestacion", "", { shouldValidate: true });
+                      setValue("idPrestacion", undefined);
+                    }}
+                  />
+                </div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="secondary"
+                      className="w-full sm:w-auto h-14"
+                      size="default"
+                      type="button"
+                      aria-label="Seleccionar prestación"
+                    >
+                      <Search className="size-4" />
+                      Seleccionar
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-xl">
+                    <DialogHeader>
+                      <DialogTitle>Seleccionar prestación</DialogTitle>
+                    </DialogHeader>
+                    <div className="py-4 space-y-4">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                        <div className="flex-grow w-full">
+                          <Input
+                            label="Nueva prestación"
+                            placeholder="Ej. Servicio de ambulancia"
+                            value={newPrestacionNombre}
+                            onChange={(e) => setNewPrestacionNombre(e.target.value)}
+                            variant="outlined"
+                            error={!!prestacionError}
+                            errorText={prestacionError}
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          className="w-full sm:w-auto h-14 shrink-0"
+                          onClick={handleCrearPrestacion}
+                          disabled={creandoPrestacion}
+                        >
+                          <Plus className="size-4" />
+                          {creandoPrestacion ? "Agregando..." : "Agregar prestación"}
+                        </Button>
+                      </div>
+
+                      <DataTable<PrestacionOption>
+                        storageKey="proveedores-prestaciones-selector"
+                        data={
+                          prestacionValue &&
+                          !prestaciones.some(
+                            (p) => p.nombre.toLowerCase() === prestacionValue.toLowerCase()
+                          )
+                            ? [
+                                ...prestaciones,
+                                {
+                                  id: "actual",
+                                  idPrestacion: 0,
+                                  nombre: prestacionValue,
+                                  tipo: "PRESTACION",
+                                  estado: "ACTIVA",
+                                },
+                              ]
+                            : prestaciones
+                        }
+                        columns={PRESTACIONES_COLUMNS}
+                        getRowId={(p) => p.id}
+                        loading={loadingPrestaciones}
+                        searchPlaceholder="Buscar prestación por nombre"
+                        emptyMessage="No se encontraron prestaciones"
+                        columnsLabel="Columnas"
+                        renderActions={(p) => (
+                          <DialogClose asChild>
+                            <Button
+                              size="sm"
+                              type="button"
+                              onClick={() => {
+                                setValue("prestacion", p.nombre, { shouldValidate: true });
+                                if (p.idPrestacion > 0) {
+                                  setValue("idPrestacion", p.idPrestacion);
+                                }
+                              }}
+                            >
+                              Elegir
+                            </Button>
+                          </DialogClose>
+                        )}
+                      />
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
 
               {/* Fecha Inicio / Nacimiento */}

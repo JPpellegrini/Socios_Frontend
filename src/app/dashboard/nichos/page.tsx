@@ -150,7 +150,7 @@ export default function NichosPage() {
       header: "Financiación",
       accessor: (n) =>
         n.cuotas > 0
-          ? `${n.cuotas} cuotas (${(n.interes * 100).toFixed(0)}% int.)`
+          ? `${n.cuotas} cuotas (${n.interes}% int.)`
           : n.ocupado
           ? "Contado"
           : "-",
@@ -159,7 +159,7 @@ export default function NichosPage() {
   ];
 
   return (
-    <div className="relative h-full p-4 md:p-8 space-y-6">
+    <div className="relative h-full p-4 md:p-8 pb-24 space-y-6">
       <h1 className="text-2xl font-bold mb-6">Gestión de Nichos</h1>
 
       {/* Tarjetas de Métricas */}
@@ -231,7 +231,7 @@ export default function NichosPage() {
         type="button"
         onClick={() => setModalCrearOpen(true)}
         className={cn(
-          fabVariants({ variant: "primary", size: "large" }),
+          fabVariants({ variant: "primary", size: "default" }),
           "fixed bottom-8 right-8"
         )}
         aria-label="Nuevo nicho"

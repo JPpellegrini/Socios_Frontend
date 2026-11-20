@@ -14,6 +14,7 @@ export interface ProveedorDetalle {
   id: string;
   cuitCuil: string;
   razonSocial: string;
+  idPrestacion?: number;
   prestacion: string;
   estado: "Activo" | "Inactivo";
   fechaNacimiento: string;
@@ -33,9 +34,10 @@ export const proveedorSchema = z.object({
     .string()
     .min(3, "La razón social debe tener al menos 3 caracteres")
     .max(150, "Máximo 150 caracteres"),
+  idPrestacion: z.number().optional(),
   prestacion: z
     .string()
-    .min(3, "La prestación debe tener al menos 3 caracteres")
+    .min(1, "La prestación es obligatoria")
     .max(200, "Máximo 200 caracteres"),
   fechaNacimiento: z.string().min(1, "La fecha de inicio o nacimiento es obligatoria"),
   ciudad: z.string().min(1, "La ciudad es obligatoria"),

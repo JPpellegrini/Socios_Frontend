@@ -362,6 +362,15 @@ export const MOCK_USUARIOS = [
   },
 ];
 
+export const MOCK_PRESTACIONES_CATALOG = [
+  { idPrestacion: 1, nombre: "SERVICIO DE AMBULANCIA Y TRASLADOS", tipo: "PRESTACION", estado: "ACTIVA" },
+  { idPrestacion: 2, nombre: "INSUMOS ORTOPÉDICOS", tipo: "PRESTACION", estado: "ACTIVA" },
+  { idPrestacion: 3, nombre: "SERVICIO DE SEPELIO", tipo: "PRESTACION", estado: "ACTIVA" },
+  { idPrestacion: 4, nombre: "MANTENIMIENTO EDILICIO", tipo: "PRESTACION", estado: "ACTIVA" },
+  { idPrestacion: 5, nombre: "ATENCIÓN MÉDICA", tipo: "COLABORACION", estado: "ACTIVA" },
+  { idPrestacion: 6, nombre: "FARMACIA", tipo: "COLABORACION", estado: "ACTIVA" },
+];
+
 export const MOCK_PROVEEDORES = [
   {
     id_Proveedor: 1,
@@ -419,8 +428,8 @@ export const MOCK_NICHOS = [
     valorNicho: 50000,
     valorLapida: 15000,
     cuotas: 12,
-    interesMensual: 0.05,
-    interes: 0.05,
+    interesMensual: 5,
+    interes: 5,
     socio: {
       id_Socio: 1,
       nombre: "Luciano",
@@ -864,13 +873,78 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
     return filtered;
   }
   if (endpoint.startsWith("/buscarentidad")) {
-    return MOCK_ENTIDADES[0];
+    let dni = "";
+    if (options?.body) {
+      try {
+        const parsed = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+        dni = String(parsed?.dni || parsed?.busqueda || "").trim();
+      } catch {
+        // fallback
+      }
+    }
+    if (!dni) {
+      const queryIdx = endpoint.indexOf("?");
+      if (queryIdx !== -1) {
+        const params = new URLSearchParams(endpoint.slice(queryIdx));
+        dni = (params.get("dni") || params.get("busqueda") || "").trim();
+      }
+    }
+    if (!dni) return null;
+
+    const found = MOCK_ENTIDADES.find(
+      (e) =>
+        e.cuitCuil === dni ||
+        (e.cuitCuil.length === 11 && e.cuitCuil.slice(2, 10) === dni)
+    );
+    return found ?? null;
   }
   if (endpoint === "/codeudores/crear") {
     return { idEntidad: 15 };
   }
   if (endpoint.startsWith("/proveedores/crear")) {
     return { idProveedor: 4 };
+  }
+  if (endpoint.startsWith("/prestaciones")) {
+    const method = (options?.method || "GET").toUpperCase();
+    if (method === "POST") {
+      let body: { nombre?: string; tipo?: string } = {};
+      if (options?.body) {
+        try {
+          body = typeof options.body === "string" ? JSON.parse(options.body) : (options.body as typeof body);
+        } catch {}
+      }
+      const nombreNorm = (body.nombre || "").trim().toUpperCase();
+      if (nombreNorm.length < 3 || nombreNorm.length > 100) {
+        throw new Error("El nombre de la prestación debe tener entre 3 y 100 caracteres.");
+      }
+      const existe = MOCK_PRESTACIONES_CATALOG.some(
+        (p) => p.nombre.toUpperCase() === nombreNorm
+      );
+      if (existe) {
+        throw new Error("Ya existe una prestación con ese nombre.");
+      }
+      const nuevo = {
+        idPrestacion: MOCK_PRESTACIONES_CATALOG.length + 1,
+        nombre: nombreNorm,
+        tipo: body.tipo || "PRESTACION",
+        estado: "ACTIVA",
+      };
+      MOCK_PRESTACIONES_CATALOG.push(nuevo);
+      return nuevo;
+    }
+
+    const queryIdx = endpoint.indexOf("?");
+    const params = queryIdx !== -1 ? new URLSearchParams(endpoint.slice(queryIdx)) : new URLSearchParams();
+    const estado = (params.get("estado") || "ACTIVA").toUpperCase();
+    const tipo = (params.get("tipo") || "").toUpperCase();
+    const nombre = (params.get("nombre") || "").trim().toLowerCase();
+
+    return MOCK_PRESTACIONES_CATALOG.filter((p) => {
+      if (estado !== "TODOS" && p.estado !== estado) return false;
+      if (tipo && p.tipo !== tipo) return false;
+      if (nombre && !p.nombre.toLowerCase().includes(nombre)) return false;
+      return true;
+    });
   }
   if (endpoint.startsWith("/proveedores/baja")) {
     let id: number | undefined;
@@ -1025,6 +1099,51 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
       nicho.valorLapida = Number(body.valorLapida) || 0;
     }
     return { mensaje: "El nicho fue asignado correctamente." };
+  }
+  if (endpoint === "/nichos/simular-cuotas") {
+    let body: {
+      valorTotal?: number;
+      cuotas?: number;
+      interesPorCuota?: number;
+      primerVencimiento?: string;
+      conLapida?: string;
+      valorLapida?: number;
+    } = {};
+    if (options?.body) {
+      try {
+        body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+      } catch {}
+    }
+    const llevaLapida = String(body.conLapida || "NO").toUpperCase() === "SI";
+    const valorTotal = Number(body.valorTotal) || 0;
+    const valorLapida = llevaLapida ? Number(body.valorLapida) || 0 : 0;
+    const cantidad = Math.max(1, Number(body.cuotas) || 1);
+    const interes = Math.max(0, Number(body.interesPorCuota) || 0);
+    const totalAFinanciar = valorTotal + valorLapida;
+    const montoCuota =
+      Math.round((totalAFinanciar / cantidad) * (1 + interes / 100) * 100) / 100;
+    const baseDate = body.primerVencimiento
+      ? new Date(`${body.primerVencimiento}T00:00:00`)
+      : new Date();
+    const cuotasList = Array.from({ length: cantidad }, (_, i) => {
+      const venc = new Date(baseDate);
+      venc.setMonth(venc.getMonth() + i);
+      return {
+        numero: i + 1,
+        mes: venc.getMonth() + 1,
+        anio: venc.getFullYear(),
+        vencimiento: venc.toISOString().split("T")[0] ?? "",
+        monto: montoCuota,
+      };
+    });
+    return {
+      totalAFinanciar,
+      interesPorCuota: interes,
+      cantidadCuotas: cantidad,
+      montoCuota,
+      totalAPagar: Math.round(montoCuota * cantidad * 100) / 100,
+      cuotas: cuotasList,
+    };
   }
   if (endpoint.startsWith("/nichos/buscar") || endpoint.startsWith("/nichos")) {
     const query = endpoint.includes("?") ? endpoint.split("?")[1] : "";
@@ -1306,6 +1425,22 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
       emp.estado = "Inactivo";
     }
     return { mensaje: `Empleado dado de baja correctamente con motivo: ${motivo}` };
+  }
+  if (endpoint.startsWith("/Empleados/reactivar") || endpoint.startsWith("/empleados/reactivar")) {
+    let idEntidad = 0;
+    if (options?.body) {
+      try {
+        const parsed = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+        idEntidad = Number(parsed?.idEntidad ?? parsed?.id ?? 0);
+      } catch {}
+    }
+    const emp = MOCK_EMPLEADOS.find(
+      (e) => e.id_Entidad === idEntidad || e.id_EntidadTipo === idEntidad
+    );
+    if (emp) {
+      emp.estado = "Activo";
+    }
+    return { mensaje: "El empleado fue reactivado correctamente." };
   }
   if (endpoint.startsWith("/Empleados/modificar") || endpoint.startsWith("/empleados/modificar")) {
     let body: {

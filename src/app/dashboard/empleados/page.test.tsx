@@ -11,6 +11,7 @@ jest.mock("next/navigation", () => ({
 jest.mock("./actions", () => ({
   obtenerEmpleados: jest.fn(),
   darDeBajaEmpleado: jest.fn(),
+  reactivarEmpleado: jest.fn(),
 }));
 
 const mockEmpleadosData = [
@@ -56,6 +57,7 @@ describe("EmpleadosPage", () => {
       expect(screen.getByText("López, Carlos")).toBeInTheDocument();
       expect(screen.getByText("32444555")).toBeInTheDocument();
       expect(screen.getByText("Ríos, Mariana")).toBeInTheDocument();
+      expect(screen.queryByText(/^Sexo$/i)).not.toBeInTheDocument();
     });
   });
 
@@ -96,6 +98,31 @@ describe("EmpleadosPage", () => {
 
     await waitFor(() => {
       expect(actions.darDeBajaEmpleado).toHaveBeenCalledWith(201, "Fin de contrato temporal");
+    });
+  });
+
+  it("permite reactivar a un empleado inactivo", async () => {
+    (actions.obtenerEmpleados as jest.Mock).mockResolvedValue(mockEmpleadosData);
+    (actions.reactivarEmpleado as jest.Mock).mockResolvedValue({ success: true });
+
+    render(<EmpleadosPage />);
+
+    await waitFor(() => {
+      expect(screen.getByText("32444555")).toBeInTheDocument();
+    });
+
+    const reactivarBtn = screen.getByTitle("Reactivar empleado");
+    fireEvent.click(reactivarBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText("Reactivar empleado")).toBeInTheDocument();
+    });
+
+    const confirmBtn = screen.getByRole("button", { name: /^Reactivar$/i });
+    fireEvent.click(confirmBtn);
+
+    await waitFor(() => {
+      expect(actions.reactivarEmpleado).toHaveBeenCalledWith(102);
     });
   });
 });

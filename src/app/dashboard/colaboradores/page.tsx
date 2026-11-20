@@ -197,7 +197,7 @@ export default function ColaboradoresPage() {
   );
 
   return (
-    <div className="relative h-full p-4 md:p-8 space-y-6">
+    <div className="relative h-full p-4 md:p-8 pb-24 space-y-6">
       <h1 className="text-2xl font-bold mb-6">Listado de Colaboradores</h1>
 
       {/* Tarjetas de Métricas */}
@@ -281,7 +281,7 @@ export default function ColaboradoresPage() {
       <Link
         href="/dashboard/colaboradores/nuevo"
         className={cn(
-          fabVariants({ variant: "primary", size: "large" }),
+          fabVariants({ variant: "primary", size: "default" }),
           "fixed bottom-8 right-8"
         )}
         aria-label="Nuevo colaborador"

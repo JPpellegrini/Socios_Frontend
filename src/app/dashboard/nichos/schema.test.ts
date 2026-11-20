@@ -38,7 +38,8 @@ describe("Nichos Schemas Validation", () => {
         idEntidad: 1,
         valorTotal: 50000,
         cuotas: 12,
-        interesPorCuota: 0.05,
+        interesPorCuota: 5,
+        primerVencimiento: "2099-12-31",
         conLapida: "NO",
       };
       const parsed = asignarNichoSchema.safeParse(data);
@@ -51,7 +52,8 @@ describe("Nichos Schemas Validation", () => {
         idEntidad: 1,
         valorTotal: 50000,
         cuotas: 12,
-        interesPorCuota: 0.05,
+        interesPorCuota: 5,
+        primerVencimiento: "2099-12-31",
         conLapida: "SI",
         valorLapida: 15000,
       };
@@ -65,7 +67,8 @@ describe("Nichos Schemas Validation", () => {
         idEntidad: 1,
         valorTotal: 50000,
         cuotas: 12,
-        interesPorCuota: 0.05,
+        interesPorCuota: 5,
+        primerVencimiento: "2099-12-31",
         conLapida: "SI",
       };
       const parsed = asignarNichoSchema.safeParse(data);

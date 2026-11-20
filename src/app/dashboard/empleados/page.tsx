@@ -20,8 +20,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { type EmpleadoListItem } from "./schema";
-import { obtenerEmpleados, darDeBajaEmpleado } from "./actions";
+import { obtenerEmpleados, darDeBajaEmpleado, reactivarEmpleado } from "./actions";
 
 const ESTADO_OPTIONS = [
   { value: "Todos", label: "Todos los estados" },
@@ -39,6 +40,10 @@ export default function EmpleadosPage() {
   const [motivoBaja, setMotivoBaja] = React.useState("");
   const [bajaError, setBajaError] = React.useState<string | null>(null);
   const [bajaLoading, setBajaLoading] = React.useState(false);
+
+  // Reactivación dialog
+  const [empleadoParaReactivar, setEmpleadoParaReactivar] = React.useState<EmpleadoListItem | null>(null);
+  const [reactivando, setReactivando] = React.useState(false);
 
   const cargarEmpleados = React.useCallback(async () => {
     setLoading(true);
@@ -86,6 +91,21 @@ export default function EmpleadosPage() {
     }
   };
 
+  const handleConfirmarReactivacion = async () => {
+    if (!empleadoParaReactivar) return;
+
+    setReactivando(true);
+    try {
+      const res = await reactivarEmpleado(Number(empleadoParaReactivar.id));
+      if (res.success) {
+        setEmpleadoParaReactivar(null);
+        await cargarEmpleados();
+      }
+    } finally {
+      setReactivando(false);
+    }
+  };
+
   // Métricas
   const totalEmpleados = empleados.length;
   const activos = empleados.filter((e) => e.estado === "Activo").length;
@@ -115,15 +135,6 @@ export default function EmpleadosPage() {
         ),
         searchable: true,
         searchAccessor: (e) => `${e.nombre} ${e.apellido}`,
-      },
-      {
-        key: "sexo",
-        header: "Sexo",
-        accessor: (e) => (
-          <span className="text-sm text-on-surface-variant">
-            {e.sexo || "—"}
-          </span>
-        ),
       },
       {
         key: "telefonos",
@@ -158,7 +169,7 @@ export default function EmpleadosPage() {
   );
 
   return (
-    <div className="relative h-full p-4 md:p-8 space-y-6">
+    <div className="relative h-full p-4 md:p-8 pb-24 space-y-6">
       <h1 className="text-2xl font-bold mb-6">Listado de Empleados</h1>
 
       {/* Tarjetas de Métricas */}
@@ -198,15 +209,26 @@ export default function EmpleadosPage() {
         onRowClick={(e) => router.push(`/dashboard/empleados/${e.id}`)}
         renderActions={(e) =>
           e.estado === "Inactivo" ? (
-            <Button
-              variant="ghost"
-              size="icon"
-              title="Editar empleado"
-              aria-label={`Editar empleado ${e.nombre}`}
-              onClick={() => router.push(`/dashboard/empleados/${e.id}?edit=true`)}
-            >
-              <Edit className="size-4" />
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                title="Editar empleado"
+                aria-label={`Editar empleado ${e.nombre}`}
+                onClick={() => router.push(`/dashboard/empleados/${e.id}?edit=true`)}
+              >
+                <Edit className="size-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                title="Reactivar empleado"
+                aria-label={`Reactivar empleado ${e.nombre}`}
+                onClick={() => setEmpleadoParaReactivar(e)}
+              >
+                <UserCheck className="size-4" />
+              </Button>
+            </>
           ) : (
             <>
               <Button
@@ -240,7 +262,7 @@ export default function EmpleadosPage() {
       <Link
         href="/dashboard/empleados/nuevo"
         className={cn(
-          fabVariants({ variant: "primary", size: "large" }),
+          fabVariants({ variant: "primary", size: "default" }),
           "fixed bottom-8 right-8"
         )}
         aria-label="Nuevo empleado"
@@ -306,6 +328,23 @@ export default function EmpleadosPage() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Confirmación de Reactivación */}
+      <ConfirmDialog
+        open={Boolean(empleadoParaReactivar)}
+        onOpenChange={(open) => {
+          if (!open) setEmpleadoParaReactivar(null);
+        }}
+        title="Reactivar empleado"
+        description={
+          empleadoParaReactivar
+            ? `¿Está seguro de que desea reactivar al empleado ${empleadoParaReactivar.nombre} ${empleadoParaReactivar.apellido} (DNI ${empleadoParaReactivar.dni})?`
+            : ""
+        }
+        confirmText="Reactivar"
+        loading={reactivando}
+        onConfirm={handleConfirmarReactivacion}
+      />
     </div>
   );
 }

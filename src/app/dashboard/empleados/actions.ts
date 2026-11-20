@@ -252,6 +252,28 @@ export async function darDeBajaEmpleado(
   }
 }
 
+export async function reactivarEmpleado(
+  idEntidad: number
+): Promise<{ success: boolean; mensaje?: string }> {
+  const token = await getAuthToken();
+  if (!token) return { success: false, mensaje: "No autenticado" };
+
+  try {
+    const res = await fetchAPI<{ mensaje?: string }>(
+      "/empleados/reactivar",
+      token,
+      {
+        method: "POST",
+        body: JSON.stringify({ idEntidad }),
+      }
+    );
+    return { success: true, mensaje: res?.mensaje };
+  } catch (err: unknown) {
+    const mensaje = err instanceof Error ? err.message : "Error al reactivar el empleado";
+    return { success: false, mensaje };
+  }
+}
+
 interface BackendEntidadBusqueda {
   id_Entidad?: number;
   dni?: string;

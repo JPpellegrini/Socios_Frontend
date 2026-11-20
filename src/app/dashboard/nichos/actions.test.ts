@@ -4,6 +4,7 @@ import {
   crearNicho,
   darDeBajaNicho,
   asignarNicho,
+  simularCuotasNicho,
 } from "./actions";
 
 jest.mock("../../../lib/apiClient", () => ({
@@ -182,7 +183,8 @@ describe("Nichos Server Actions", () => {
         idEntidad: 1,
         valorTotal: 50000,
         cuotas: 12,
-        interesPorCuota: 0.05,
+        interesPorCuota: 5,
+        primerVencimiento: "2099-12-31",
         conLapida: "SI",
       });
       expect(res.success).toBe(false);
@@ -199,8 +201,9 @@ describe("Nichos Server Actions", () => {
         idNicho: 2,
         idEntidad: 1,
         valorTotal: 50000,
-        cuotas: 12,
-        interesPorCuota: 0.05,
+        cuotas: 1,
+        interesPorCuota: 0,
+        primerVencimiento: "2099-12-31",
         conLapida: "NO",
       });
       expect(res.success).toBe(true);
@@ -213,12 +216,45 @@ describe("Nichos Server Actions", () => {
             idNicho: 2,
             idEntidad: 1,
             valorTotal: 50000,
-            cuotas: 12,
-            interesPorCuota: 0.05,
+            cuotas: 1,
+            interesPorCuota: 0,
+            primerVencimiento: "2099-12-31",
             conLapida: "NO",
             valorLapida: 0,
           }),
         })
+      );
+    });
+  });
+
+  describe("simularCuotasNicho", () => {
+    it("llama a POST /nichos/simular-cuotas con éxito", async () => {
+      (cookies as jest.Mock).mockResolvedValue({
+        get: () => ({ value: "tok" }),
+      });
+      (fetchAPI as jest.Mock).mockResolvedValue({
+        totalAFinanciar: 50000,
+        interesPorCuota: 5,
+        cantidadCuotas: 2,
+        montoCuota: 26250,
+        totalAPagar: 52500,
+        cuotas: [],
+      });
+
+      const res = await simularCuotasNicho({
+        valorTotal: 50000,
+        cuotas: 2,
+        interesPorCuota: 5,
+        primerVencimiento: "2099-12-31",
+        conLapida: "NO",
+      });
+
+      expect(res.success).toBe(true);
+      expect(res.simulacion?.montoCuota).toBe(26250);
+      expect(fetchAPI).toHaveBeenCalledWith(
+        "/nichos/simular-cuotas",
+        "tok",
+        expect.objectContaining({ method: "POST" })
       );
     });
   });

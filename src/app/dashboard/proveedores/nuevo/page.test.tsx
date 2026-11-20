@@ -16,12 +16,23 @@ jest.mock("../actions", () => ({
   crearProveedor: jest.fn(),
   actualizarProveedor: jest.fn(),
   buscarProveedorPorDocumento: jest.fn(),
+  obtenerPrestacionesProveedor: jest.fn(),
+  crearPrestacionProveedor: jest.fn(),
 }));
 
 describe("NuevoProveedorPage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockSearchParams = new URLSearchParams();
+    (actions.obtenerPrestacionesProveedor as jest.Mock).mockResolvedValue([
+      {
+        id: "1",
+        idPrestacion: 1,
+        nombre: "SERVICIO DE AMBULANCIA Y TRASLADOS",
+        tipo: "PRESTACION",
+        estado: "ACTIVA",
+      },
+    ]);
   });
 
   it("debe renderizar el campo de búsqueda inicial de CUIT/CUIL/DNI", () => {
@@ -65,9 +76,18 @@ describe("NuevoProveedorPage", () => {
     fireEvent.change(screen.getByLabelText(/Razón Social \/ Nombre/i), {
       target: { value: "Emergencias Médicas S.A." },
     });
-    fireEvent.change(screen.getByLabelText(/Prestación \/ Especialidad \/ Servicio/i), {
-      target: { value: "Ambulancia" },
+
+    // Seleccionar prestación
+    const selectPrestacionBtn = screen.getByRole("button", { name: /Seleccionar prestación/i });
+    fireEvent.click(selectPrestacionBtn);
+    await waitFor(() => {
+      expect(screen.getByText("SERVICIO DE AMBULANCIA Y TRASLADOS")).toBeInTheDocument();
     });
+    const elegirPrestacionBtn = screen.getAllByRole("button", { name: /Elegir/i })[0];
+    if (elegirPrestacionBtn) {
+      fireEvent.click(elegirPrestacionBtn);
+    }
+
     fireEvent.change(screen.getByLabelText(/Fecha de inicio \/ nacimiento/i), {
       target: { value: "2010-01-01" },
     });
@@ -79,7 +99,7 @@ describe("NuevoProveedorPage", () => {
     });
 
     // Seleccionar ciudad
-    const selectCiudadBtn = screen.getByRole("button", { name: /Seleccionar/i });
+    const selectCiudadBtn = screen.getByRole("button", { name: /^Seleccionar$/i });
     fireEvent.click(selectCiudadBtn);
     const elegirBtns = screen.getAllByRole("button", { name: /Elegir/i });
     if (elegirBtns.length > 0 && elegirBtns[0]) {
@@ -103,10 +123,47 @@ describe("NuevoProveedorPage", () => {
         expect.objectContaining({
           cuitCuil: "30712345678",
           razonSocial: "Emergencias Médicas S.A.",
-          prestacion: "Ambulancia",
+          idPrestacion: 1,
+          prestacion: "SERVICIO DE AMBULANCIA Y TRASLADOS",
         })
       );
       expect(mockPush).toHaveBeenCalledWith("/dashboard/proveedores");
+    });
+  });
+
+  it("permite agregar una nueva prestación desde el modal selector", async () => {
+    (actions.buscarProveedorPorDocumento as jest.Mock).mockResolvedValue(null);
+    (actions.crearPrestacionProveedor as jest.Mock).mockResolvedValue({
+      success: true,
+      prestacion: {
+        id: "99",
+        idPrestacion: 99,
+        nombre: "KINESIOLOGÍA A DOMICILIO",
+        tipo: "PRESTACION",
+        estado: "ACTIVA",
+      },
+    });
+
+    render(<NuevoProveedorPage />);
+
+    fireEvent.change(screen.getByLabelText(/CUIT \/ CUIL \/ DNI/i), {
+      target: { value: "30712345678" },
+    });
+    fireEvent.click(screen.getByLabelText("Buscar"));
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Seleccionar prestación/i })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Seleccionar prestación/i }));
+    fireEvent.change(screen.getByLabelText(/Nueva prestación/i), {
+      target: { value: "Kinesiología a domicilio" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Agregar prestación/i }));
+
+    await waitFor(() => {
+      expect(actions.crearPrestacionProveedor).toHaveBeenCalledWith("Kinesiología a domicilio");
+      expect(screen.getByDisplayValue("KINESIOLOGÍA A DOMICILIO")).toBeInTheDocument();
     });
   });
 

@@ -33,6 +33,23 @@ export interface SocioAsignableNicho {
   dni: string;
 }
 
+export interface NichoCuotaSimulada {
+  numero: number;
+  mes: number;
+  anio: number;
+  vencimiento: string;
+  monto: number;
+}
+
+export interface NichoSimulacionCuotas {
+  totalAFinanciar: number;
+  interesPorCuota: number;
+  cantidadCuotas: number;
+  montoCuota: number;
+  totalAPagar: number;
+  cuotas: NichoCuotaSimulada[];
+}
+
 export const crearNichoSchema = z.object({
   sector: z
     .string()
@@ -65,6 +82,13 @@ export const asignarNichoSchema = z
     interesPorCuota: z
       .number({ message: "El interés por cuota debe ser un número válido." })
       .min(0, "El interés no puede ser negativo."),
+    primerVencimiento: z
+      .string()
+      .min(1, "La fecha del primer vencimiento es obligatoria.")
+      .refine((val) => {
+        const today = new Date().toISOString().split("T")[0] ?? "";
+        return val > today;
+      }, "La fecha del primer vencimiento debe ser posterior a hoy."),
     conLapida: z.enum(["SI", "NO"], {
       message: "Debe indicar si el nicho lleva lápida ('SI' o 'NO').",
     }),

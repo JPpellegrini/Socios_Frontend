@@ -253,7 +253,7 @@ export default function PrestacionesPage() {
             : `¿Está seguro de que desea reactivar la prestación "${confirmTarget?.item.nombre}"?`
         }
         confirmText={confirmTarget?.action === "baja" ? "Dar de baja" : "Reactivar"}
-        variant={confirmTarget?.action === "baja" ? "destructive" : "default"}
+        variant={confirmTarget?.action === "baja" ? "destructive" : "primary"}
         loading={procesandoConfirm}
         onConfirm={handleConfirmAction}
       />

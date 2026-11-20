@@ -1330,7 +1330,7 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
       telefonos: body.telefonos || [],
       emails: body.emails || [],
     };
-    MOCK_COLABORADORES.push(nuevo as any);
+    MOCK_COLABORADORES.push(nuevo as (typeof MOCK_COLABORADORES)[number]);
     return { idColaborador: nextColabId };
   }
   if (endpoint.startsWith("/colaboradores/baja/")) {
@@ -1451,7 +1451,7 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
       telefonos: body.telefonos || [],
       emails: body.emails || [],
     };
-    MOCK_EMPLEADOS.push(nuevo as any);
+    MOCK_EMPLEADOS.push(nuevo as (typeof MOCK_EMPLEADOS)[number]);
     return { id: nextId, mensaje: `Empleado ${body.nombre} ${body.apellido} creado correctamente.` };
   }
   if (endpoint.startsWith("/Empleados/baja/") || endpoint.startsWith("/empleados/baja/")) {

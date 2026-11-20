@@ -354,7 +354,7 @@ export default function ConfiguracionCuotasPage() {
                     required
                   />
                   <p className="text-xs text-on-surface-variant">
-                    Al modificar este tope de edad, el tramo superior ("Más de") del mismo plan se actualizará automáticamente.
+                    Al modificar este tope de edad, el tramo superior (&ldquo;Más de&rdquo;) del mismo plan se actualizará automáticamente.
                   </p>
                 </div>
               )}

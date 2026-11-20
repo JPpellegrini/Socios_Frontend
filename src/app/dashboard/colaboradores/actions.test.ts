@@ -2,7 +2,6 @@ import {
   obtenerColaboradores,
   obtenerColaboradorDetalle,
   crearColaborador,
-  modificarColaborador,
   darDeBajaColaborador,
   reactivarColaborador,
   buscarColaboradorPorDocumento,

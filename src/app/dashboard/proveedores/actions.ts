@@ -9,6 +9,23 @@ import {
   normalizeContacts,
 } from "./schema";
 import { findCiudadIdByName } from "@/lib/ciudades";
+import { findPrestacionIdByName } from "@/lib/prestaciones";
+
+export interface PrestacionOption {
+  id: string;
+  idPrestacion: number;
+  nombre: string;
+  tipo: string;
+  estado: string;
+}
+
+interface BackendPrestacionDto {
+  idPrestacion?: number;
+  id_Prestacion?: number;
+  nombre?: string;
+  tipo?: string;
+  estado?: string;
+}
 
 interface BackendProveedorItem {
   id_Proveedor?: number;
@@ -17,6 +34,8 @@ interface BackendProveedorItem {
   cuitCuil?: string;
   razonSocial?: string;
   nombre?: string;
+  idPrestacion?: number;
+  id_Prestacion?: number;
   prestacion?: string;
   servicio?: string;
   estado?: string;
@@ -117,6 +136,7 @@ export async function obtenerProveedorDetalle(
       id: String(idRaw),
       cuitCuil: raw.cuitCuil || "",
       razonSocial: raw.razonSocial || raw.nombre || "",
+      idPrestacion: raw.idPrestacion ?? raw.id_Prestacion,
       prestacion: raw.prestacion || raw.servicio || "",
       estado: estadoNorm,
       fechaNacimiento: fechaRaw ? (fechaRaw.split("T")[0] ?? "") : "",
@@ -140,8 +160,11 @@ export async function crearProveedor(
   if (!token) return null;
 
   const payload = {
+    tipoDocumento: data.cuitCuil.length === 11 ? "CUIT" : "DNI",
+    documento: data.cuitCuil,
     dni: data.cuitCuil,
     razonSocial: data.razonSocial,
+    idPrestacion: data.idPrestacion ?? findPrestacionIdByName(data.prestacion),
     prestacion: data.prestacion,
     fechaNacimiento: data.fechaNacimiento,
     idCiudad: findCiudadIdByName(data.ciudad),
@@ -167,8 +190,10 @@ export async function actualizarProveedor(
   if (!token) return;
 
   const payload = {
+    idEntidad: Number(id),
     id_Proveedor: Number(id),
     razonSocial: data.razonSocial,
+    idPrestacion: data.idPrestacion ?? findPrestacionIdByName(data.prestacion),
     prestacion: data.prestacion,
     idCiudad: findCiudadIdByName(data.ciudad),
     calle: data.calle,
@@ -300,5 +325,70 @@ export async function buscarProveedorPorDocumento(
     };
   } catch {
     return null;
+  }
+}
+
+export async function obtenerPrestacionesProveedor(): Promise<PrestacionOption[]> {
+  const token = await getAuthToken();
+  if (!token) return [];
+
+  try {
+    const raw = await fetchAPI<BackendPrestacionDto[]>(
+      "/prestaciones?estado=ACTIVA&tipo=PRESTACION",
+      token
+    );
+    if (!Array.isArray(raw)) return [];
+    return raw.map((p) => {
+      const idNum = Number(p.idPrestacion ?? p.id_Prestacion ?? 0);
+      return {
+        id: String(idNum),
+        idPrestacion: idNum,
+        nombre: p.nombre || "",
+        tipo: p.tipo || "PRESTACION",
+        estado: p.estado || "ACTIVA",
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
+export async function crearPrestacionProveedor(
+  nombre: string
+): Promise<{ success: boolean; prestacion?: PrestacionOption; mensaje?: string }> {
+  const nombreTrim = nombre.trim();
+  if (nombreTrim.length < 3 || nombreTrim.length > 100) {
+    return {
+      success: false,
+      mensaje: "El nombre de la prestación debe tener entre 3 y 100 caracteres.",
+    };
+  }
+
+  const token = await getAuthToken();
+  if (!token) return { success: false, mensaje: "No autenticado" };
+
+  try {
+    const res = await fetchAPI<BackendPrestacionDto>("/prestaciones", token, {
+      method: "POST",
+      body: JSON.stringify({
+        nombre: nombreTrim,
+        tipo: "PRESTACION",
+      }),
+    });
+    const idNum = Number(res?.idPrestacion ?? res?.id_Prestacion ?? 0);
+    return {
+      success: true,
+      prestacion: {
+        id: String(idNum),
+        idPrestacion: idNum,
+        nombre: res?.nombre || nombreTrim.toUpperCase(),
+        tipo: res?.tipo || "PRESTACION",
+        estado: res?.estado || "ACTIVA",
+      },
+    };
+  } catch (err: unknown) {
+    const mensaje =
+      err instanceof Error ? err.message : "Error al crear la prestación.";
+    return { success: false, mensaje };
   }
 }

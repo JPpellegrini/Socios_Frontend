@@ -362,6 +362,15 @@ export const MOCK_USUARIOS = [
   },
 ];
 
+export const MOCK_PRESTACIONES_CATALOG = [
+  { idPrestacion: 1, nombre: "SERVICIO DE AMBULANCIA Y TRASLADOS", tipo: "PRESTACION", estado: "ACTIVA" },
+  { idPrestacion: 2, nombre: "INSUMOS ORTOPÉDICOS", tipo: "PRESTACION", estado: "ACTIVA" },
+  { idPrestacion: 3, nombre: "SERVICIO DE SEPELIO", tipo: "PRESTACION", estado: "ACTIVA" },
+  { idPrestacion: 4, nombre: "MANTENIMIENTO EDILICIO", tipo: "PRESTACION", estado: "ACTIVA" },
+  { idPrestacion: 5, nombre: "ATENCIÓN MÉDICA", tipo: "COLABORACION", estado: "ACTIVA" },
+  { idPrestacion: 6, nombre: "FARMACIA", tipo: "COLABORACION", estado: "ACTIVA" },
+];
+
 export const MOCK_PROVEEDORES = [
   {
     id_Proveedor: 1,
@@ -894,6 +903,48 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
   }
   if (endpoint.startsWith("/proveedores/crear")) {
     return { idProveedor: 4 };
+  }
+  if (endpoint.startsWith("/prestaciones")) {
+    const method = (options?.method || "GET").toUpperCase();
+    if (method === "POST") {
+      let body: { nombre?: string; tipo?: string } = {};
+      if (options?.body) {
+        try {
+          body = typeof options.body === "string" ? JSON.parse(options.body) : (options.body as typeof body);
+        } catch {}
+      }
+      const nombreNorm = (body.nombre || "").trim().toUpperCase();
+      if (nombreNorm.length < 3 || nombreNorm.length > 100) {
+        throw new Error("El nombre de la prestación debe tener entre 3 y 100 caracteres.");
+      }
+      const existe = MOCK_PRESTACIONES_CATALOG.some(
+        (p) => p.nombre.toUpperCase() === nombreNorm
+      );
+      if (existe) {
+        throw new Error("Ya existe una prestación con ese nombre.");
+      }
+      const nuevo = {
+        idPrestacion: MOCK_PRESTACIONES_CATALOG.length + 1,
+        nombre: nombreNorm,
+        tipo: body.tipo || "PRESTACION",
+        estado: "ACTIVA",
+      };
+      MOCK_PRESTACIONES_CATALOG.push(nuevo);
+      return nuevo;
+    }
+
+    const queryIdx = endpoint.indexOf("?");
+    const params = queryIdx !== -1 ? new URLSearchParams(endpoint.slice(queryIdx)) : new URLSearchParams();
+    const estado = (params.get("estado") || "ACTIVA").toUpperCase();
+    const tipo = (params.get("tipo") || "").toUpperCase();
+    const nombre = (params.get("nombre") || "").trim().toLowerCase();
+
+    return MOCK_PRESTACIONES_CATALOG.filter((p) => {
+      if (estado !== "TODOS" && p.estado !== estado) return false;
+      if (tipo && p.tipo !== tipo) return false;
+      if (nombre && !p.nombre.toLowerCase().includes(nombre)) return false;
+      return true;
+    });
   }
   if (endpoint.startsWith("/proveedores/baja")) {
     let id: number | undefined;

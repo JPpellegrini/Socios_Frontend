@@ -68,7 +68,14 @@ export function ModificarRolDialog({
             Modificar Rol
           </DialogTitle>
           <DialogDescription className="text-xs text-on-surface-variant">
-            Seleccione el nuevo rol para el usuario.
+            {usuario ? (
+              <>
+                Seleccione el nuevo rol para el usuario{" "}
+                <span className="font-semibold text-foreground">{usuario.usuario}</span>.
+              </>
+            ) : (
+              "Seleccione el nuevo rol para el usuario."
+            )}
           </DialogDescription>
         </DialogHeader>
 

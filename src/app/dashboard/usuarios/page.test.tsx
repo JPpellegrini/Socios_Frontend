@@ -80,6 +80,7 @@ describe("Pantalla Usuarios - Lista e Integración UI", () => {
     fireEvent.click(cambiarRolBtn)
 
     expect(await screen.findByRole("heading", { name: /modificar rol/i })).toBeInTheDocument()
+    expect(within(screen.getByRole("dialog")).getByText("CJR")).toBeInTheDocument()
     expect(screen.getByRole("combobox")).toBeInTheDocument()
 
   })
@@ -95,6 +96,7 @@ describe("Pantalla Usuarios - Lista e Integración UI", () => {
     fireEvent.click(cambiarPassBtn)
 
     expect(await screen.findByRole("heading", { name: /modificar password/i })).toBeInTheDocument()
+    expect(within(screen.getByRole("dialog")).getByText("CJR")).toBeInTheDocument()
 
     const submitBtn = screen.getByRole("button", { name: /cambiar password/i })
     fireEvent.click(submitBtn)

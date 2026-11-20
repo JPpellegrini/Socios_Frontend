@@ -1307,6 +1307,22 @@ export function getMockResponse(endpoint: string, options?: RequestInit): unknow
     }
     return { mensaje: `Empleado dado de baja correctamente con motivo: ${motivo}` };
   }
+  if (endpoint.startsWith("/Empleados/reactivar") || endpoint.startsWith("/empleados/reactivar")) {
+    let idEntidad = 0;
+    if (options?.body) {
+      try {
+        const parsed = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
+        idEntidad = Number(parsed?.idEntidad ?? parsed?.id ?? 0);
+      } catch {}
+    }
+    const emp = MOCK_EMPLEADOS.find(
+      (e) => e.id_Entidad === idEntidad || e.id_EntidadTipo === idEntidad
+    );
+    if (emp) {
+      emp.estado = "Activo";
+    }
+    return { mensaje: "El empleado fue reactivado correctamente." };
+  }
   if (endpoint.startsWith("/Empleados/modificar") || endpoint.startsWith("/empleados/modificar")) {
     let body: {
       idEntidad?: number;

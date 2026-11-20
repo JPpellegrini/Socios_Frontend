@@ -4,6 +4,7 @@ import {
   crearEmpleado,
   modificarEmpleado,
   darDeBajaEmpleado,
+  reactivarEmpleado,
   buscarEmpleadoPorDocumento,
 } from "./actions";
 
@@ -214,6 +215,24 @@ describe("Empleados Actions", () => {
       expect(res?.nombre).toBe("Carlos");
       expect(res?.apellido).toBe("López");
       expect(res?.ciudad).toBe("Rosario");
+    });
+  });
+
+  describe("reactivarEmpleado", () => {
+    it("envía POST a /empleados/reactivar con idEntidad", async () => {
+      (fetchAPI as jest.Mock).mockResolvedValue({ mensaje: "El empleado fue reactivado correctamente." });
+
+      const res = await reactivarEmpleado(102);
+
+      expect(res.success).toBe(true);
+      expect(fetchAPI).toHaveBeenCalledWith(
+        "/empleados/reactivar",
+        "mock-token-xyz",
+        expect.objectContaining({
+          method: "POST",
+          body: JSON.stringify({ idEntidad: 102 }),
+        })
+      );
     });
   });
 });
